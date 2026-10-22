@@ -1,0 +1,1932 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS WMS Pro - Gestão de Almoxarifado Industrial</title>
+  
+  <!-- Supabase JS Client SDK -->
+  <script src="https://qnxqrimsgehthjgksuqa.supabase.co/rest/v1/"></script>
+<head>const SUPABASE_URL = 'https://qnxqrimsgehthjgksuqa.supabase.co/rest/v1/';
+const SUPABASE_ANON_KEY = 'sb_secret_8r2ctf2pAY-aQRBPQL1_Sw_AqEZmH5U'; // Cole aqui a sua chave pública do painel do Supabase
+
+let supabaseClient = null;
+if (window.supabase) {
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS WMS Pro - Gestão de Almoxarifado Industrial</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            },
+            darkbg: '#0b0f19',
+            darkcard: 'rgba(17, 24, 39, 0.7)',
+            darkborder: 'rgba(255, 255, 255, 0.08)',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Font & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- JsBarcode library for barcode generation -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top right, #1e1b4b 0%, #0b0f19 50%, #030712 100%);
+      background-attachment: fixed;
+      color: #f3f4f6;
+    }
+    
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.6);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.5);
+    }
+
+    /* Glassmorphism Classes */
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glass-card {
+      background: rgba(30, 41, 59, 0.4);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .glass-input {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+    .glass-input:focus {
+      border-color: #3b82f6;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+    }
+
+    /* Scanner animation laser effect */
+    @keyframes scanLine {
+      0% { top: 10%; opacity: 0.2; }
+      50% { top: 85%; opacity: 0.9; }
+      100% { top: 10%; opacity: 0.2; }
+    }
+    .scanner-laser {
+      position: absolute;
+      left: 5%;
+      width: 90%;
+      height: 2px;
+      background: #f43f5e;
+      box-shadow: 0 0 12px 3px #f43f5e, 0 0 20px 6px rgba(244, 63, 94, 0.5);
+      animation: scanLine 2.2s infinite ease-in-out;
+    }
+
+    /* Mobile Device Frame */
+    .phone-mockup {
+      width: 380px;
+      height: 740px;
+      border-radius: 44px;
+      border: 10px solid #1f2937;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(59, 130, 246, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP HEADER BAR & VIEW SWITCHER -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 lg:px-8 py-3 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+        <i data-lucide="boxes" class="w-6 h-6 text-white"></i>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-lg tracking-wide text-white">NEXUS <span class="text-blue-400 font-extrabold">WMS PRO</span></h1>
+          <span class="px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">v3.8 Live</span>
+        </div>
+        <p class="text-xs text-gray-400">Gestão Integradora de Almoxarifado Industrial</p>
+      </div>
+    </div>
+
+    <!-- Mode Switcher -->
+    <div class="flex items-center gap-2 bg-slate-900/80 p-1 rounded-xl border border-white/10">
+      <button id="btn-view-desktop" onclick="switchView('desktop')" class="px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200 bg-blue-600 text-white shadow-md">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">Portal Web (Gestão / Almoxarife)</span>
+      </button>
+      <button id="btn-view-mobile" onclick="switchView('mobile')" class="px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200 text-gray-400 hover:text-white">
+        <i data-lucide="smartphone" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">App Coletor Mobile (Operador)</span>
+      </button>
+    </div>
+
+    <!-- Quick Actions / User Info -->
+    <div class="hidden md:flex items-center gap-4">
+      <div class="relative">
+        <button onclick="toggleAlerts()" class="p-2 rounded-lg bg-slate-800/80 border border-white/10 hover:bg-slate-700 text-gray-300 relative">
+          <i data-lucide="bell" class="w-4 h-4"></i>
+          <span id="badge-alerts" class="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">2</span>
+        </button>
+
+        <!-- Dropdown Notifications -->
+        <div id="popover-alerts" class="hidden absolute right-0 mt-2 w-80 glass-panel rounded-xl shadow-2xl p-4 border border-white/10 z-50">
+          <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-3 flex items-center justify-between">
+            <span>Alertas de Estoque</span>
+            <span class="text-[10px] text-blue-400 cursor-pointer" onclick="clearAlerts()">Limpar</span>
+          </h4>
+          <div class="space-y-2 text-xs" id="alerts-container">
+            <!-- Dynamic alerts -->
+          </div>
+        </div>
+      </div>
+
+      <div class="h-6 w-[1px] bg-white/10"></div>
+
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-xs font-bold text-white shadow">
+          AL
+        </div>
+        <div class="text-left leading-tight hidden lg:block">
+          <p class="text-xs font-semibold text-gray-200">Carlos Silva</p>
+          <p class="text-[10px] text-gray-400">Almoxarife Chefe</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER WITH DUAL VIEWS -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: DESKTOP WEB PORTAL                  -->
+    <!-- ========================================== -->
+    <main id="view-desktop" class="flex-1 flex overflow-hidden">
+      
+      <!-- SIDEBAR -->
+      <aside class="w-64 glass-panel border-r border-white/10 hidden md:flex flex-col justify-between p-4 shrink-0">
+        <div class="space-y-6">
+          <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3">Navegação Principal</div>
+          
+          <nav class="space-y-1" id="desktop-nav">
+            <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white bg-blue-600/30 border border-blue-500/40">
+              <i data-lucide="line-chart" class="w-4 h-4 text-blue-400"></i> Dashboard General
+            </a>
+            <a href="#" onclick="switchTab('skus')" id="nav-skus" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <i data-lucide="package" class="w-4 h-4"></i> Catálogo SKUs (Materiais)
+            </a>
+            <a href="#" onclick="switchTab('recebimento')" id="nav-recebimento" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <i data-lucide="truck" class="w-4 h-4"></i> Entradas & Qualidade
+            </a>
+            <a href="#" onclick="switchTab('requisicoes')" id="nav-requisicoes" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <i data-lucide="clipboard-list" class="w-4 h-4"></i> Central Requisições
+            </a>
+            <a href="#" onclick="switchTab('inventario')" id="nav-inventario" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <i data-lucide="pie-chart" class="w-4 h-4"></i> Curva ABC & Inventário
+            </a>
+            <a href="#" onclick="switchTab('endereçamento')" id="nav-endereçamento" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <i data-lucide="map-pin" class="w-4 h-4"></i> Endereçamento & Racks
+            </a>
+          </nav>
+        </div>
+
+        <!-- Plant Summary Box -->
+        <div class="glass-card p-3.5 rounded-xl space-y-2 border border-white/5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-gray-400">Planta Operacional</span>
+            <span class="text-emerald-400 font-medium">Ativa</span>
+          </div>
+          <div class="text-xs font-bold text-gray-200">Unidade II - Distrito Industrial</div>
+          <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-3/4"></div>
+          </div>
+          <p class="text-[10px] text-gray-400">Ocupação Física: 74.8% dos Endereços</p>
+        </div>
+      </aside>
+
+      <!-- PORTAL CONTENT AREA -->
+      <section class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6">
+
+        <!-- TAB 1: DASHBOARD -->
+        <div id="tab-dashboard" class="space-y-6">
+          <!-- Top Stats Bar -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="flex items-center justify-between text-gray-400 mb-2">
+                <span class="text-xs font-medium">Total de SKUs</span>
+                <i data-lucide="layers" class="w-4 h-4 text-blue-400"></i>
+              </div>
+              <div class="text-2xl font-bold text-white" id="kpi-total-skus">0</div>
+              <span class="text-[10px] text-emerald-400 flex items-center gap-1 mt-2">
+                <i data-lucide="trending-up" class="w-3 h-3"></i> +12 este mês
+              </span>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="flex items-center justify-between text-gray-400 mb-2">
+                <span class="text-xs font-medium">Valor em Estoque</span>
+                <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+              </div>
+              <div class="text-2xl font-bold text-white" id="kpi-total-valor">R$ 0,00</div>
+              <span class="text-[10px] text-gray-400 mt-2">Custo Médio Ponderado</span>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="flex items-center justify-between text-gray-400 mb-2">
+                <span class="text-xs font-medium">Itens Críticos / Baixo</span>
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
+              </div>
+              <div class="text-2xl font-bold text-rose-400" id="kpi-criticos">0</div>
+              <span class="text-[10px] text-rose-400/80 mt-2">Requerem Ponto de Pedido</span>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="flex items-center justify-between text-gray-400 mb-2">
+                <span class="text-xs font-medium">Requisições Pendentes</span>
+                <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
+              </div>
+              <div class="text-2xl font-bold text-amber-400" id="kpi-requisicoes-pendentes">0</div>
+              <span class="text-[10px] text-amber-400/80 mt-2">Aguardando aprovação</span>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="flex items-center justify-between text-gray-400 mb-2">
+                <span class="text-xs font-medium">Acurácia de Inventário</span>
+                <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400"></i>
+              </div>
+              <div class="text-2xl font-bold text-white">99.2%</div>
+              <span class="text-[10px] text-emerald-400 mt-2">Auditoria Cíclica Semanal</span>
+            </div>
+          </div>
+
+          <!-- Interactive Charts Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Line Chart: Flow Movement -->
+            <div class="glass-card p-5 rounded-2xl border border-white/5 lg:col-span-2 space-y-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-bold text-white">Movimentação Semanal de Estoque</h3>
+                  <p class="text-xs text-gray-400">Fluxo de Entradas (Recebimento) vs Saídas (Atendimento)</p>
+                </div>
+                <div class="flex items-center gap-3 text-xs">
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Entradas</span>
+                  <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Saídas</span>
+                </div>
+              </div>
+              <div class="h-64 relative w-full">
+                <canvas id="chart-movements" class="w-full h-full"></canvas>
+              </div>
+            </div>
+
+            <!-- ABC Curve Chart -->
+            <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-4 flex flex-col justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-white">Distribuição por Curva ABC</h3>
+                <p class="text-xs text-gray-400">Classificação por Impacto Financeiro</p>
+              </div>
+              <div class="h-52 relative flex items-center justify-center">
+                <canvas id="chart-abc" class="w-full h-full"></canvas>
+              </div>
+              <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                <div class="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                  <span class="font-bold text-blue-400 block">Classe A</span>
+                  <span class="text-[10px] text-gray-400">80% Valor</span>
+                </div>
+                <div class="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20">
+                  <span class="font-bold text-amber-400 block">Classe B</span>
+                  <span class="text-[10px] text-gray-400">15% Valor</span>
+                </div>
+                <div class="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+                  <span class="font-bold text-emerald-400 block">Classe C</span>
+                  <span class="text-[10px] text-gray-400">5% Valor</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Operations & Quick Actions -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-4">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="history" class="w-4 h-4 text-blue-400"></i> Últimas Movimentações Registradas
+              </h3>
+              <div class="space-y-3 overflow-y-auto max-h-60 pr-1" id="recent-movements-list">
+                <!-- Dynamic Items -->
+              </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-4 flex flex-col justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2 mb-1">
+                  <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Operações Rápidas do Almoxarife
+                </h3>
+                <p class="text-xs text-gray-400 mb-4">Execute ações imediatas com um clique.</p>
+                
+                <div class="grid grid-cols-2 gap-3">
+                  <button onclick="openModalSKU()" class="p-3 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-xl text-xs text-blue-300 font-semibold flex items-center gap-2 transition">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Novo Material SKU
+                  </button>
+                  <button onclick="switchTab('recebimento')" class="p-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 rounded-xl text-xs text-emerald-300 font-semibold flex items-center gap-2 transition">
+                    <i data-lucide="download-cloud" class="w-4 h-4"></i> Dar Entrada NFe
+                  </button>
+                  <button onclick="switchTab('requisicoes')" class="p-3 bg-amber-600/20 hover:bg-amber-600/30 border border-amber-500/30 rounded-xl text-xs text-amber-300 font-semibold flex items-center gap-2 transition">
+                    <i data-lucide="check-square" class="w-4 h-4"></i> Aprovar Requisições
+                  </button>
+                  <button onclick="exportDataJSON()" class="p-3 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-xl text-xs text-gray-300 font-semibold flex items-center gap-2 transition">
+                    <i data-lucide="file-spread-sheet" class="w-4 h-4"></i> Exportar Dados
+                  </button>
+                </div>
+              </div>
+
+              <div class="p-3 bg-slate-900/60 rounded-xl border border-white/5 text-xs text-gray-400 flex items-center justify-between">
+                <span>Backup em nuvem sincronizado</span>
+                <span class="text-emerald-400 font-medium">Agora mesmo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: CATÁLOGO DE SKUs -->
+        <div id="tab-skus" class="hidden space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-white">Catálogo de Materiais & SKUs</h2>
+              <p class="text-xs text-gray-400">Controle completo de insumos, ferramentas e matérias-primas</p>
+            </div>
+            <button onclick="openModalSKU()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-blue-500/20 flex items-center gap-2 transition">
+              <i data-lucide="plus" class="w-4 h-4"></i> Cadastrar Novo SKU
+            </button>
+          </div>
+
+          <!-- Filters Bar -->
+          <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="relative w-full md:w-80">
+              <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-3"></i>
+              <input type="text" id="filter-search" onkeyup="renderSKUTable()" placeholder="Buscar por Nome, Código SKU ou Local..." class="w-full glass-input pl-9 pr-4 py-2 rounded-xl text-xs">
+            </div>
+
+            <div class="flex items-center gap-3 w-full md:w-auto">
+              <select id="filter-categoria" onchange="renderSKUTable()" class="glass-input px-3 py-2 rounded-xl text-xs">
+                <option value="todos">Todas Categorias</option>
+                <option value="Ferramentas">Ferramentas</option>
+                <option value="EPIs">EPIs</option>
+                <option value="Insumos">Insumos Industriais</option>
+                <option value="Peças">Peças de Reposição</option>
+                <option value="Químicos">Químicos</option>
+              </select>
+
+              <select id="filter-status" onchange="renderSKUTable()" class="glass-input px-3 py-2 rounded-xl text-xs">
+                <option value="todos">Todos Status</option>
+                <option value="normal">Estoque Normal</option>
+                <option value="critico">Abaixo do Mínimo</option>
+                <option value="esgotado">Esgotado</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Data Table -->
+          <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-gray-300">
+                <thead class="bg-slate-900/80 text-gray-400 font-semibold uppercase tracking-wider border-b border-white/10">
+                  <tr>
+                    <th class="p-4">SKU / Código</th>
+                    <th class="p-4">Descrição do Material</th>
+                    <th class="p-4">Categoria</th>
+                    <th class="p-4 text-center">Curva ABC</th>
+                    <th class="p-4 text-center">Qtd Atual</th>
+                    <th class="p-4 text-center">Min / Máx</th>
+                    <th class="p-4">Localização</th>
+                    <th class="p-4 text-center">Status</th>
+                    <th class="p-4 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="sku-table-body" class="divide-y divide-white/5">
+                  <!-- Dynamic SKUs -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: RECEBIMENTO & QUALIDADE (KANBAN) -->
+        <div id="tab-recebimento" class="hidden space-y-6">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl font-bold text-white">Recebimento & Inspeção de Qualidade</h2>
+              <p class="text-xs text-gray-400">Workflow visual de triagem de Notas Fiscais e materiais recebidos</p>
+            </div>
+            <button onclick="openModalRecebimento()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs rounded-xl shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition">
+              <i data-lucide="file-plus" class="w-4 h-4"></i> Registrar Nova Entrada NFe
+            </button>
+          </div>
+
+          <!-- Pipeline Kanban Board -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Col 1: NF Emitida -->
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[600px]">
+              <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+                <div class="flex items-center gap-2 font-bold text-xs text-gray-300">
+                  <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> NFe Emitida / Trânsito
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold" id="kanban-count-1">0</span>
+              </div>
+              <div class="flex-1 overflow-y-auto space-y-3 pr-1" id="kanban-col-1"></div>
+            </div>
+
+            <!-- Col 2: Doca / Aguardando -->
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[600px]">
+              <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+                <div class="flex items-center gap-2 font-bold text-xs text-gray-300">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Doca / Aguardando
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-[10px] font-bold" id="kanban-count-2">0</span>
+              </div>
+              <div class="flex-1 overflow-y-auto space-y-3 pr-1" id="kanban-col-2"></div>
+            </div>
+
+            <!-- Col 3: Em Inspeção / CQ -->
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[600px]">
+              <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+                <div class="flex items-center gap-2 font-bold text-xs text-gray-300">
+                  <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span> CQ / Em Inspeção
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 text-[10px] font-bold" id="kanban-count-3">0</span>
+              </div>
+              <div class="flex-1 overflow-y-auto space-y-3 pr-1" id="kanban-col-3"></div>
+            </div>
+
+            <!-- Col 4: Endereçado / Liberado -->
+            <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[600px]">
+              <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3">
+                <div class="flex items-center gap-2 font-bold text-xs text-gray-300">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Endereçado / Disponível
+                </div>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold" id="kanban-count-4">0</span>
+              </div>
+              <div class="flex-1 overflow-y-auto space-y-3 pr-1" id="kanban-col-4"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: CENTRAL DE REQUIÇÕES -->
+        <div id="tab-requisicoes" class="hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white">Aprovação de Requisições de Materiais</h2>
+              <p class="text-xs text-gray-400">Gerencie solicitações vindas dos Centros de Custo e Operadores</p>
+            </div>
+          </div>
+
+          <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-gray-300">
+                <thead class="bg-slate-900/80 text-gray-400 font-semibold uppercase tracking-wider border-b border-white/10">
+                  <tr>
+                    <th class="p-4">ID Req</th>
+                    <th class="p-4">Solicitante</th>
+                    <th class="p-4">Centro de Custo</th>
+                    <th class="p-4">Material Solicitado</th>
+                    <th class="p-4 text-center">Qtd</th>
+                    <th class="p-4 text-center">Urgência</th>
+                    <th class="p-4 text-center">Status</th>
+                    <th class="p-4 text-right">Decisão</th>
+                  </tr>
+                </thead>
+                <tbody id="requisitions-table-body" class="divide-y divide-white/5">
+                  <!-- Dynamic Requisitions -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: CURVA ABC & AUDITORIA INVENTÁRIO -->
+        <div id="tab-inventario" class="hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white">Controle de Inventário & Curva ABC</h2>
+              <p class="text-xs text-gray-400">Classificação Paretiana e Auditoria Cíclica de DIVERGÊNCIAS</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
+              <div class="text-xs font-bold text-blue-400 uppercase tracking-wider">Classe A (Alta Relevância)</div>
+              <p class="text-xs text-gray-400">Representam ~80% do valor do estoque. Auditoria Semanal mandatória.</p>
+              <div class="text-2xl font-extrabold text-white" id="count-class-a">0 SKUs</div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
+              <div class="text-xs font-bold text-amber-400 uppercase tracking-wider">Classe B (Média Relevância)</div>
+              <p class="text-xs text-gray-400">Representam ~15% do valor do estoque. Auditoria Mensal.</p>
+              <div class="text-2xl font-extrabold text-white" id="count-class-b">0 SKUs</div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-3">
+              <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Classe C (Baixa Relevância)</div>
+              <p class="text-xs text-gray-400">Representam ~5% do valor. Auditoria Trimestral.</p>
+              <div class="text-2xl font-extrabold text-white" id="count-class-c">0 SKUs</div>
+            </div>
+          </div>
+
+          <!-- Contagem de Inventário Cíclico Historico -->
+          <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-4">
+            <h3 class="text-sm font-bold text-white">Histórico de Contagens Cíclicas & Divergências</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-gray-300">
+                <thead class="bg-slate-900/80 text-gray-400 font-semibold uppercase tracking-wider border-b border-white/10">
+                  <tr>
+                    <th class="p-3">Data</th>
+                    <th class="p-3">Operador / Coletor</th>
+                    <th class="p-3">SKU Auditado</th>
+                    <th class="p-3 text-center">Qtd Sistema</th>
+                    <th class="p-3 text-center">Qtd Contada</th>
+                    <th class="p-3 text-center">Divergência</th>
+                    <th class="p-3 text-right">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-counts-body" class="divide-y divide-white/5">
+                  <!-- Dynamic Counts -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 6: ENDEREÇAMENTO & RACKS -->
+        <div id="tab-endereçamento" class="hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-bold text-white">Endereçamento WMS (Mapa de Armazém)</h2>
+              <p class="text-xs text-gray-400">Visualização lógica de Corredores, Racks, Prateleiras e Nichos</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Corredor A -->
+            <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <h4 class="font-bold text-sm text-blue-400">CORREDOR A (Alta Rotatividade)</h4>
+                <span class="text-[10px] text-gray-400">Racks A1 - A4</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs" id="rack-grid-a">
+                <!-- Rack spots -->
+              </div>
+            </div>
+
+            <!-- Corredor B -->
+            <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <h4 class="font-bold text-sm text-amber-400">CORREDOR B (EPIs e Ferramentas)</h4>
+                <span class="text-[10px] text-gray-400">Racks B1 - B4</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs" id="rack-grid-b">
+                <!-- Rack spots -->
+              </div>
+            </div>
+
+            <!-- Corredor C -->
+            <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-3">
+              <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <h4 class="font-bold text-sm text-emerald-400">CORREDOR C (Volumosos & Peças)</h4>
+                <span class="text-[10px] text-gray-400">Racks C1 - C4</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2 text-xs" id="rack-grid-c">
+                <!-- Rack spots -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: MOBILE PWA SIMULATOR (OPERADOR)    -->
+    <!-- ========================================== -->
+    <main id="view-mobile" class="flex-1 hidden flex items-center justify-center p-4 overflow-y-auto">
+      
+      <!-- Phone Framework -->
+      <div class="phone-mockup bg-slate-950 flex flex-col justify-between text-gray-100">
+        
+        <!-- Phone Notch / Header -->
+        <div class="bg-slate-900/90 px-6 pt-3 pb-3 border-b border-white/10 flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-xs font-bold text-white tracking-wider">NEXUS Coletor</span>
+          </div>
+          <div class="flex items-center gap-2 text-[10px] text-gray-400">
+            <i data-lucide="wifi" class="w-3 h-3 text-emerald-400"></i>
+            <span>98% Bateria</span>
+          </div>
+        </div>
+
+        <!-- Mobile Screen Dynamic Content -->
+        <div id="mobile-screen-content" class="flex-1 overflow-y-auto p-4 space-y-4">
+
+          <!-- Mobile Screen: INÍCIO / CRACHÁ -->
+          <div id="mobile-page-home" class="space-y-4">
+            <!-- Operator Badge -->
+            <div class="glass-card p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-slate-900/80 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] uppercase tracking-widest text-blue-400 font-bold">Crachá Digital</span>
+                <i data-lucide="qr-code" class="w-4 h-4 text-blue-400"></i>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-base font-bold text-white shadow">
+                  OP
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-white">João Pedro Santos</div>
+                  <div class="text-xs text-gray-400">Operador de Turno - Mat. 8842</div>
+                </div>
+              </div>
+              <div class="pt-2 border-t border-white/10 flex justify-between text-[10px] text-gray-400">
+                <span>Setor: Almoxarifado Central</span>
+                <span class="text-emerald-400">Turno A (07:00 - 17:00)</span>
+              </div>
+            </div>
+
+            <!-- Mobile Quick Actions -->
+            <div class="grid grid-cols-2 gap-3">
+              <button onclick="navMobile('scanner')" class="glass-card p-4 rounded-2xl text-center hover:bg-slate-800/80 transition space-y-2 border border-blue-500/20">
+                <div class="w-10 h-10 mx-auto rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center">
+                  <i data-lucide="scan-line" class="w-5 h-5"></i>
+                </div>
+                <div class="text-xs font-bold text-white">Bipar / Scanner</div>
+                <div class="text-[10px] text-gray-400">QR & Barcode</div>
+              </button>
+
+              <button onclick="navMobile('inventario')" class="glass-card p-4 rounded-2xl text-center hover:bg-slate-800/80 transition space-y-2 border border-emerald-500/20">
+                <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                </div>
+                <div class="text-xs font-bold text-white">Coleta Cíclica</div>
+                <div class="text-[10px] text-gray-400">Contar Estoque</div>
+              </button>
+            </div>
+
+            <!-- Fast Material Request Button -->
+            <button onclick="navMobile('requisitar')" class="w-full glass-card p-4 rounded-2xl flex items-center justify-between hover:bg-slate-800/80 transition border border-amber-500/20">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                </div>
+                <div class="text-left">
+                  <div class="text-xs font-bold text-white">Solicitar Insumo / Ferramenta</div>
+                  <div class="text-[10px] text-gray-400">Requisição Rápida para o Centro de Custo</div>
+                </div>
+              </div>
+              <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            </button>
+
+            <!-- Pending Orders for Mobile -->
+            <div class="glass-card p-3 rounded-2xl border border-white/5 space-y-2">
+              <div class="text-xs font-bold text-gray-300">Suas Solicitações Recentes</div>
+              <div id="mobile-my-requests" class="space-y-2 text-xs">
+                <!-- Dynamic mobile requests -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Screen: SCANNER SIMULATOR -->
+          <div id="mobile-page-scanner" class="hidden space-y-4">
+            <div class="text-center space-y-1">
+              <h3 class="text-sm font-bold text-white">Scanner de Código de Barras / QR</h3>
+              <p class="text-[11px] text-gray-400">Aponte a câmera do dispositivo para o rótulo do material</p>
+            </div>
+
+            <!-- Camera Mockup Window -->
+            <div class="relative w-full h-56 bg-black rounded-2xl overflow-hidden border-2 border-blue-500/50 flex flex-col items-center justify-center">
+              <div class="scanner-laser"></div>
+              
+              <!-- Target Bracket overlay -->
+              <div class="w-40 h-28 border-2 border-dashed border-blue-400/80 rounded-lg flex items-center justify-center relative">
+                <i data-lucide="qr-code" class="w-12 h-12 text-white/30"></i>
+              </div>
+
+              <div class="absolute bottom-2 right-2 flex gap-2">
+                <button onclick="toggleFlash()" id="btn-flash" class="p-1.5 rounded-full bg-slate-800/80 text-gray-300 text-[10px] flex items-center gap-1 px-2 border border-white/10">
+                  <i data-lucide="zap" class="w-3 h-3"></i> Flash
+                </button>
+              </div>
+            </div>
+
+            <!-- Manual Barcode Input Selector -->
+            <div class="space-y-2">
+              <label class="text-[11px] text-gray-400 block">Simular Bipagem de Item:</label>
+              <select id="mobile-scan-select" onchange="simulateScanItem()" class="w-full glass-input px-3 py-2 rounded-xl text-xs">
+                <option value="">-- Selecione um SKU para bipar --</option>
+              </select>
+            </div>
+
+            <!-- Scanned Item Details Modal/Card -->
+            <div id="scanned-result-card" class="hidden glass-card p-4 rounded-2xl border border-emerald-500/40 bg-emerald-950/20 space-y-3">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="text-[10px] font-bold text-emerald-400 uppercase">Item Bipado com Sucesso</span>
+                  <h4 class="text-sm font-bold text-white" id="scan-res-title">---</h4>
+                  <p class="text-[10px] text-gray-400" id="scan-res-sku">SKU: ---</p>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300" id="scan-res-loc">---</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-white/10">
+                <div>
+                  <span class="text-[10px] text-gray-400 block">Em Estoque:</span>
+                  <span class="font-bold text-white" id="scan-res-qty">0 UN</span>
+                </div>
+                <div>
+                  <span class="text-[10px] text-gray-400 block">Status:</span>
+                  <span class="font-bold text-emerald-400" id="scan-res-status">OK</span>
+                </div>
+              </div>
+
+              <div class="flex gap-2 pt-1">
+                <button onclick="quickAdjustQtyModal()" class="flex-1 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-medium">Ajustar Saldo</button>
+                <button onclick="reqThisItemFromScan()" class="flex-1 py-1.5 bg-amber-600 text-white rounded-lg text-xs font-medium">Requisitar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Screen: REQUISITAR MATERIAIS -->
+          <div id="mobile-page-requisitar" class="hidden space-y-4">
+            <div class="text-center">
+              <h3 class="text-sm font-bold text-white">Nova Requisição de Material</h3>
+              <p class="text-[11px] text-gray-400">Solicite retiradas para a sua ordem de serviço</p>
+            </div>
+
+            <form onsubmit="submitMobileRequisition(event)" class="space-y-3">
+              <div>
+                <label class="text-[11px] text-gray-400 block mb-1">Selecione o Material / SKU</label>
+                <select id="mob-req-sku" onchange="checkMobStockAvailability()" required class="w-full glass-input px-3 py-2 rounded-xl text-xs">
+                  <!-- Dynamic options -->
+                </select>
+              </div>
+
+              <div id="mob-stock-notice" class="text-[10px] text-blue-400 font-medium hidden">
+                Saldo Disponível em Estoque: <span id="mob-avail-qty">0</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] text-gray-400 block mb-1">Quantidade</label>
+                  <input type="number" id="mob-req-qty" min="1" value="1" required class="w-full glass-input px-3 py-2 rounded-xl text-xs">
+                </div>
+
+                <div>
+                  <label class="text-[11px] text-gray-400 block mb-1">Nível de Urgência</label>
+                  <select id="mob-req-urgency" class="w-full glass-input px-3 py-2 rounded-xl text-xs">
+                    <option value="Baixa">Normal / Baixa</option>
+                    <option value="Média">Média</option>
+                    <option value="Alta">ALTA (Linha Parada)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-[11px] text-gray-400 block mb-1">Centro de Custo / Destino</label>
+                <select id="mob-req-cc" class="w-full glass-input px-3 py-2 rounded-xl text-xs">
+                  <option value="CC-101 Manutenção Mecânica">CC-101 Manutenção Mecânica</option>
+                  <option value="CC-202 Linha de Montagem A">CC-202 Linha de Montagem A</option>
+                  <option value="CC-303 Caldeiraria & Usinagem">CC-303 Caldeiraria & Usinagem</option>
+                  <option value="CC-404 Segurança do Trabalho (SESMT)">CC-404 Segurança do Trabalho (SESMT)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-[11px] text-gray-400 block mb-1">Observações / Ordem de Serviço</label>
+                <textarea id="mob-req-obs" rows="2" placeholder="Ex: Manutenção preventiva na Prensa P-04" class="w-full glass-input px-3 py-2 rounded-xl text-xs"></textarea>
+              </div>
+
+              <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white font-bold text-xs rounded-xl shadow-lg transition">
+                Enviar Solicitacao ao Almoxarife
+              </button>
+            </form>
+          </div>
+
+          <!-- Mobile Screen: INVENTÁRIO CÍCLICO -->
+          <div id="mobile-page-inventario" class="hidden space-y-4">
+            <div class="text-center">
+              <h3 class="text-sm font-bold text-white">Coleta de Inventário Cíclico</h3>
+              <p class="text-[11px] text-gray-400">Contagem física direta de prateleira</p>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border border-white/10 space-y-3">
+              <div>
+                <label class="text-[11px] text-gray-400 block mb-1">Material a Auditar</label>
+                <select id="mob-inv-sku" onchange="calculateDiscrepancy()" class="w-full glass-input px-3 py-2 rounded-xl text-xs">
+                  <!-- Dynamic SKUs -->
+                </select>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div class="p-2.5 bg-slate-900 rounded-xl border border-white/5">
+                  <span class="text-[10px] text-gray-400 block">Saldo Sistema:</span>
+                  <span class="text-sm font-bold text-blue-400" id="mob-sys-qty">0</span>
+                </div>
+                <div>
+                  <label class="text-[11px] text-gray-400 block mb-1">Qtd Contada no RACK</label>
+                  <input type="number" id="mob-counted-qty" oninput="calculateDiscrepancy()" placeholder="0" class="w-full glass-input px-3 py-2 rounded-xl text-xs font-bold text-emerald-400">
+                </div>
+              </div>
+
+              <!-- Discrepancy Indicator -->
+              <div id="discrepancy-box" class="p-3 rounded-xl border text-xs flex items-center justify-between bg-slate-800 border-white/10">
+                <span class="text-gray-300">Divergência:</span>
+                <span class="font-bold" id="discrepancy-val">0 UN (0%)</span>
+              </div>
+
+              <button onclick="saveInventoryCount()" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition">
+                Confirmar & Salvar Contagem
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Phone Bottom Navigation Bar -->
+        <div class="bg-slate-900/95 border-t border-white/10 px-4 py-2 flex items-center justify-between shrink-0 text-gray-400 text-[10px]">
+          <button onclick="navMobile('home')" id="mob-nav-home" class="flex flex-col items-center gap-1 text-blue-400">
+            <i data-lucide="home" class="w-4 h-4"></i>
+            <span>Início</span>
+          </button>
+          <button onclick="navMobile('scanner')" id="mob-nav-scanner" class="flex flex-col items-center gap-1 hover:text-white">
+            <i data-lucide="scan" class="w-4 h-4"></i>
+            <span>Scanner</span>
+          </button>
+          <button onclick="navMobile('requisitar')" id="mob-nav-requisitar" class="flex flex-col items-center gap-1 hover:text-white">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+            <span>Requisitar</span>
+          </button>
+          <button onclick="navMobile('inventario')" id="mob-nav-inventario" class="flex flex-col items-center gap-1 hover:text-white">
+            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+            <span>Inventário</span>
+          </button>
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
+
+
+  <!-- ========================================== -->
+  <!-- MODALS SECTION                             -->
+  <!-- ========================================== -->
+
+  <!-- MODAL: Cadastrar / Editar SKU -->
+  <div id="modal-sku" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg rounded-2xl border border-white/10 p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="box" class="w-5 h-5 text-blue-400"></i> Cadastrar Novo Material (SKU)
+        </h3>
+        <button onclick="closeModalSKU()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="saveSKU(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Código SKU *</label>
+            <input type="text" id="form-sku-code" required placeholder="Ex: ROL-6205-2RS" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Categoria</label>
+            <select id="form-sku-cat" class="w-full glass-input px-3 py-2 rounded-xl">
+              <option value="Peças">Peças de Reposição</option>
+              <option value="Ferramentas">Ferramentas</option>
+              <option value="EPIs">EPIs</option>
+              <option value="Insumos">Insumos Industriais</option>
+              <option value="Químicos">Químicos</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-gray-300 block mb-1 font-medium">Descrição Detalhada do Material *</label>
+          <input type="text" id="form-sku-name" required placeholder="Ex: Rolamento De Esferas Blindado 6205" class="w-full glass-input px-3 py-2 rounded-xl">
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Unidade Medida</label>
+            <select id="form-sku-unit" class="w-full glass-input px-3 py-2 rounded-xl">
+              <option value="UN">UN (Unidade)</option>
+              <option value="KG">KG (Quilo)</option>
+              <option value="M">M (Metro)</option>
+              <option value="CX">CX (Caixa)</option>
+              <option value="L">L (Litro)</option>
+              <option value="PAR">PAR (Par)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Estoque Mínimo</label>
+            <input type="number" id="form-sku-min" required value="5" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Estoque Máximo</label>
+            <input type="number" id="form-sku-max" required value="50" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Quantidade Inicial em Estoque</label>
+            <input type="number" id="form-sku-qty" required value="10" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Custo Unitário (R$)</label>
+            <input type="number" step="0.01" id="form-sku-cost" required value="25.00" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Localização / Rack</label>
+            <input type="text" id="form-sku-loc" required placeholder="Ex: RACK-A1-P2" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1 font-medium">Curva ABC</label>
+            <select id="form-sku-abc" class="w-full glass-input px-3 py-2 rounded-xl">
+              <option value="A">Classe A</option>
+              <option value="B">Classe B</option>
+              <option value="C" selected>Classe C</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Preview Barcode Area -->
+        <div class="p-3 bg-slate-900/80 rounded-xl border border-white/5 flex flex-col items-center justify-center space-y-1">
+          <span class="text-[10px] text-gray-400">Código de Barras Gerado Automaticamente</span>
+          <svg id="barcode-preview" class="max-h-12"></svg>
+        </div>
+
+        <div class="pt-2 flex gap-3">
+          <button type="button" onclick="closeModalSKU()" class="flex-1 py-2 bg-slate-800 text-gray-300 rounded-xl">Cancelar</button>
+          <button type="submit" class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg">Salvar SKU</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- MODAL: Registrar Recebimento / NFe -->
+  <div id="modal-recebimento" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg rounded-2xl border border-white/10 p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-white/10 pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="truck" class="w-5 h-5 text-emerald-400"></i> Registrar Nota Fiscal & Entrada
+        </h3>
+        <button onclick="closeModalRecebimento()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <form onsubmit="saveRecebimento(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-gray-300 block mb-1">Número da NFe *</label>
+            <input type="text" id="form-rec-nfe" required placeholder="NF-45982" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1">Fornecedor *</label>
+            <input type="text" id="form-rec-forn" required placeholder="TechSupri Indústria S/A" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+        </div>
+
+        <div>
+          <label class="text-gray-300 block mb-1">Material do Catálogo</label>
+          <select id="form-rec-sku" required class="w-full glass-input px-3 py-2 rounded-xl">
+            <!-- Dynamic options -->
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-gray-300 block mb-1">Quantidade Entrando</label>
+            <input type="number" id="form-rec-qty" min="1" required value="20" class="w-full glass-input px-3 py-2 rounded-xl">
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1">Status Inicial</label>
+            <select id="form-rec-step" class="w-full glass-input px-3 py-2 rounded-xl">
+              <option value="1">1. NFe Emitida / Trânsito</option>
+              <option value="2">2. Doca / Aguardando</option>
+              <option value="3">3. CQ / Em Inspeção</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-2 flex gap-3">
+          <button type="button" onclick="closeModalRecebimento()" class="flex-1 py-2 bg-slate-800 text-gray-300 rounded-xl">Cancelar</button>
+          <button type="submit" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg">Lançar no Pipeline</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- MODAL: Quick Adjustment from Mobile -->
+  <div id="modal-adjust-qty" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-sm rounded-2xl border border-white/10 p-5 space-y-4">
+      <h3 class="text-sm font-bold text-white">Ajustar Saldo Manual de SKU</h3>
+      <p class="text-xs text-gray-400" id="adjust-sku-name">---</p>
+      
+      <div class="space-y-2">
+        <label class="text-xs text-gray-300 block">Novo Saldo Real:</label>
+        <input type="number" id="input-adjust-newqty" class="w-full glass-input px-3 py-2 rounded-xl text-sm font-bold">
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="closeModalAdjust()" class="flex-1 py-2 bg-slate-800 text-gray-300 text-xs rounded-xl">Cancelar</button>
+        <button onclick="confirmAdjustQty()" class="flex-1 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl">Atualizar Saldo</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+
+  <!-- ========================================== -->
+  <!-- JAVASCRIPT LOGIC & LOCALSTORAGE            -->
+  <!-- ========================================== -->
+  <script>
+    // INITIAL DEFAULT DATA
+    const DEFAULT_SKUS = [
+      { id: '1', code: 'EPI-CAP-01', name: 'Capacete de Segurança MSA Aba Frontal', category: 'EPIs', unit: 'UN', min: 10, max: 60, qty: 38, cost: 45.00, loc: 'RACK-B1-P1', abc: 'B' },
+      { id: '2', code: 'ROL-6205-2RS', name: 'Rolamento de Esferas Blindado SKF 6205', category: 'Peças', unit: 'UN', min: 15, max: 80, qty: 12, cost: 32.50, loc: 'RACK-A2-P3', abc: 'A' },
+      { id: '3', code: 'FER-CHV-13', name: 'Chave Combinada Mayle 13mm Cromo Vanádio', category: 'Ferramentas', unit: 'UN', min: 5, max: 20, qty: 4, cost: 18.90, loc: 'RACK-B2-P2', abc: 'C' },
+      { id: '4', code: 'INS-DIS-07', name: 'Disco de Corte Inox 4.1/2 " Norton Quantum', category: 'Insumos', unit: 'CX', min: 20, max: 100, qty: 85, cost: 110.00, loc: 'RACK-A1-P1', abc: 'A' },
+      { id: '5', code: 'QUI-DES-20', name: 'Desengraxante Industrial Concentrado 20L', category: 'Químicos', unit: 'L', min: 8, max: 40, qty: 0, cost: 140.00, loc: 'RACK-C1-P1', abc: 'B' },
+      { id: '6', code: 'EPI-LUV-09', name: 'Luva de Vaqueta Cano Curto Tam G', category: 'EPIs', unit: 'PAR', min: 25, max: 120, qty: 94, cost: 22.00, loc: 'RACK-B1-P2', abc: 'C' },
+    ];
+
+    const DEFAULT_RECEBIMENTOS = [
+      { id: 'r1', nfe: 'NF-10492', forn: 'Gerdau Aços S/A', skuCode: 'ROL-6205-2RS', qty: 30, step: 2, date: '22/10/2026' },
+      { id: 'r2', nfe: 'NF-88301', forn: '3M do Brasil Ltda', skuCode: 'INS-DIS-07', qty: 50, step: 3, date: '21/10/2026' },
+      { id: 'r3', nfe: 'NF-44910', forn: 'Bosch Ferramentas', skuCode: 'FER-CHV-13', qty: 10, step: 1, date: '22/10/2026' },
+    ];
+
+    const DEFAULT_REQUISICOES = [
+      { id: 'REQ-101', reqBy: 'Lucas Lima', cc: 'CC-101 Manutenção Mecânica', skuCode: 'ROL-6205-2RS', qty: 4, urgency: 'Alta', status: 'Pendente', date: '22/10/2026' },
+      { id: 'REQ-102', reqBy: 'Marcos Souza', cc: 'CC-202 Linha de Montagem A', skuCode: 'EPI-LUV-09', qty: 10, urgency: 'Baixa', status: 'Aprovada', date: '21/10/2026' },
+      { id: 'REQ-103', reqBy: 'Ana Paula', cc: 'CC-404 Segurança (SESMT)', skuCode: 'EPI-CAP-01', qty: 2, urgency: 'Média', status: 'Pendente', date: '22/10/2026' },
+    ];
+
+    const DEFAULT_COUNTS = [
+      { date: '20/10/2026', user: 'João Pedro', skuCode: 'ROL-6205-2RS', sysQty: 14, countedQty: 12, diff: -2 },
+      { date: '19/10/2026', user: 'João Pedro', skuCode: 'INS-DIS-07', sysQty: 85, countedQty: 85, diff: 0 }
+    ];
+
+    // STATE CONTROLLERS
+    let skus = [];
+    let recebimentos = [];
+    let requisicoes = [];
+    let counts = [];
+    let activeMobSku = null;
+
+    // INITIALIZATION ON LOAD
+    window.onload = function() {
+      loadLocalStorage();
+      lucide.createIcons();
+      renderAllViews();
+      initCharts();
+      populateRackGrids();
+    };
+
+    function loadLocalStorage() {
+      skus = JSON.parse(localStorage.getItem('nexus_wms_skus')) || DEFAULT_SKUS;
+      recebimentos = JSON.parse(localStorage.getItem('nexus_wms_recebimentos')) || DEFAULT_RECEBIMENTOS;
+      requisicoes = JSON.parse(localStorage.getItem('nexus_wms_requisicoes')) || DEFAULT_REQUISICOES;
+      counts = JSON.parse(localStorage.getItem('nexus_wms_counts')) || DEFAULT_COUNTS;
+    }
+
+    function saveLocalStorage() {
+      localStorage.setItem('nexus_wms_skus', JSON.stringify(skus));
+      localStorage.setItem('nexus_wms_recebimentos', JSON.stringify(recebimentos));
+      localStorage.setItem('nexus_wms_requisicoes', JSON.stringify(requisicoes));
+      localStorage.setItem('nexus_wms_counts', JSON.stringify(counts));
+      renderAllViews();
+    }
+
+    // VIEW SWITCHER (DESKTOP vs MOBILE)
+    function switchView(view) {
+      const vDesk = document.getElementById('view-desktop');
+      const vMob = document.getElementById('view-mobile');
+      const btnDesk = document.getElementById('btn-view-desktop');
+      const btnMob = document.getElementById('btn-view-mobile');
+
+      if (view === 'desktop') {
+        vDesk.classList.remove('hidden');
+        vMob.classList.add('hidden');
+        btnDesk.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200 bg-blue-600 text-white shadow-md";
+        btnMob.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200 text-gray-400 hover:text-white";
+      } else {
+        vDesk.classList.add('hidden');
+        vMob.classList.remove('hidden');
+        btnMob.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200 bg-blue-600 text-white shadow-md";
+        btnDesk.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition-all duration-200 text-gray-400 hover:text-white";
+      }
+    }
+
+    // DESKTOP NAVIGATION TABS
+    function switchTab(tabId) {
+      const tabs = ['dashboard', 'skus', 'recebimento', 'requisicoes', 'inventario', 'endereçamento'];
+      tabs.forEach(t => {
+        document.getElementById(`tab-${t}`).classList.add('hidden');
+        const navEl = document.getElementById(`nav-${t}`);
+        if (navEl) {
+          navEl.className = "sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50";
+        }
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeNav = document.getElementById(`nav-${tabId}`);
+      if (activeNav) {
+        activeNav.className = "sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white bg-blue-600/30 border border-blue-500/40";
+      }
+    }
+
+    // RENDER ALL DATA INTERFACES
+    function renderAllViews() {
+      renderKPIs();
+      renderSKUTable();
+      renderKanbanPipeline();
+      renderRequisitionsTable();
+      renderInventoryCounts();
+      renderMobileSelects();
+      renderMobileRequests();
+      lucide.createIcons();
+    }
+
+    // RENDER DASHBOARD KPIS
+    function renderKPIs() {
+      const totalSkus = skus.length;
+      const totalVal = skus.reduce((acc, item) => acc + (item.qty * item.cost), 0);
+      const criticos = skus.filter(item => item.qty <= item.min).length;
+      const reqPendentes = requisicoes.filter(r => r.status === 'Pendente').length;
+
+      document.getElementById('kpi-total-skus').innerText = totalSkus;
+      document.getElementById('kpi-total-valor').innerText = totalVal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      document.getElementById('kpi-criticos').innerText = criticos;
+      document.getElementById('kpi-requisicoes-pendentes').innerText = reqPendentes;
+      document.getElementById('badge-alerts').innerText = criticos;
+
+      // Class counts
+      document.getElementById('count-class-a').innerText = skus.filter(s => s.abc === 'A').length + " SKUs";
+      document.getElementById('count-class-b').innerText = skus.filter(s => s.abc === 'B').length + " SKUs";
+      document.getElementById('count-class-c').innerText = skus.filter(s => s.abc === 'C').length + " SKUs";
+
+      // Populate recent movements
+      const recentContainer = document.getElementById('recent-movements-list');
+      recentContainer.innerHTML = '';
+      
+      const sampleMovements = [
+        { type: 'Entrada NFe', desc: 'NF-10492 - Gerdau Aços', qty: '+30 UN', time: '10 min atrás', color: 'emerald' },
+        { type: 'Saída Req', desc: 'REQ-102 - Atendimento Linha A', qty: '-10 PAR', time: '42 min atrás', color: 'rose' },
+        { type: 'Ajuste Cíclico', desc: 'ROL-6205-2RS Auditado', qty: '-2 UN', time: '2h atrás', color: 'amber' },
+      ];
+
+      sampleMovements.forEach(m => {
+        recentContainer.innerHTML += `
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2 h-2 rounded-full bg-${m.color}-500"></span>
+              <div>
+                <span class="font-bold text-white block">${m.type}</span>
+                <span class="text-[10px] text-gray-400">${m.desc}</span>
+              </div>
+            </div>
+            <div class="text-right">
+              <span class="font-bold text-${m.color}-400 block">${m.qty}</span>
+              <span class="text-[10px] text-gray-500">${m.time}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      // Alerts dropdown items
+      const alertsContainer = document.getElementById('alerts-container');
+      alertsContainer.innerHTML = '';
+      const lowStock = skus.filter(item => item.qty <= item.min);
+      if (lowStock.length === 0) {
+        alertsContainer.innerHTML = `<p class="text-gray-400">Nenhum alerta pendente.</p>`;
+      } else {
+        lowStock.forEach(item => {
+          alertsContainer.innerHTML += `
+            <div class="p-2 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-300 flex justify-between items-center">
+              <div>
+                <span class="font-bold block">${item.code}</span>
+                <span class="text-[10px]">Saldo (${item.qty}) abaixo do mínimo (${item.min})</span>
+              </div>
+              <button onclick="switchTab('skus')" class="text-[10px] bg-rose-600 text-white px-2 py-0.5 rounded">Ver</button>
+            </div>
+          `;
+        });
+      }
+    }
+
+    // RENDER SKU TABLE
+    function renderSKUTable() {
+      const search = document.getElementById('filter-search').value.toLowerCase();
+      const cat = document.getElementById('filter-categoria').value;
+      const status = document.getElementById('filter-status').value;
+
+      const tbody = document.getElementById('sku-table-body');
+      tbody.innerHTML = '';
+
+      const filtered = skus.filter(item => {
+        const matchesSearch = item.name.toLowerCase().includes(search) || item.code.toLowerCase().includes(search) || item.loc.toLowerCase().includes(search);
+        const matchesCat = cat === 'todos' || item.category === cat;
+        
+        let matchesStatus = true;
+        if (status === 'critico') matchesStatus = item.qty > 0 && item.qty <= item.min;
+        if (status === 'esgotado') matchesStatus = item.qty === 0;
+        if (status === 'normal') matchesStatus = item.qty > item.min;
+
+        return matchesSearch && matchesCat && matchesStatus;
+      });
+
+      filtered.forEach(item => {
+        let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Normal</span>`;
+        if (item.qty === 0) {
+          statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">Esgotado</span>`;
+        } else if (item.qty <= item.min) {
+          statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">Crítico</span>`;
+        }
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-4 font-mono font-bold text-blue-400">${item.code}</td>
+            <td class="p-4">
+              <div class="font-bold text-white">${item.name}</div>
+              <div class="text-[10px] text-gray-400">R$ ${item.cost.toFixed(2)} / ${item.unit}</div>
+            </td>
+            <td class="p-4"><span class="px-2 py-0.5 rounded-md bg-slate-800 text-gray-300 text-[10px]">${item.category}</span></td>
+            <td class="p-4 text-center font-bold text-amber-400">${item.abc}</td>
+            <td class="p-4 text-center font-extrabold text-white">${item.qty} <span class="text-[10px] text-gray-400 font-normal">${item.unit}</span></td>
+            <td class="p-4 text-center text-gray-400">${item.min} / ${item.max}</td>
+            <td class="p-4 font-mono text-[11px] text-emerald-400"><i data-lucide="map-pin" class="w-3 h-3 inline mr-1"></i>${item.loc}</td>
+            <td class="p-4 text-center">${statusBadge}</td>
+            <td class="p-4 text-right">
+              <button onclick="quickAdjustQty('${item.id}')" class="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 border border-blue-500/30 mr-1" title="Ajuste Rápido">
+                <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="deleteSKU('${item.id}')" class="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30" title="Excluir">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // RENDER KANBAN RECEBIMENTO PIPELINE
+    function renderKanbanPipeline() {
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`kanban-col-${i}`).innerHTML = '';
+      }
+
+      const counts = { 1: 0, 2: 0, 3: 0, 4: 0 };
+
+      recebimentos.forEach(item => {
+        counts[item.step]++;
+        const col = document.getElementById(`kanban-col-${item.step}`);
+        
+        let actionBtn = '';
+        if (item.step < 4) {
+          actionBtn = `<button onclick="advanceKanban('${item.id}')" class="w-full mt-2 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg transition flex items-center justify-center gap-1">Avançar Etapa <i data-lucide="arrow-right" class="w-3 h-3"></i></button>`;
+        } else {
+          actionBtn = `<span class="text-[10px] text-emerald-400 font-bold block text-center mt-2">✓ Disponível no Estoque</span>`;
+        }
+
+        col.innerHTML += `
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-white/10 space-y-2 shadow">
+            <div class="flex justify-between items-start">
+              <span class="font-mono text-xs font-bold text-blue-400">${item.nfe}</span>
+              <span class="text-[10px] text-gray-400">${item.date}</span>
+            </div>
+            <div class="text-xs font-bold text-white">${item.skuCode}</div>
+            <div class="text-[10px] text-gray-400">Forn: ${item.forn}</div>
+            <div class="text-xs font-semibold text-emerald-400">Qtd: +${item.qty} UN</div>
+            ${actionBtn}
+          </div>
+        `;
+      });
+
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`kanban-count-${i}`).innerText = counts[i];
+      }
+    }
+
+    function advanceKanban(id) {
+      const rec = recebimentos.find(r => r.id === id);
+      if (rec && rec.step < 4) {
+        rec.step++;
+        // If moved to step 4 (Disponivel), automatically increment SKU stock
+        if (rec.step === 4) {
+          const sku = skus.find(s => s.code === rec.skuCode);
+          if (sku) {
+            sku.qty += rec.qty;
+            showToast(`Estoque atualizado! +${rec.qty} de ${sku.code}`, 'success');
+          }
+        } else {
+          showToast(`NFe ${rec.nfe} avançada no Pipeline!`, 'info');
+        }
+        saveLocalStorage();
+      }
+    }
+
+    // RENDER REQUISITIONS TABLE
+    function renderRequisitionsTable() {
+      const tbody = document.getElementById('requisitions-table-body');
+      tbody.innerHTML = '';
+
+      requisicoes.forEach(r => {
+        let badgeStatus = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">Pendente</span>`;
+        if (r.status === 'Aprovada') badgeStatus = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Aprovada</span>`;
+        if (r.status === 'Rejeitada') badgeStatus = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">Rejeitada</span>`;
+
+        let urgencyColor = "text-gray-400";
+        if (r.urgency === 'Alta') urgencyColor = "text-rose-400 font-bold";
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-4 font-mono font-bold text-gray-300">${r.id}</td>
+            <td class="p-4 font-semibold text-white">${r.reqBy}</td>
+            <td class="p-4 text-gray-400 text-[11px]">${r.cc}</td>
+            <td class="p-4 font-bold text-blue-400">${r.skuCode}</td>
+            <td class="p-4 text-center font-extrabold text-white">${r.qty}</td>
+            <td class="p-4 text-center ${urgencyColor}">${r.urgency}</td>
+            <td class="p-4 text-center">${badgeStatus}</td>
+            <td class="p-4 text-right">
+              ${r.status === 'Pendente' ? `
+                <button onclick="approveReq('${r.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold mr-1">Aprovar</button>
+                <button onclick="rejectReq('${r.id}')" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-[10px] font-bold">Rejeitar</button>
+              ` : `<span class="text-[10px] text-gray-500">Concluído</span>`}
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function approveReq(id) {
+      const req = requisicoes.find(r => r.id === id);
+      if (!req) return;
+
+      const sku = skus.find(s => s.code === req.skuCode);
+      if (!sku) {
+        showToast('SKU não encontrado.', 'error');
+        return;
+      }
+
+      if (sku.qty < req.qty) {
+        showToast(`Saldo insuficiente em estoque (${sku.qty} disponível)`, 'error');
+        return;
+      }
+
+      sku.qty -= req.qty;
+      req.status = 'Aprovada';
+      saveLocalStorage();
+      showToast(`Requisição ${req.id} aprovada com sucesso!`, 'success');
+    }
+
+    function rejectReq(id) {
+      const req = requisicoes.find(r => r.id === id);
+      if (req) {
+        req.status = 'Rejeitada';
+        saveLocalStorage();
+        showToast(`Requisição ${req.id} rejeitada.`, 'info');
+      }
+    }
+
+    // RENDER INVENTORY COUNTS
+    function renderInventoryCounts() {
+      const tbody = document.getElementById('inventory-counts-body');
+      tbody.innerHTML = '';
+
+      counts.forEach(c => {
+        let diffBadge = `<span class="text-emerald-400 font-bold">0 (OK)</span>`;
+        if (c.diff < 0) diffBadge = `<span class="text-rose-400 font-bold">${c.diff} UN</span>`;
+        if (c.diff > 0) diffBadge = `<span class="text-amber-400 font-bold">+${c.diff} UN</span>`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-800/40">
+            <td class="p-3 text-gray-400">${c.date}</td>
+            <td class="p-3 font-semibold text-white">${c.user}</td>
+            <td class="p-3 font-mono text-blue-400 font-bold">${c.skuCode}</td>
+            <td class="p-3 text-center text-gray-300">${c.sysQty}</td>
+            <td class="p-3 text-center font-bold text-white">${c.countedQty}</td>
+            <td class="p-3 text-center">${diffBadge}</td>
+            <td class="p-3 text-right">
+              <button onclick="applyInventoryAdjust('${c.skuCode}', ${c.countedQty})" class="px-2 py-1 bg-blue-600/30 hover:bg-blue-600 text-blue-300 hover:text-white rounded text-[10px]">Ajustar Sistema</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function applyInventoryAdjust(skuCode, countedQty) {
+      const sku = skus.find(s => s.code === skuCode);
+      if (sku) {
+        sku.qty = countedQty;
+        saveLocalStorage();
+        showToast(`Estoque de ${skuCode} ajustado para ${countedQty}`, 'success');
+      }
+    }
+
+    // RENDER RACK MAP
+    function populateRackGrids() {
+      const gridA = document.getElementById('rack-grid-a');
+      const gridB = document.getElementById('rack-grid-b');
+      const gridC = document.getElementById('rack-grid-c');
+
+      gridA.innerHTML = ''; gridB.innerHTML = ''; gridC.innerHTML = '';
+
+      for (let i = 1; i <= 8; i++) {
+        gridA.innerHTML += `<div class="p-2.5 bg-slate-900/80 rounded-xl border border-blue-500/20 text-center"><span class="block text-[10px] text-gray-400">RACK A-${i}</span><span class="font-bold text-blue-400">Ocupado (80%)</span></div>`;
+        gridB.innerHTML += `<div class="p-2.5 bg-slate-900/80 rounded-xl border border-amber-500/20 text-center"><span class="block text-[10px] text-gray-400">RACK B-${i}</span><span class="font-bold text-amber-400">Ocupado (65%)</span></div>`;
+        gridC.innerHTML += `<div class="p-2.5 bg-slate-900/80 rounded-xl border border-emerald-500/20 text-center"><span class="block text-[10px] text-gray-400">RACK C-${i}</span><span class="font-bold text-emerald-400">Livre</span></div>`;
+      }
+    }
+
+    // MOBILE APP NAVIGATION
+    function navMobile(page) {
+      const pages = ['home', 'scanner', 'requisitar', 'inventario'];
+      pages.forEach(p => {
+        document.getElementById(`mobile-page-${p}`).classList.add('hidden');
+        document.getElementById(`mob-nav-${p}`).className = "flex flex-col items-center gap-1 hover:text-white";
+      });
+
+      document.getElementById(`mobile-page-${page}`).classList.remove('hidden');
+      document.getElementById(`mob-nav-${page}`).className = "flex flex-col items-center gap-1 text-blue-400 font-bold";
+    }
+
+    function renderMobileSelects() {
+      const scanSelect = document.getElementById('mobile-scan-select');
+      const reqSelect = document.getElementById('mob-req-sku');
+      const invSelect = document.getElementById('mob-inv-sku');
+
+      scanSelect.innerHTML = `<option value="">-- Selecione um SKU para bipar --</option>`;
+      reqSelect.innerHTML = `<option value="">-- Selecione o Insumo --</option>`;
+      invSelect.innerHTML = `<option value="">-- Selecione o SKU --</option>`;
+
+      skus.forEach(s => {
+        scanSelect.innerHTML += `<option value="${s.id}">${s.code} - ${s.name}</option>`;
+        reqSelect.innerHTML += `<option value="${s.code}">${s.code} (${s.name})</option>`;
+        invSelect.innerHTML += `<option value="${s.code}">${s.code} - ${s.loc}</option>`;
+      });
+    }
+
+    function renderMobileRequests() {
+      const container = document.getElementById('mobile-my-requests');
+      container.innerHTML = '';
+
+      requisicoes.slice(0, 3).forEach(r => {
+        container.innerHTML += `
+          <div class="p-2 bg-slate-900 rounded-lg flex justify-between items-center border border-white/5">
+            <div>
+              <span class="font-bold text-white block">${r.skuCode}</span>
+              <span class="text-[10px] text-gray-400">Qtd: ${r.qty} • ${r.cc}</span>
+            </div>
+            <span class="text-[10px] font-bold ${r.status === 'Aprovada' ? 'text-emerald-400' : 'text-amber-400'}">${r.status}</span>
+          </div>
+        `;
+      });
+    }
+
+    function simulateScanItem() {
+      const val = document.getElementById('mobile-scan-select').value;
+      const resultCard = document.getElementById('scanned-result-card');
+      if (!val) {
+        resultCard.classList.add('hidden');
+        return;
+      }
+
+      const item = skus.find(s => s.id === val);
+      if (item) {
+        activeMobSku = item;
+        document.getElementById('scan-res-title').innerText = item.name;
+        document.getElementById('scan-res-sku').innerText = 'SKU: ' + item.code;
+        document.getElementById('scan-res-loc').innerText = item.loc;
+        document.getElementById('scan-res-qty').innerText = `${item.qty} ${item.unit}`;
+        document.getElementById('scan-res-status').innerText = item.qty > item.min ? 'NORMAL' : 'ABAIXO DO MÍNIMO';
+        
+        resultCard.classList.remove('hidden');
+        showToast(`Item ${item.code} Bipado!`, 'success');
+      }
+    }
+
+    function toggleFlash() {
+      showToast('Flash da Câmera Alternado', 'info');
+    }
+
+    function checkMobStockAvailability() {
+      const code = document.getElementById('mob-req-sku').value;
+      const notice = document.getElementById('mob-stock-notice');
+      const qtySpan = document.getElementById('mob-avail-qty');
+
+      const sku = skus.find(s => s.code === code);
+      if (sku) {
+        notice.classList.remove('hidden');
+        qtySpan.innerText = `${sku.qty} ${sku.unit}`;
+      } else {
+        notice.classList.add('hidden');
+      }
+    }
+
+    function submitMobileRequisition(e) {
+      e.preventDefault();
+      const code = document.getElementById('mob-req-sku').value;
+      const qty = parseInt(document.getElementById('mob-req-qty').value);
+      const urgency = document.getElementById('mob-req-urgency').value;
+      const cc = document.getElementById('mob-req-cc').value;
+
+      const newReq = {
+        id: 'REQ-' + Math.floor(100 + Math.random() * 900),
+        reqBy: 'João Pedro (Coletor)',
+        cc: cc,
+        skuCode: code,
+        qty: qty,
+        urgency: urgency,
+        status: 'Pendente',
+        date: new Date().toLocaleDateString('pt-BR')
+      };
+
+      requisicoes.unshift(newReq);
+      saveLocalStorage();
+      showToast('Solicitação de Material enviada com sucesso!', 'success');
+      navMobile('home');
+    }
+
+    function calculateDiscrepancy() {
+      const code = document.getElementById('mob-inv-sku').value;
+      const sysQtyEl = document.getElementById('mob-sys-qty');
+      const countedQty = parseInt(document.getElementById('mob-counted-qty').value) || 0;
+      const discBox = document.getElementById('discrepancy-box');
+      const discVal = document.getElementById('discrepancy-val');
+
+      const sku = skus.find(s => s.code === code);
+      if (sku) {
+        sysQtyEl.innerText = `${sku.qty} ${sku.unit}`;
+        const diff = countedQty - sku.qty;
+        
+        if (diff === 0) {
+          discBox.className = "p-3 rounded-xl border text-xs flex items-center justify-between bg-emerald-500/10 border-emerald-500/30 text-emerald-300";
+          discVal.innerText = "0 UN (Sem Divergência)";
+        } else {
+          discBox.className = "p-3 rounded-xl border text-xs flex items-center justify-between bg-rose-500/10 border-rose-500/30 text-rose-300";
+          discVal.innerText = `${diff} UN (Atenção)`;
+        }
+      }
+    }
+
+    function saveInventoryCount() {
+      const code = document.getElementById('mob-inv-sku').value;
+      const countedQty = parseInt(document.getElementById('mob-counted-qty').value);
+
+      if (!code || isNaN(countedQty)) {
+        showToast('Preencha os campos da contagem', 'error');
+        return;
+      }
+
+      const sku = skus.find(s => s.code === code);
+      if (sku) {
+        const diff = countedQty - sku.qty;
+        counts.unshift({
+          date: new Date().toLocaleDateString('pt-BR'),
+          user: 'João Pedro',
+          skuCode: code,
+          sysQty: sku.qty,
+          countedQty: countedQty,
+          diff: diff
+        });
+
+        saveLocalStorage();
+        showToast('Contagem Cíclica Registrada!', 'success');
+        document.getElementById('mob-counted-qty').value = '';
+      }
+    }
+
+    // MODAL HANDLERS FOR CRUD
+    function openModalSKU() {
+      document.getElementById('modal-sku').classList.remove('hidden');
+      updateBarcodePreview('SKU-PREVIEW');
+    }
+
+    function closeModalSKU() {
+      document.getElementById('modal-sku').classList.add('hidden');
+    }
+
+    document.getElementById('form-sku-code').addEventListener('input', function(e) {
+      updateBarcodePreview(e.target.value || 'SKU-PREVIEW');
+    });
+
+    function updateBarcodePreview(val) {
+      try {
+        JsBarcode("#barcode-preview", val, {
+          format: "CODE128",
+          width: 1.5,
+          height: 35,
+          displayValue: true,
+          lineColor: "#3b82f6",
+          background: "transparent",
+          textColor: "#9ca3af"
+        });
+      } catch (e) {}
+    }
+
+    function saveSKU(e) {
+      e.preventDefault();
+      const newSku = {
+        id: Date.now().toString(),
+        code: document.getElementById('form-sku-code').value.toUpperCase(),
+        name: document.getElementById('form-sku-name').value,
+        category: document.getElementById('form-sku-cat').value,
+        unit: document.getElementById('form-sku-unit').value,
+        min: parseInt(document.getElementById('form-sku-min').value),
+        max: parseInt(document.getElementById('form-sku-max').value),
+        qty: parseInt(document.getElementById('form-sku-qty').value),
+        cost: parseFloat(document.getElementById('form-sku-cost').value),
+        loc: document.getElementById('form-sku-loc').value.toUpperCase(),
+        abc: document.getElementById('form-sku-abc').value
+      };
+
+      skus.push(newSku);
+      saveLocalStorage();
+      closeModalSKU();
+      showToast('Novo SKU cadastrado com sucesso!', 'success');
+    }
+
+    function deleteSKU(id) {
+      if (confirm('Tem certeza que deseja remover este SKU?')) {
+        skus = skus.filter(s => s.id !== id);
+        saveLocalStorage();
+        showToast('SKU excluído com sucesso.', 'info');
+      }
+    }
+
+    function quickAdjustQty(id) {
+      const item = skus.find(s => s.id === id);
+      if (item) {
+        activeMobSku = item;
+        document.getElementById('adjust-sku-name').innerText = `${item.code} - ${item.name}`;
+        document.getElementById('input-adjust-newqty').value = item.qty;
+        document.getElementById('modal-adjust-qty').classList.remove('hidden');
+      }
+    }
+
+    function quickAdjustQtyModal() {
+      if (activeMobSku) {
+        quickAdjustQty(activeMobSku.id);
+      }
+    }
+
+    function closeModalAdjust() {
+      document.getElementById('modal-adjust-qty').classList.add('hidden');
+    }
+
+    function confirmAdjustQty() {
+      const newQty = parseInt(document.getElementById('input-adjust-newqty').value);
+      if (activeMobSku && !isNaN(newQty)) {
+        activeMobSku.qty = newQty;
+        saveLocalStorage();
+        closeModalAdjust();
+        showToast('Saldo atualizado!', 'success');
+      }
+    }
+
+    function reqThisItemFromScan() {
+      if (activeMobSku) {
+        navMobile('requisitar');
+        document.getElementById('mob-req-sku').value = activeMobSku.code;
+        checkMobStockAvailability();
+      }
+    }
+
+    function openModalRecebimento() {
+      const select = document.getElementById('form-rec-sku');
+      select.innerHTML = '';
+      skus.forEach(s => {
+        select.innerHTML += `<option value="${s.code}">${s.code} - ${s.name}</option>`;
+      });
+      document.getElementById('modal-recebimento').classList.remove('hidden');
+    }
+
+    function closeModalRecebimento() {
+      document.getElementById('modal-recebimento').classList.add('hidden');
+    }
+
+    function saveRecebimento(e) {
+      e.preventDefault();
+      const nfe = document.getElementById('form-rec-nfe').value;
+      const forn = document.getElementById('form-rec-forn').value;
+      const skuCode = document.getElementById('form-rec-sku').value;
+      const qty = parseInt(document.getElementById('form-rec-qty').value);
+      const step = parseInt(document.getElementById('form-rec-step').value);
+
+      recebimentos.push({
+        id: 'r-' + Date.now(),
+        nfe: nfe,
+        forn: forn,
+        skuCode: skuCode,
+        qty: qty,
+        step: step,
+        date: new Date().toLocaleDateString('pt-BR')
+      });
+
+      saveLocalStorage();
+      closeModalRecebimento();
+      showToast('Recebimento cadastrado no Pipeline!', 'success');
+    }
+
+    function exportDataJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ skus, recebimentos, requisicoes, counts }));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", "nexus_wms_backup.json");
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Backup dos dados exportado!', 'success');
+    }
+
+    function toggleAlerts() {
+      document.getElementById('popover-alerts').classList.toggle('hidden');
+    }
+
+    function clearAlerts() {
+      document.getElementById('popover-alerts').classList.add('hidden');
+    }
+
+    // TOAST NOTIFICATIONS SYSTEM
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      let bg = 'bg-slate-800 border-white/10 text-white';
+      if (type === 'success') bg = 'bg-emerald-900/90 border-emerald-500/40 text-emerald-200';
+      if (type === 'error') bg = 'bg-rose-900/90 border-rose-500/40 text-rose-200';
+      if (type === 'info') bg = 'bg-blue-900/90 border-blue-500/40 text-blue-200';
+
+      toast.className = `p-3 rounded-xl border glass-panel shadow-2xl text-xs font-semibold flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bg}`;
+      toast.innerHTML = `<span>${message}</span>`;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // INTERACTIVE CANVAS CHARTS
+    function initCharts() {
+      drawMovementsChart();
+      drawABCChart();
+    }
+
+    function drawMovementsChart() {
+      const canvas = document.getElementById('chart-movements');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Draw Grid Lines
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        const y = (h / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Sample Data
+      const entries = [12, 19, 15, 25, 32, 28, 40];
+      const exits = [8, 14, 22, 18, 24, 30, 22];
+      const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+
+      const stepX = w / (labels.length - 1);
+
+      // Line 1: Entries (Blue)
+      ctx.beginPath();
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 3;
+      entries.forEach((val, i) => {
+        const x = i * stepX;
+        const y = h - (val / 50) * h;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Line 2: Exits (Rose)
+      ctx.beginPath();
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 3;
+      exits.forEach((val, i) => {
+        const x = i * stepX;
+        const y = h - (val / 50) * h;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    function drawABCChart() {
+      const canvas = document.getElementById('chart-abc');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = canvas.parentElement.clientWidth;
+      canvas.height = canvas.parentElement.clientHeight;
+
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(centerX, centerY) - 10;
+
+      const data = [
+        { label: 'A', value: 70, color: '#3b82f6' },
+        { label: 'B', value: 20, color: '#f59e0b' },
+        { label: 'C', value: 10, color: '#10b981' }
+      ];
+
+      let startAngle = 0;
+      data.forEach(slice => {
+        const sliceAngle = (slice.value / 100) * 2 * Math.PI;
+
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+        ctx.lineTo(centerX, centerY);
+        ctx.fillStyle = slice.color;
+        ctx.fill();
+
+        startAngle += sliceAngle;
+      });
+
+      // Inner Donut Cutout
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius * 0.55, 0, 2 * Math.PI);
+      ctx.fillStyle = '#0b0f19';
+      ctx.fill();
+    }
+
+    window.onresize = function() {
+      initCharts();
+    };
+  </script>
+</body>
+</html>
