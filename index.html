@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEXUS WMS Pro - Gestão de Almoxarifado Industrial</title>
+  <title>NEXUS WMS Pro - Portal Web (Gestor)</title>
   
   <!-- Supabase JS Client SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,9 +39,6 @@
   <!-- JsBarcode -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
-  <!-- HTML5 QR Code / Barcode Scanner Engine Real -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -58,16 +55,6 @@
     .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); }
     .glass-input { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.12); color: #fff; }
     .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25); }
-    
-    @keyframes scanLine { 0% { top: 10%; opacity: 0.2; } 50% { top: 85%; opacity: 0.9; } 100% { top: 10%; opacity: 0.2; } }
-    .scanner-laser { position: absolute; left: 5%; width: 90%; height: 2px; background: #f43f5e; box-shadow: 0 0 12px 3px #f43f5e, 0 0 20px 6px rgba(244, 63, 94, 0.5); animation: scanLine 2.2s infinite ease-in-out; pointer-events: none; z-index: 10; }
-    
-    /* MOLDURA MOBILE RESPONSIVA */
-    .phone-mockup { width: 100%; max-width: 380px; height: 100%; max-height: 740px; border-radius: 32px; border: 8px solid #1f2937; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); position: relative; overflow: hidden; display: flex; flex-direction: column; }
-
-    /* ESTILOS DE CÂMERA E LEITOR */
-    #interactive-reader { width: 100% !important; height: 100% !important; overflow: hidden; position: relative; }
-    #interactive-reader video { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 0.75rem; }
 
     /* ESTILOS DE ETIQUETA */
     .label-size-100x50 {
@@ -140,7 +127,7 @@
           <i data-lucide="boxes" class="w-8 h-8 text-white"></i>
         </div>
         <h1 class="text-2xl font-black tracking-wide text-white">NEXUS <span class="text-blue-400">WMS PRO</span></h1>
-        <p class="text-xs text-gray-400">Acesse o Sistema de Gestão de Almoxarifado</p>
+        <p class="text-xs text-gray-400">Portal do Gestor & Almoxarifado Central</p>
       </div>
 
       <form onsubmit="handleLogin(event)" class="space-y-4 text-xs">
@@ -160,28 +147,20 @@
           </div>
         </div>
 
-        <div>
-          <label class="text-gray-300 font-semibold block mb-1">Perfil de Acesso</label>
-          <select id="login-role" class="w-full glass-input px-3 py-2.5 rounded-xl text-xs font-medium">
-            <option value="gestor">Almoxarife Chefe / Gestor (Portal Web)</option>
-            <option value="operador">Operador de Turno (App Coletor Mobile)</option>
-          </select>
-        </div>
-
         <button type="submit" id="btn-login-submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition">
           <i data-lucide="log-in" class="w-4 h-4"></i>
-          <span>Entrar no Sistema</span>
+          <span>Entrar no Portal Web</span>
         </button>
       </form>
 
       <div class="pt-4 border-t border-white/5 text-center text-[10px] text-gray-500 flex items-center justify-between">
         <span>Agrícola FP S/A</span>
-        <span class="text-emerald-400 font-semibold flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Supabase Conectado</span>
+        <a href="mobile.html" class="text-blue-400 underline font-semibold">Ir para o Link Mobile (Celular)</a>
       </div>
     </div>
   </section>
 
-  <!-- ================= APLICAÇÃO PRINCIPAL ================= -->
+  <!-- ================= APLICAÇÃO PRINCIPAL WEB ================= -->
   <div id="app-container" class="hidden min-h-screen flex flex-col">
 
     <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 lg:px-8 py-3 flex items-center justify-between">
@@ -192,37 +171,17 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="font-bold text-lg tracking-wide text-white">NEXUS <span class="text-blue-400 font-extrabold">WMS PRO</span></h1>
-            <span class="px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Enterprise v7.6</span>
+            <span class="px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Portal Web</span>
           </div>
           <p class="text-xs text-gray-400">Gestão de Almoxarifado Industrial & Impressão Térmica</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2 bg-slate-900/80 p-1 rounded-xl border border-white/10">
-        <button id="btn-view-desktop" onclick="switchView('desktop')" class="px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition bg-blue-600 text-white shadow-md">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">Portal Web (Gestor)</span>
-        </button>
-        <button id="btn-view-mobile" onclick="switchView('mobile')" class="px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 transition text-gray-400 hover:text-white">
+      <div class="flex items-center gap-4">
+        <a href="mobile.html" target="_blank" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-emerald-400 flex items-center gap-2 font-semibold shadow">
           <i data-lucide="smartphone" class="w-4 h-4"></i>
-          <span class="hidden sm:inline">App Coletor (Operador)</span>
-        </button>
-      </div>
-
-      <div class="hidden md:flex items-center gap-4">
-        <div class="relative">
-          <button onclick="toggleAlerts()" class="p-2 rounded-lg bg-slate-800/80 border border-white/10 hover:bg-slate-700 text-gray-300 relative">
-            <i data-lucide="bell" class="w-4 h-4"></i>
-            <span id="badge-alerts" class="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
-          </button>
-          <div id="popover-alerts" class="hidden absolute right-0 mt-2 w-80 glass-panel rounded-xl shadow-2xl p-4 border border-white/10 z-50">
-            <h4 class="text-xs font-bold text-gray-300 uppercase tracking-wider mb-3 flex items-center justify-between">
-              <span>Alertas de Estoque</span>
-              <span class="text-[10px] text-blue-400 cursor-pointer" onclick="toggleAlerts()">Fechar</span>
-            </h4>
-            <div class="space-y-2 text-xs" id="alerts-container"></div>
-          </div>
-        </div>
+          <span>Link App Coletor Mobile</span>
+        </a>
 
         <div class="h-6 w-[1px] bg-white/10"></div>
 
@@ -539,144 +498,6 @@
 
         </section>
       </main>
-
-      <!-- MOBILE PWA SIMULATOR -->
-      <main id="view-mobile" class="flex-1 hidden flex items-center justify-center p-2 sm:p-4 overflow-hidden">
-        <div class="phone-mockup bg-slate-950 text-gray-100">
-          <div class="bg-slate-900/90 px-5 pt-3 pb-3 border-b border-white/10 flex items-center justify-between shrink-0">
-            <div class="flex items-center gap-2">
-              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span class="text-xs font-bold text-white tracking-wider">NEXUS Coletor</span>
-            </div>
-            <span class="text-[10px] text-gray-400">98% Bateria</span>
-          </div>
-
-          <div class="flex-1 overflow-y-auto p-4 space-y-4">
-            <div id="mobile-page-home" class="space-y-4">
-              <div class="glass-card p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-slate-900/80 space-y-3">
-                <div class="flex items-center justify-between">
-                  <span class="text-[10px] uppercase tracking-widest text-blue-400 font-bold">Operador Ativo</span>
-                  <i data-lucide="qr-code" class="w-4 h-4 text-blue-400"></i>
-                </div>
-                <div class="flex items-center gap-3">
-                  <div id="mob-user-avatar" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center text-base font-bold text-white shadow">AP</div>
-                  <div>
-                    <div class="text-sm font-bold text-white" id="mob-user-name">Alan Kaique</div>
-                    <div class="text-xs text-gray-400" id="mob-user-role">Operador de Turno</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
-                <button onclick="navMobile('scanner')" class="glass-card p-4 rounded-2xl text-center hover:bg-slate-800 transition space-y-2 border border-blue-500/20">
-                  <div class="w-10 h-10 mx-auto rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center"><i data-lucide="scan-line" class="w-5 h-5"></i></div>
-                  <div class="text-xs font-bold text-white">Scanner Câmera</div>
-                </button>
-                <button onclick="navMobile('inventario')" class="glass-card p-4 rounded-2xl text-center hover:bg-slate-800 transition space-y-2 border border-emerald-500/20">
-                  <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center"><i data-lucide="clipboard-check" class="w-5 h-5"></i></div>
-                  <div class="text-xs font-bold text-white">Coleta Cíclica</div>
-                </button>
-              </div>
-
-              <button onclick="navMobile('requisitar')" class="w-full glass-card p-4 rounded-2xl flex items-center justify-between hover:bg-slate-800 transition border border-amber-500/20">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center"><i data-lucide="truck" class="w-5 h-5"></i></div>
-                  <div class="text-left">
-                    <div class="text-xs font-bold text-white">Solicitar p/ Frota</div>
-                    <div class="text-[10px] text-gray-400">Requisição com Equipamento</div>
-                  </div>
-                </div>
-                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-              </button>
-            </div>
-
-            <!-- TELA DO SCANNER COM CÂMERA REAL E ENQUADRAMENTO RESPONSIVO -->
-            <div id="mobile-page-scanner" class="hidden space-y-3">
-              <div class="text-center"><h3 class="text-sm font-bold text-white">Scanner de Código de Barras</h3></div>
-              
-              <div class="relative w-full h-52 bg-black rounded-2xl overflow-hidden border-2 border-blue-500/50 flex flex-col items-center justify-center shadow-inner">
-                <div class="scanner-laser"></div>
-                <div id="interactive-reader" class="w-full h-full"></div>
-              </div>
-
-              <div class="flex gap-2">
-                <button id="btn-start-camera" onclick="startCameraScanner()" class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1">
-                  <i data-lucide="camera" class="w-4 h-4"></i> Ligar Câmera
-                </button>
-                <button id="btn-stop-camera" onclick="stopCameraScanner()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-gray-300 rounded-xl text-xs font-bold flex items-center justify-center gap-1">
-                  <i data-lucide="camera-off" class="w-4 h-4"></i> Desligar
-                </button>
-              </div>
-
-              <div class="space-y-1.5 pt-2 border-t border-white/10">
-                <label class="text-[11px] text-gray-400 block">Ou selecione manualmente:</label>
-                <select id="mobile-scan-select" onchange="simulateScanItem()" class="w-full glass-input px-3 py-2 rounded-xl text-xs"></select>
-              </div>
-
-              <div id="scanned-result-card" class="hidden glass-card p-3 rounded-2xl border border-emerald-500/40 bg-emerald-950/20 space-y-1 text-xs">
-                <h4 class="font-bold text-white text-xs" id="scan-res-title">---</h4>
-                <p class="text-gray-400 text-[11px]" id="scan-res-sku">SKU: ---</p>
-                <p class="text-emerald-400 font-bold text-xs" id="scan-res-qty">0 UN</p>
-              </div>
-            </div>
-
-            <div id="mobile-page-requisitar" class="hidden space-y-3">
-              <div class="text-center"><h3 class="text-sm font-bold text-white">Requisição & Aplicação Frota</h3></div>
-              <form onsubmit="submitMobileRequisition(event)" class="space-y-3">
-                <div>
-                  <label class="text-[11px] text-gray-400 block mb-1">Solicitante (Retirante) *</label>
-                  <input type="text" id="mob-req-user" required value="Alan Kaique" class="w-full glass-input px-3 py-2 rounded-xl text-xs">
-                </div>
-                <div>
-                  <label class="text-[11px] text-gray-400 block mb-1">Equipamento / Trator / Frota *</label>
-                  <input type="text" id="mob-req-fleet" required placeholder="Ex: Trator John Deere 04" class="w-full glass-input px-3 py-2 rounded-xl text-xs font-semibold text-amber-400">
-                </div>
-                <div>
-                  <label class="text-[11px] text-gray-400 block mb-1">Material / SKU *</label>
-                  <select id="mob-req-sku" required class="w-full glass-input px-3 py-2 rounded-xl text-xs"></select>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <div>
-                    <label class="text-[11px] text-gray-400 block mb-1">Qtd</label>
-                    <input type="number" id="mob-req-qty" min="1" value="1" required class="w-full glass-input px-3 py-2 rounded-xl text-xs">
-                  </div>
-                  <div>
-                    <label class="text-[11px] text-gray-400 block mb-1">Centro de Custo</label>
-                    <input type="text" id="mob-req-cc" value="CC-101 Manutenção" class="glass-input px-3 py-2 rounded-xl text-xs w-full">
-                  </div>
-                </div>
-                <button type="submit" class="w-full py-2.5 bg-amber-600 text-white font-bold text-xs rounded-xl">Enviar Solicitação</button>
-              </form>
-            </div>
-
-            <div id="mobile-page-inventario" class="hidden space-y-3">
-              <div class="text-center"><h3 class="text-sm font-bold text-white">Contagem Cíclica</h3></div>
-              <div class="glass-card p-4 rounded-2xl border border-white/10 space-y-3">
-                <div>
-                  <label class="text-[11px] text-gray-400 block mb-1">Auditor *</label>
-                  <input type="text" id="mob-inv-user" required value="Alan Kaique" class="w-full glass-input px-3 py-2 rounded-xl text-xs">
-                </div>
-                <div>
-                  <label class="text-[11px] text-gray-400 block mb-1">SKU</label>
-                  <select id="mob-inv-sku" class="w-full glass-input px-3 py-2 rounded-xl text-xs"></select>
-                </div>
-                <div>
-                  <label class="text-[11px] text-gray-400 block mb-1">Qtd Contada</label>
-                  <input type="number" id="mob-counted-qty" placeholder="0" class="w-full glass-input px-3 py-2 rounded-xl text-xs font-bold text-emerald-400">
-                </div>
-                <button onclick="saveInventoryCount()" class="w-full py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl">Salvar Contagem</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-slate-900/95 border-t border-white/10 px-4 py-2 flex items-center justify-between shrink-0 text-gray-400 text-[10px]">
-            <button onclick="navMobile('home')" class="flex flex-col items-center gap-1 text-blue-400"><i data-lucide="home" class="w-4 h-4"></i><span>Início</span></button>
-            <button onclick="navMobile('scanner')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="scan" class="w-4 h-4"></i><span>Scanner</span></button>
-            <button onclick="navMobile('requisitar')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="truck" class="w-4 h-4"></i><span>Frota</span></button>
-            <button onclick="navMobile('inventario')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="check-circle-2" class="w-4 h-4"></i><span>Inventário</span></button>
-          </div>
-        </div>
-      </main>
     </div>
 
   </div>
@@ -946,7 +767,7 @@
 
   <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- LÓGICA DO SISTEMA -->
+  <!-- LÓGICA DO SISTEMA WEB -->
   <script>
     const SUPABASE_URL = 'https://qnxqrimsgehthjgksuqa.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_secret_8r2ctf2pAY-aQRBPQL1_Sw_AqEZmH5U';
@@ -965,7 +786,6 @@
     let selectedSkuIds = new Set();
     let activeMobSku = null;
     let chartMov = null, chartAbc = null;
-    let html5QrCodeScanner = null;
 
     const FALLBACK_SKUS = [
       { id: '1', code: 'EPI-CAP-01', lote: 'LOT-2026-A', name: 'Capacete de Segurança MSA', category: 'EPIs', unit: 'UN', min: 10, max: 60, qty: 38, cost: 45.00, loc: 'RACK-B1', abc: 'B', validade: '2028-05-10' },
@@ -990,7 +810,6 @@
     async function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('login-email').value;
-      const role = document.getElementById('login-role').value;
       const btn = document.getElementById('btn-login-submit');
 
       btn.disabled = true;
@@ -1006,29 +825,18 @@
         }
       } catch(err) {}
 
-      let name = "Alan Kaique";
-      let roleName = "Almoxarife Chefe";
-      let initials = "AP";
-
-      if (role === 'operador') {
-        name = "Operador Agrícola";
-        roleName = "Operador de Turno";
-        initials = "OP";
-      }
-
-      currentUser = { email, name, role, roleName, initials };
+      currentUser = { email, name: "Alan Kaique", role: "gestor", roleName: "Almoxarife Chefe", initials: "AP" };
       localStorage.setItem('nexus_user', JSON.stringify(currentUser));
 
       setTimeout(() => {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="log-in" class="w-4 h-4"></i> Entrar no Sistema`;
+        btn.innerHTML = `<i data-lucide="log-in" class="w-4 h-4"></i> Entrar no Portal Web`;
         startApp();
-        showToast(`Sessão iniciada como ${currentUser.name}`, 'success');
+        showToast(`Sessão iniciada no Portal Web`, 'success');
       }, 500);
     }
 
     function handleLogout() {
-      stopCameraScanner();
       localStorage.removeItem('nexus_user');
       currentUser = null;
       document.getElementById('app-container').classList.add('hidden');
@@ -1044,20 +852,10 @@
       document.getElementById('header-user-role').innerText = currentUser.roleName;
       document.getElementById('user-avatar').innerText = currentUser.initials;
 
-      document.getElementById('mob-user-name').innerText = currentUser.name;
-      document.getElementById('mob-user-role').innerText = currentUser.roleName;
-      document.getElementById('mob-user-avatar').innerText = currentUser.initials;
-
-      if (currentUser.role === 'operador') {
-        switchView('mobile');
-      } else {
-        switchView('desktop');
-      }
-
       await fetchDataFromSupabase();
       initCharts();
       renderAllViews();
-      logAudit(currentUser.name, 'Auth/Login', 'Sessão iniciada no sistema');
+      logAudit(currentUser.name, 'Auth/Login', 'Sessão iniciada no portal web');
     }
 
     async function fetchDataFromSupabase() {
@@ -1122,28 +920,7 @@
       ];
     }
 
-    function switchView(view) {
-      stopCameraScanner();
-      const vDesk = document.getElementById('view-desktop');
-      const vMob = document.getElementById('view-mobile');
-      const btnDesk = document.getElementById('btn-view-desktop');
-      const btnMob = document.getElementById('btn-view-mobile');
-
-      if (view === 'desktop') {
-        vDesk.classList.remove('hidden');
-        vMob.classList.add('hidden');
-        btnDesk.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 bg-blue-600 text-white shadow-md";
-        btnMob.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 text-gray-400 hover:text-white";
-      } else {
-        vDesk.classList.add('hidden');
-        vMob.classList.remove('hidden');
-        btnMob.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 bg-blue-600 text-white shadow-md";
-        btnDesk.className = "px-3 lg:px-4 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 text-gray-400 hover:text-white";
-      }
-    }
-
     function switchTab(tabId) {
-      stopCameraScanner();
       ['dashboard', 'skus', 'recebimento', 'requisicoes', 'inventario', 'auditoria'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
         const n = document.getElementById(`nav-${t}`);
@@ -1161,7 +938,6 @@
       renderRequisitionsTable();
       renderInventoryCounts();
       renderAuditLogs();
-      renderMobileSelects();
       renderWebSelects();
       lucide.createIcons();
     }
@@ -1176,7 +952,6 @@
       document.getElementById('kpi-total-valor').innerText = totalVal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
       document.getElementById('kpi-criticos').innerText = criticos;
       document.getElementById('kpi-requisicoes-pendentes').innerText = reqPendentes;
-      document.getElementById('badge-alerts').innerText = criticos;
     }
 
     function renderSKUTable() {
@@ -1648,178 +1423,11 @@
       showToast('Saída gerada e estoque atualizado com sucesso!', 'success');
     }
 
-    function navMobile(page) {
-      stopCameraScanner();
-      ['home', 'scanner', 'requisitar', 'inventario'].forEach(p => {
-        const el = document.getElementById(`mobile-page-${p}`);
-        if (el) el.classList.add('hidden');
-      });
-      const targetEl = document.getElementById(`mobile-page-${page}`);
-      if (targetEl) targetEl.classList.remove('hidden');
-
-      if (page === 'scanner') {
-        renderMobileSelects();
-        startCameraScanner();
-      } else if (page === 'requisitar' || page === 'inventario') {
-        renderMobileSelects();
-      }
-    }
-
-    /* SCANNER DE CÂMERA REAL OTIMIZADO */
-    function startCameraScanner() {
-      if (typeof Html5Qrcode === "undefined") {
-        showToast("Carregando biblioteca do leitor...", "info");
-        return;
-      }
-
-      if (html5QrCodeScanner) {
-        stopCameraScanner();
-      }
-
-      const readerElement = document.getElementById("interactive-reader");
-      if (!readerElement) return;
-
-      html5QrCodeScanner = new Html5Qrcode("interactive-reader");
-
-      const config = { 
-        fps: 15, 
-        qrbox: { width: 240, height: 140 },
-        aspectRatio: 1.777778
-      };
-
-      const formatsToSupport = [
-        Html5QrcodeSupportedFormats.CODE_128,
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.CODE_39,
-        Html5QrcodeSupportedFormats.QR_CODE,
-        Html5QrcodeSupportedFormats.UPC_A
-      ];
-
-      html5QrCodeScanner.start(
-        { facingMode: "environment" },
-        { ...config, formatsToSupport },
-        (decodedText) => {
-          showToast(`Lido: ${decodedText}`, "success");
-          handleScannedCode(decodedText);
-        },
-        (errorMessage) => {
-          // buscando...
-        }
-      ).catch((err) => {
-        console.error("Erro ao iniciar câmera: ", err);
-        showToast("Acesse via HTTPS para liberar a câmera.", "error");
-      });
-    }
-
-    function stopCameraScanner() {
-      if (html5QrCodeScanner) {
-        html5QrCodeScanner.stop().then(() => {
-          html5QrCodeScanner.clear();
-          html5QrCodeScanner = null;
-        }).catch(() => { html5QrCodeScanner = null; });
-      }
-    }
-
-    function handleScannedCode(scannedCode) {
-      const codeClean = scannedCode.trim().toUpperCase();
-      const item = skus.find(s => s.code.toUpperCase() === codeClean || s.lote.toUpperCase() === codeClean);
-      
-      const selectEl = document.getElementById('mobile-scan-select');
-      if (item) {
-        if (selectEl) selectEl.value = item.code;
-        document.getElementById('scan-res-title').innerText = item.name;
-        document.getElementById('scan-res-sku').innerText = `SKU: ${item.code} | Lote: ${item.lote}`;
-        document.getElementById('scan-res-qty').innerText = `${item.qty} ${item.unit} (Local: ${item.loc})`;
-        document.getElementById('scanned-result-card').classList.remove('hidden');
-        logAudit(currentUser ? currentUser.name : 'Operador', 'Coletor Mobile', `Câmera Bipou SKU ${item.code}`);
-      } else {
-        if (selectEl) selectEl.value = "";
-        document.getElementById('scan-res-title').innerText = `Não Encontrado (${scannedCode})`;
-        document.getElementById('scan-res-sku').innerText = `SKU não possui cadastro no WMS`;
-        document.getElementById('scan-res-qty').innerText = `0 UN`;
-        document.getElementById('scanned-result-card').classList.remove('hidden');
-      }
-    }
-
-    function renderMobileSelects() {
-      const s = document.getElementById('mobile-scan-select');
-      const r = document.getElementById('mob-req-sku');
-      const i = document.getElementById('mob-inv-sku');
-      
-      const optionsHtml = '<option value="">-- Selecione o Material --</option>' + 
-        skus.map(item => `<option value="${item.code}">${item.code} - ${item.name} (Disp: ${item.qty})</option>`).join('');
-
-      if (s) s.innerHTML = optionsHtml;
-      if (r) r.innerHTML = optionsHtml;
-      if (i) i.innerHTML = optionsHtml;
-
-      if (currentUser) {
-        const mobReqUser = document.getElementById('mob-req-user');
-        const mobInvUser = document.getElementById('mob-inv-user');
-        if (mobReqUser) mobReqUser.value = currentUser.name;
-        if (mobInvUser) mobInvUser.value = currentUser.name;
-      }
-    }
-
     function renderWebSelects() {
       const sel = document.getElementById('web-req-sku');
       if (sel) {
         sel.innerHTML = '<option value="">-- Selecione o Material do Estoque --</option>' + 
           skus.map(item => `<option value="${item.code}">${item.code} - ${item.name} (Disp: ${item.qty})</option>`).join('');
-      }
-    }
-
-    function simulateScanItem() {
-      const code = document.getElementById('mobile-scan-select').value;
-      if (code) handleScannedCode(code);
-    }
-
-    async function submitMobileRequisition(e) {
-      e.preventDefault();
-      const newReq = {
-        id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
-        reqBy: document.getElementById('mob-req-user').value,
-        cc: document.getElementById('mob-req-cc').value,
-        fleet: document.getElementById('mob-req-fleet').value,
-        skuCode: document.getElementById('mob-req-sku').value,
-        qty: parseInt(document.getElementById('mob-req-qty').value),
-        status: 'Pendente',
-        date: new Date().toLocaleDateString('pt-BR'),
-        almoxarife: 'Pendente'
-      };
-      requisicoes.unshift(newReq);
-      logAudit(newReq.reqBy, 'Coletor Mobile', `Requisição p/ frota ${newReq.fleet} criada`);
-
-      if (supabaseClient) {
-        await supabaseClient.from('requisicoes').insert([{
-          codigo_req: newReq.id,
-          requisitante: newReq.reqBy,
-          destino: newReq.cc,
-          equipamento: newReq.fleet,
-          sku: newReq.skuCode,
-          quantidade: newReq.qty,
-          status: newReq.status
-        }]);
-      }
-
-      renderAllViews();
-      showToast('Requisição enviada com sucesso!', 'success');
-      navMobile('home');
-    }
-
-    function saveInventoryCount() {
-      const user = document.getElementById('mob-inv-user').value;
-      const code = document.getElementById('mob-inv-sku').value;
-      const counted = parseInt(document.getElementById('mob-counted-qty').value);
-      const sku = skus.find(s => s.code === code);
-
-      if (sku && !isNaN(counted)) {
-        const diff = counted - sku.qty;
-        sku.qty = counted;
-        counts.unshift({ date: new Date().toLocaleDateString('pt-BR'), user: user, skuCode: code, sysQty: sku.qty - diff, countedQty: counted, diff: diff });
-        logAudit(user, 'Coletor Mobile', `Auditoria física em ${code}`);
-        renderAllViews();
-        showToast('Contagem gravada!', 'success');
       }
     }
 
@@ -1855,8 +1463,6 @@
         });
       }
     }
-
-    function toggleAlerts() { document.getElementById('popover-alerts').classList.toggle('hidden'); }
 
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
