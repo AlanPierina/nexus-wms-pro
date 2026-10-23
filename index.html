@@ -39,6 +39,9 @@
   <!-- JsBarcode -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
+  <!-- HTML5 QR Code / Barcode Scanner Engine Real -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -57,7 +60,7 @@
     .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25); }
     
     @keyframes scanLine { 0% { top: 10%; opacity: 0.2; } 50% { top: 85%; opacity: 0.9; } 100% { top: 10%; opacity: 0.2; } }
-    .scanner-laser { position: absolute; left: 5%; width: 90%; height: 2px; background: #f43f5e; box-shadow: 0 0 12px 3px #f43f5e, 0 0 20px 6px rgba(244, 63, 94, 0.5); animation: scanLine 2.2s infinite ease-in-out; }
+    .scanner-laser { position: absolute; left: 5%; width: 90%; height: 2px; background: #f43f5e; box-shadow: 0 0 12px 3px #f43f5e, 0 0 20px 6px rgba(244, 63, 94, 0.5); animation: scanLine 2.2s infinite ease-in-out; pointer-events: none; z-index: 10; }
     .phone-mockup { width: 380px; height: 740px; border-radius: 44px; border: 10px solid #1f2937; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); position: relative; overflow: hidden; }
 
     /* ESTILOS DE ETIQUETA */
@@ -70,12 +73,12 @@
       display: flex; flex-direction: column; justify-content: space-between; page-break-inside: avoid; break-inside: avoid;
     }
 
-    /* REGRAS DE IMPRESSÃO ISOLADAS E FORMATADAS PARA FOLHA A4 OU ROLO TÉRMICO */
+    #interactive-reader video { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 1rem; }
+
     @media print {
       body * { visibility: hidden !important; }
       body { background: white !important; color: black !important; padding: 0 !important; margin: 0 !important; }
 
-      /* IMPRESSÃO DE ETIQUETAS EM LOTE */
       body.printing-labels #print-labels-batch-modal,
       body.printing-labels #print-labels-batch-modal * {
         visibility: visible !important;
@@ -86,7 +89,6 @@
       }
       body.printing-labels .no-print { display: none !important; }
 
-      /* Layout Folha A4 (Várias Etiquetas por Página) */
       body.printing-labels.layout-grid #batch-labels-container {
         display: flex !important; flex-wrap: wrap !important; gap: 4mm !important; justify-content: flex-start !important;
         padding: 5mm !important; background: white !important; max-height: none !important; overflow: visible !important;
@@ -96,7 +98,6 @@
         border: 1px solid #000 !important; margin: 0 !important; page-break-inside: avoid !important; break-inside: avoid !important;
       }
 
-      /* Layout Térmico (1 por Página/Rolo) */
       body.printing-labels.layout-thermal #batch-labels-container {
         display: block !important; padding: 0 !important; background: white !important; max-height: none !important;
       }
@@ -105,7 +106,6 @@
         border: none !important; margin: 0 auto !important; page-break-after: always !important; break-after: page !important;
       }
 
-      /* IMPRESSÃO DE RECIBO A4 */
       body.printing-receipt #print-receipt-modal,
       body.printing-receipt #print-receipt-modal * {
         visibility: visible !important;
@@ -566,7 +566,7 @@
               <div class="grid grid-cols-2 gap-3">
                 <button onclick="navMobile('scanner')" class="glass-card p-4 rounded-2xl text-center hover:bg-slate-800 transition space-y-2 border border-blue-500/20">
                   <div class="w-10 h-10 mx-auto rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center"><i data-lucide="scan-line" class="w-5 h-5"></i></div>
-                  <div class="text-xs font-bold text-white">Scanner</div>
+                  <div class="text-xs font-bold text-white">Scanner Câmera</div>
                 </button>
                 <button onclick="navMobile('inventario')" class="glass-card p-4 rounded-2xl text-center hover:bg-slate-800 transition space-y-2 border border-emerald-500/20">
                   <div class="w-10 h-10 mx-auto rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center"><i data-lucide="clipboard-check" class="w-5 h-5"></i></div>
@@ -586,18 +586,30 @@
               </button>
             </div>
 
+            <!-- TELA DO SCANNER COM CÂMERA REAL -->
             <div id="mobile-page-scanner" class="hidden space-y-4">
-              <div class="text-center"><h3 class="text-sm font-bold text-white">Scanner de Código de Barras</h3></div>
-              <div class="relative w-full h-48 bg-black rounded-2xl overflow-hidden border-2 border-blue-500/50 flex flex-col items-center justify-center">
+              <div class="text-center"><h3 class="text-sm font-bold text-white">Scanner de Código de Barras / Câmera</h3></div>
+              
+              <div class="relative w-full h-56 bg-black rounded-2xl overflow-hidden border-2 border-blue-500/50 flex flex-col items-center justify-center shadow-inner">
                 <div class="scanner-laser"></div>
-                <div class="w-36 h-24 border-2 border-dashed border-blue-400/80 rounded-lg flex items-center justify-center">
-                  <i data-lucide="qr-code" class="w-10 h-10 text-white/30"></i>
-                </div>
+                <!-- Container do Vídeo da Câmera -->
+                <div id="interactive-reader" class="w-full h-full"></div>
               </div>
-              <div class="space-y-2">
-                <label class="text-[11px] text-gray-400 block">Selecionar SKU:</label>
+
+              <div class="flex gap-2">
+                <button id="btn-start-camera" onclick="startCameraScanner()" class="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1">
+                  <i data-lucide="camera" class="w-4 h-4"></i> Ligar Câmera
+                </button>
+                <button id="btn-stop-camera" onclick="stopCameraScanner()" class="flex-1 py-2 bg-slate-800 hover:bg-slate-700 text-gray-300 rounded-xl text-xs font-bold flex items-center justify-center gap-1">
+                  <i data-lucide="camera-off" class="w-4 h-4"></i> Desligar
+                </button>
+              </div>
+
+              <div class="space-y-2 pt-2 border-t border-white/10">
+                <label class="text-[11px] text-gray-400 block">Ou selecione manualmente:</label>
                 <select id="mobile-scan-select" onchange="simulateScanItem()" class="w-full glass-input px-3 py-2 rounded-xl text-xs"></select>
               </div>
+
               <div id="scanned-result-card" class="hidden glass-card p-4 rounded-2xl border border-emerald-500/40 bg-emerald-950/20 space-y-2 text-xs">
                 <h4 class="font-bold text-white text-sm" id="scan-res-title">---</h4>
                 <p class="text-gray-400" id="scan-res-sku">SKU: ---</p>
@@ -706,7 +718,7 @@
     </div>
   </div>
 
-  <!-- MODAL: IMPRESSÃO EM LOTE DE ETIQUETAS (COM SELETOR DE MODO DE IMPRESSÃO A4 OU TÉRMICO) -->
+  <!-- MODAL: IMPRESSÃO EM LOTE DE ETIQUETAS -->
   <div id="print-labels-batch-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-4xl rounded-2xl border border-white/10 p-6 space-y-4 text-slate-900 bg-white max-h-[90vh] overflow-y-auto">
       
@@ -739,7 +751,6 @@
         <button onclick="closeBatchPrintModal()" class="text-gray-400 hover:text-slate-900"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- CONTAINER COM GRID LADO A LADO DAS ETIQUETAS -->
       <div id="batch-labels-container" class="flex flex-wrap items-center justify-center gap-4 py-4 bg-gray-100 rounded-xl overflow-y-auto max-h-[60vh]"></div>
 
       <div class="flex gap-3 pt-4 border-t border-gray-200 no-print">
@@ -951,6 +962,7 @@
     let selectedSkuIds = new Set();
     let activeMobSku = null;
     let chartMov = null, chartAbc = null;
+    let html5QrCodeScanner = null;
 
     const FALLBACK_SKUS = [
       { id: '1', code: 'EPI-CAP-01', lote: 'LOT-2026-A', name: 'Capacete de Segurança MSA', category: 'EPIs', unit: 'UN', min: 10, max: 60, qty: 38, cost: 45.00, loc: 'RACK-B1', abc: 'B', validade: '2028-05-10' },
@@ -1013,6 +1025,7 @@
     }
 
     function handleLogout() {
+      stopCameraScanner();
       localStorage.removeItem('nexus_user');
       currentUser = null;
       document.getElementById('app-container').classList.add('hidden');
@@ -1107,6 +1120,7 @@
     }
 
     function switchView(view) {
+      stopCameraScanner();
       const vDesk = document.getElementById('view-desktop');
       const vMob = document.getElementById('view-mobile');
       const btnDesk = document.getElementById('btn-view-desktop');
@@ -1126,6 +1140,7 @@
     }
 
     function switchTab(tabId) {
+      stopCameraScanner();
       ['dashboard', 'skus', 'recebimento', 'requisicoes', 'inventario', 'auditoria'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
         const n = document.getElementById(`nav-${t}`);
@@ -1289,22 +1304,14 @@
       document.getElementById('print-labels-batch-modal').classList.add('hidden');
     }
 
-    /* IMPRESSÃO ISOLADA DE ETIQUETAS */
     function printLabelsOnly() {
       const layoutMode = document.getElementById('select-print-layout').value;
-      
       document.body.classList.add('printing-labels');
-      if (layoutMode === 'grid') {
-        document.body.classList.add('layout-grid');
-      } else {
-        document.body.classList.add('layout-thermal');
-      }
+      if (layoutMode === 'grid') document.body.classList.add('layout-grid');
+      else document.body.classList.add('layout-thermal');
 
       window.print();
-
-      setTimeout(() => {
-        document.body.classList.remove('printing-labels', 'layout-grid', 'layout-thermal');
-      }, 500);
+      setTimeout(() => { document.body.classList.remove('printing-labels', 'layout-grid', 'layout-thermal'); }, 500);
     }
 
     function printReceiptOnly() {
@@ -1639,6 +1646,7 @@
     }
 
     function navMobile(page) {
+      stopCameraScanner();
       ['home', 'scanner', 'requisitar', 'inventario'].forEach(p => {
         const el = document.getElementById(`mobile-page-${p}`);
         if (el) el.classList.add('hidden');
@@ -1646,8 +1654,75 @@
       const targetEl = document.getElementById(`mobile-page-${page}`);
       if (targetEl) targetEl.classList.remove('hidden');
 
-      if (page === 'scanner' || page === 'requisitar' || page === 'inventario') {
+      if (page === 'scanner') {
         renderMobileSelects();
+        startCameraScanner();
+      } else if (page === 'requisitar' || page === 'inventario') {
+        renderMobileSelects();
+      }
+    }
+
+    /* ENGINE DO SCANNER DE CÂMERA REAL */
+    function startCameraScanner() {
+      if (typeof Html5Qrcode === "undefined") {
+        showToast("Biblioteca de scanner carregando...", "info");
+        return;
+      }
+
+      if (html5QrCodeScanner) {
+        stopCameraScanner();
+      }
+
+      const readerElement = document.getElementById("interactive-reader");
+      if (!readerElement) return;
+
+      html5QrCodeScanner = new Html5Qrcode("interactive-reader");
+
+      const config = { fps: 10, qrbox: { width: 220, height: 140 } };
+
+      html5QrCodeScanner.start(
+        { facingMode: "environment" },
+        config,
+        (decodedText) => {
+          showToast(`Código Lido: ${decodedText}`, "success");
+          handleScannedCode(decodedText);
+        },
+        (errorMessage) => {
+          // buscando código...
+        }
+      ).catch((err) => {
+        console.error("Erro ao iniciar câmera: ", err);
+        showToast("Permissão de câmera negada ou indisponível.", "error");
+      });
+    }
+
+    function stopCameraScanner() {
+      if (html5QrCodeScanner) {
+        html5QrCodeScanner.stop().then(() => {
+          html5QrCodeScanner.clear();
+          html5QrCodeScanner = null;
+        }).catch(() => { html5QrCodeScanner = null; });
+      }
+    }
+
+    function handleScannedCode(scannedCode) {
+      const codeClean = scannedCode.trim().toUpperCase();
+      const item = skus.find(s => s.code.toUpperCase() === codeClean || s.lote.toUpperCase() === codeClean);
+      
+      const selectEl = document.getElementById('mobile-scan-select');
+      if (item) {
+        if (selectEl) selectEl.value = item.code;
+        document.getElementById('scan-res-title').innerText = item.name;
+        document.getElementById('scan-res-sku').innerText = `SKU: ${item.code} | Lote: ${item.lote}`;
+        document.getElementById('scan-res-qty').innerText = `${item.qty} ${item.unit} (Local: ${item.loc})`;
+        document.getElementById('scanned-result-card').classList.remove('hidden');
+        logAudit(currentUser ? currentUser.name : 'Operador', 'Coletor Mobile', `Câmera Bipou SKU ${item.code}`);
+      } else {
+        if (selectEl) selectEl.value = "";
+        document.getElementById('scan-res-title').innerText = `Não Encontrado (${scannedCode})`;
+        document.getElementById('scan-res-sku').innerText = `SKU não possui cadastro no WMS`;
+        document.getElementById('scan-res-qty').innerText = `0 UN`;
+        document.getElementById('scanned-result-card').classList.remove('hidden');
       }
     }
 
@@ -1681,14 +1756,7 @@
 
     function simulateScanItem() {
       const code = document.getElementById('mobile-scan-select').value;
-      const item = skus.find(s => s.code === code);
-      if (item) {
-        document.getElementById('scan-res-title').innerText = item.name;
-        document.getElementById('scan-res-sku').innerText = `SKU: ${item.code} | Lote: ${item.lote}`;
-        document.getElementById('scan-res-qty').innerText = `${item.qty} ${item.unit} (Local: ${item.loc})`;
-        document.getElementById('scanned-result-card').classList.remove('hidden');
-        logAudit(currentUser ? currentUser.name : 'Operador', 'Coletor Mobile', `Bipado SKU ${item.code}`);
-      }
+      if (code) handleScannedCode(code);
     }
 
     async function submitMobileRequisition(e) {
