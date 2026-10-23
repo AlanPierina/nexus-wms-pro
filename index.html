@@ -61,7 +61,13 @@
     
     @keyframes scanLine { 0% { top: 10%; opacity: 0.2; } 50% { top: 85%; opacity: 0.9; } 100% { top: 10%; opacity: 0.2; } }
     .scanner-laser { position: absolute; left: 5%; width: 90%; height: 2px; background: #f43f5e; box-shadow: 0 0 12px 3px #f43f5e, 0 0 20px 6px rgba(244, 63, 94, 0.5); animation: scanLine 2.2s infinite ease-in-out; pointer-events: none; z-index: 10; }
-    .phone-mockup { width: 380px; height: 740px; border-radius: 44px; border: 10px solid #1f2937; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); position: relative; overflow: hidden; }
+    
+    /* MOLDURA MOBILE RESPONSIVA */
+    .phone-mockup { width: 100%; max-width: 380px; height: 100%; max-height: 740px; border-radius: 32px; border: 8px solid #1f2937; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* ESTILOS DE CÂMERA E LEITOR */
+    #interactive-reader { width: 100% !important; height: 100% !important; overflow: hidden; position: relative; }
+    #interactive-reader video { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 0.75rem; }
 
     /* ESTILOS DE ETIQUETA */
     .label-size-100x50 {
@@ -72,8 +78,6 @@
       width: 58mm; height: 38mm; padding: 1.5mm; box-sizing: border-box; background: white; color: black; border: 1px solid #ccc;
       display: flex; flex-direction: column; justify-content: space-between; page-break-inside: avoid; break-inside: avoid;
     }
-
-    #interactive-reader video { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 1rem; }
 
     @media print {
       body * { visibility: hidden !important; }
@@ -537,9 +541,9 @@
       </main>
 
       <!-- MOBILE PWA SIMULATOR -->
-      <main id="view-mobile" class="flex-1 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="phone-mockup bg-slate-950 flex flex-col justify-between text-gray-100">
-          <div class="bg-slate-900/90 px-6 pt-3 pb-3 border-b border-white/10 flex items-center justify-between shrink-0">
+      <main id="view-mobile" class="flex-1 hidden flex items-center justify-center p-2 sm:p-4 overflow-hidden">
+        <div class="phone-mockup bg-slate-950 text-gray-100">
+          <div class="bg-slate-900/90 px-5 pt-3 pb-3 border-b border-white/10 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-2">
               <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
               <span class="text-xs font-bold text-white tracking-wider">NEXUS Coletor</span>
@@ -586,13 +590,12 @@
               </button>
             </div>
 
-            <!-- TELA DO SCANNER COM CÂMERA REAL -->
-            <div id="mobile-page-scanner" class="hidden space-y-4">
-              <div class="text-center"><h3 class="text-sm font-bold text-white">Scanner de Código de Barras / Câmera</h3></div>
+            <!-- TELA DO SCANNER COM CÂMERA REAL E ENQUADRAMENTO RESPONSIVO -->
+            <div id="mobile-page-scanner" class="hidden space-y-3">
+              <div class="text-center"><h3 class="text-sm font-bold text-white">Scanner de Código de Barras</h3></div>
               
-              <div class="relative w-full h-56 bg-black rounded-2xl overflow-hidden border-2 border-blue-500/50 flex flex-col items-center justify-center shadow-inner">
+              <div class="relative w-full h-52 bg-black rounded-2xl overflow-hidden border-2 border-blue-500/50 flex flex-col items-center justify-center shadow-inner">
                 <div class="scanner-laser"></div>
-                <!-- Container do Vídeo da Câmera -->
                 <div id="interactive-reader" class="w-full h-full"></div>
               </div>
 
@@ -605,19 +608,19 @@
                 </button>
               </div>
 
-              <div class="space-y-2 pt-2 border-t border-white/10">
+              <div class="space-y-1.5 pt-2 border-t border-white/10">
                 <label class="text-[11px] text-gray-400 block">Ou selecione manualmente:</label>
                 <select id="mobile-scan-select" onchange="simulateScanItem()" class="w-full glass-input px-3 py-2 rounded-xl text-xs"></select>
               </div>
 
-              <div id="scanned-result-card" class="hidden glass-card p-4 rounded-2xl border border-emerald-500/40 bg-emerald-950/20 space-y-2 text-xs">
-                <h4 class="font-bold text-white text-sm" id="scan-res-title">---</h4>
-                <p class="text-gray-400" id="scan-res-sku">SKU: ---</p>
-                <p class="text-emerald-400 font-bold" id="scan-res-qty">0 UN</p>
+              <div id="scanned-result-card" class="hidden glass-card p-3 rounded-2xl border border-emerald-500/40 bg-emerald-950/20 space-y-1 text-xs">
+                <h4 class="font-bold text-white text-xs" id="scan-res-title">---</h4>
+                <p class="text-gray-400 text-[11px]" id="scan-res-sku">SKU: ---</p>
+                <p class="text-emerald-400 font-bold text-xs" id="scan-res-qty">0 UN</p>
               </div>
             </div>
 
-            <div id="mobile-page-requisitar" class="hidden space-y-4">
+            <div id="mobile-page-requisitar" class="hidden space-y-3">
               <div class="text-center"><h3 class="text-sm font-bold text-white">Requisição & Aplicação Frota</h3></div>
               <form onsubmit="submitMobileRequisition(event)" class="space-y-3">
                 <div>
@@ -626,7 +629,7 @@
                 </div>
                 <div>
                   <label class="text-[11px] text-gray-400 block mb-1">Equipamento / Trator / Frota *</label>
-                  <input type="text" id="mob-req-fleet" required placeholder="Ex: Trator John Deere 04 / Placa ABC-1234" class="w-full glass-input px-3 py-2 rounded-xl text-xs font-semibold text-amber-400">
+                  <input type="text" id="mob-req-fleet" required placeholder="Ex: Trator John Deere 04" class="w-full glass-input px-3 py-2 rounded-xl text-xs font-semibold text-amber-400">
                 </div>
                 <div>
                   <label class="text-[11px] text-gray-400 block mb-1">Material / SKU *</label>
@@ -646,7 +649,7 @@
               </form>
             </div>
 
-            <div id="mobile-page-inventario" class="hidden space-y-4">
+            <div id="mobile-page-inventario" class="hidden space-y-3">
               <div class="text-center"><h3 class="text-sm font-bold text-white">Contagem Cíclica</h3></div>
               <div class="glass-card p-4 rounded-2xl border border-white/10 space-y-3">
                 <div>
@@ -1662,10 +1665,10 @@
       }
     }
 
-    /* ENGINE DO SCANNER DE CÂMERA REAL */
+    /* SCANNER DE CÂMERA REAL OTIMIZADO */
     function startCameraScanner() {
       if (typeof Html5Qrcode === "undefined") {
-        showToast("Biblioteca de scanner carregando...", "info");
+        showToast("Carregando biblioteca do leitor...", "info");
         return;
       }
 
@@ -1678,21 +1681,33 @@
 
       html5QrCodeScanner = new Html5Qrcode("interactive-reader");
 
-      const config = { fps: 10, qrbox: { width: 220, height: 140 } };
+      const config = { 
+        fps: 15, 
+        qrbox: { width: 240, height: 140 },
+        aspectRatio: 1.777778
+      };
+
+      const formatsToSupport = [
+        Html5QrcodeSupportedFormats.CODE_128,
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.CODE_39,
+        Html5QrcodeSupportedFormats.QR_CODE,
+        Html5QrcodeSupportedFormats.UPC_A
+      ];
 
       html5QrCodeScanner.start(
         { facingMode: "environment" },
-        config,
+        { ...config, formatsToSupport },
         (decodedText) => {
-          showToast(`Código Lido: ${decodedText}`, "success");
+          showToast(`Lido: ${decodedText}`, "success");
           handleScannedCode(decodedText);
         },
         (errorMessage) => {
-          // buscando código...
+          // buscando...
         }
       ).catch((err) => {
         console.error("Erro ao iniciar câmera: ", err);
-        showToast("Permissão de câmera negada ou indisponível.", "error");
+        showToast("Acesse via HTTPS para liberar a câmera.", "error");
       });
     }
 
