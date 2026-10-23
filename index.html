@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEXUS WMS Pro - Portal Web (Gestor)</title>
   
+  <!-- Supabase JS Client SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -74,7 +76,7 @@
 
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
 
-  <!-- TELA DE LOGIN WEB -->
+  <!-- TELA DE LOGIN -->
   <section id="view-login" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
     <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -107,7 +109,7 @@
     </div>
   </section>
 
-  <!-- APP PRINCIPAL WEB -->
+  <!-- APLICAÇÃO PRINCIPAL WEB -->
   <div id="app-container" class="hidden min-h-screen flex flex-col">
     <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 lg:px-8 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -117,7 +119,7 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="font-bold text-lg tracking-wide text-white">NEXUS <span class="text-blue-400 font-extrabold">WMS PRO</span></h1>
-            <span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Portal Web</span>
+            <span class="px-2 py-0.5 text-[10px] uppercase font-bold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Portal Web Gestor</span>
           </div>
           <p class="text-xs text-gray-400">Gestão de Almoxarifado Industrial</p>
         </div>
@@ -151,9 +153,10 @@
         </div>
       </aside>
 
-      <!-- CONTEÚDO DAS TABS WEB -->
+      <!-- CONTEÚDO WEB -->
       <section class="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6">
-        <!-- TAB 1: DASHBOARD -->
+        
+        <!-- DASHBOARD -->
         <div id="tab-dashboard" class="space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
@@ -189,12 +192,12 @@
           </div>
         </div>
 
-        <!-- TAB 2: SKUS -->
+        <!-- SKUS & ETIQUETAS -->
         <div id="tab-skus" class="hidden space-y-6">
           <div class="flex items-center justify-between">
             <h2 class="text-xl font-bold text-white">Catálogo de SKUs & Lotes</h2>
             <div class="flex gap-2">
-              <button onclick="openBatchPrintModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-white/10 text-white text-xs rounded-xl">Imprimir Selecionados (<span id="selected-count">0</span>)</button>
+              <button onclick="openBatchPrintModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-white/10 text-white text-xs rounded-xl">Imprimir Etiquetas Selecionadas (<span id="selected-count">0</span>)</button>
               <button onclick="openModalSKU()" class="px-4 py-2 bg-blue-600 text-white text-xs rounded-xl font-bold">+ Novo SKU</button>
             </div>
           </div>
@@ -211,7 +214,7 @@
           </div>
         </div>
 
-        <!-- TAB 3: RECEBIMENTO -->
+        <!-- RECEBIMENTO NFE -->
         <div id="tab-recebimento" class="hidden space-y-6">
           <div class="flex items-center justify-between"><h2 class="text-xl font-bold text-white">Recebimento & Qualidade</h2><button onclick="openModalRecebimento()" class="px-4 py-2 bg-emerald-600 text-white text-xs rounded-xl">+ Registrar NFe</button></div>
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -222,20 +225,20 @@
           </div>
         </div>
 
-        <!-- TAB 4: REQUISIÇÕES -->
+        <!-- REQUISIÇÕES & FROTA -->
         <div id="tab-requisicoes" class="hidden space-y-6">
           <div class="flex items-center justify-between"><h2 class="text-xl font-bold text-white">Central de Requisições & Frota</h2><button onclick="openModalWebRequisicao()" class="px-4 py-2 bg-amber-600 text-white text-xs rounded-xl">+ Nova Saída Web</button></div>
           <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
             <table class="w-full text-left text-xs text-gray-300">
               <thead class="bg-slate-900/80 text-gray-400 uppercase border-b border-white/10">
-                <tr><th class="p-4">ID Req</th><th class="p-4">Requisitante</th><th class="p-4">Equipamento / Frota</th><th class="p-4">SKU</th><th class="p-4 text-center">Qtd</th><th class="p-4 text-center">Status</th><th class="p-4 text-right">Recibo</th></tr>
+                <tr><th class="p-4">ID Req</th><th class="p-4">Requisitante</th><th class="p-4">Equipamento / Frota</th><th class="p-4">SKU</th><th class="p-4 text-center">Qtd</th><th class="p-4 text-center">Status</th><th class="p-4 text-right">Recibo A4</th></tr>
               </thead>
               <tbody id="requisitions-table-body" class="divide-y divide-white/5"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- TAB 5: INVENTÁRIO -->
+        <!-- INVENTÁRIO -->
         <div id="tab-inventario" class="hidden space-y-6">
           <h2 class="text-xl font-bold text-white">Controle de Inventário</h2>
           <div class="glass-card p-4 rounded-2xl overflow-x-auto">
@@ -246,7 +249,7 @@
           </div>
         </div>
 
-        <!-- TAB 6: AUDITORIA -->
+        <!-- AUDITORIA -->
         <div id="tab-auditoria" class="hidden space-y-6">
           <h2 class="text-xl font-bold text-white">Log de Auditoria</h2>
           <div class="glass-card p-4 rounded-2xl overflow-x-auto">
@@ -260,27 +263,52 @@
     </div>
   </div>
 
-  <!-- MODAIS WEB -->
+  <!-- MODAL DE IMPRESSÃO EM LOTE DE ETIQUETAS -->
   <div id="print-labels-batch-modal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-4xl rounded-2xl p-6 bg-white text-black max-h-[90vh] overflow-y-auto space-y-4">
-      <div class="flex justify-between items-center border-b pb-2"><h3 class="font-bold">Lote de Etiquetas</h3><button onclick="closeBatchPrintModal()">✕</button></div>
-      <div id="batch-labels-container" class="flex flex-wrap gap-4 justify-center bg-gray-100 p-4 rounded"></div>
-      <div class="flex gap-2"><button onclick="closeBatchPrintModal()" class="flex-1 py-2 bg-gray-300 rounded">Cancelar</button><button onclick="printLabelsOnly()" class="flex-1 py-2 bg-blue-600 text-white rounded font-bold">Imprimir</button></div>
+      <div class="flex justify-between items-center border-b pb-2 no-print">
+        <h3 class="font-bold">Lote de Etiquetas WMS (<span id="batch-modal-count">0</span> itens)</h3>
+        <div class="flex gap-2">
+          <select id="select-label-dimension" onchange="renderBatchLabels()" class="px-2 py-1 border rounded text-xs">
+            <option value="100x50" selected>Grande (100x50 mm)</option>
+            <option value="60x40">Pequena (60x40 mm)</option>
+          </select>
+          <select id="select-print-layout" class="px-2 py-1 border rounded text-xs">
+            <option value="grid" selected>Folha A4 (Grade)</option>
+            <option value="thermal">Térmica (1 por página)</option>
+          </select>
+        </div>
+        <button onclick="closeBatchPrintModal()">✕</button>
+      </div>
+      <div id="batch-labels-container" class="flex flex-wrap gap-4 justify-center bg-gray-100 p-4 rounded max-h-[60vh] overflow-y-auto"></div>
+      <div class="flex gap-2 no-print">
+        <button onclick="closeBatchPrintModal()" class="flex-1 py-2 bg-gray-300 rounded text-xs font-bold">Cancelar</button>
+        <button onclick="printLabelsOnly()" class="flex-1 py-2 bg-blue-600 text-white rounded text-xs font-bold">Imprimir Etiquetas</button>
+      </div>
     </div>
   </div>
 
+  <!-- MODAL DE RECIBO A4 -->
   <div id="print-receipt-modal" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-2xl rounded-2xl p-6 bg-white text-black max-h-[92vh] overflow-y-auto space-y-4 flex flex-col justify-between">
-      <div class="flex justify-between border-b pb-2"><h3 class="font-bold">RECIBO DE RETIRADA</h3><button onclick="closeReceiptModal()">✕</button></div>
-      <div id="receipt-sheet" class="p-6 border-2 border-black rounded space-y-4 bg-white text-black">
-        <h2 class="text-base font-black">AGRÍCOLA FP S/A - RECIBO Nº <span id="rcp-id">---</span></h2>
-        <p class="text-xs">Solicitante: <strong id="rcp-solicitante-name">---</strong> | Frota: <strong id="rcp-fleet" class="text-blue-800">---</strong></p>
-        <table class="w-full border border-black text-xs"><thead><tr class="bg-gray-200"><th class="p-2 border">SKU</th><th class="p-2 border">Descrição</th><th class="p-2 border">Qtd</th></tr></thead><tbody id="rcp-items-body"></tbody></table>
+      <div class="flex justify-between border-b pb-2 no-print"><h3 class="font-bold">RECIBO DE RETIRADA A4</h3><button onclick="closeReceiptModal()">✕</button></div>
+      <div id="receipt-sheet" class="p-6 border-2 border-black rounded space-y-4 bg-white text-black text-xs">
+        <div class="flex justify-between border-b-2 border-black pb-3">
+          <div><h2 class="text-base font-black">AGRÍCOLA FP S/A</h2><p>Almoxarifado Industrial</p></div>
+          <div class="text-right"><span>RECIBO Nº <strong id="rcp-id">---</strong></span><p>Data: <span id="rcp-date">---</span></p></div>
+        </div>
+        <div><p><strong>Retirante:</strong> <span id="rcp-solicitante-name">---</span> | <strong>Frota/Equipamento:</strong> <span id="rcp-fleet" class="text-blue-800 font-bold">---</span></p></div>
+        <table class="w-full border border-black text-xs"><thead><tr class="bg-gray-200"><th class="p-2 border">SKU</th><th class="p-2 border">Descrição</th><th class="p-2 border text-center">Qtd</th></tr></thead><tbody id="rcp-items-body"></tbody></table>
+        <div class="grid grid-cols-2 gap-8 pt-8 text-center">
+          <div><div class="border-b border-black mb-1"></div><strong>Alan Kaique</strong><br><span class="text-[10px]">Almoxarife Responsável</span></div>
+          <div><div class="border-b border-black mb-1"></div><strong id="rcp-sig-name">---</strong><br><span class="text-[10px]">Assinatura do Retirante</span></div>
+        </div>
       </div>
-      <div class="flex gap-2"><button onclick="closeReceiptModal()" class="flex-1 py-2 bg-gray-200 rounded">Fechar</button><button onclick="printReceiptOnly()" class="flex-1 py-2 bg-blue-600 text-white rounded font-bold">Imprimir Recibo</button></div>
+      <div class="flex gap-2 no-print"><button onclick="closeReceiptModal()" class="flex-1 py-2 bg-gray-200 rounded text-xs font-bold">Fechar</button><button onclick="printReceiptOnly()" class="flex-1 py-2 bg-blue-600 text-white rounded text-xs font-bold">Imprimir Folha A4</button></div>
     </div>
   </div>
 
+  <!-- MODAIS CADASTROS -->
   <div id="modal-sku" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"><div class="glass-panel w-full max-w-lg rounded-2xl p-6 space-y-3"><h3 class="font-bold text-white">Cadastrar SKU</h3><form onsubmit="saveSKU(event)" class="space-y-2 text-xs"><input type="text" id="form-sku-code" required placeholder="Código SKU" class="w-full glass-input p-2 rounded"><input type="text" id="form-sku-name" required placeholder="Nome" class="w-full glass-input p-2 rounded"><input type="number" id="form-sku-qty" required value="10" class="w-full glass-input p-2 rounded"><button type="submit" class="w-full py-2 bg-blue-600 text-white rounded font-bold">Salvar</button></form></div></div>
   <div id="modal-recebimento" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"><div class="glass-panel w-full max-w-lg rounded-2xl p-6 space-y-3"><h3 class="font-bold text-white">Registrar NFe</h3><form onsubmit="saveRecebimento(event)" class="space-y-2 text-xs"><input type="text" id="form-rec-nfe" required placeholder="NFe" class="w-full glass-input p-2 rounded"><select id="form-rec-sku" class="w-full glass-input p-2 rounded"></select><button type="submit" class="w-full py-2 bg-emerald-600 text-white rounded font-bold">Lançar</button></form></div></div>
   <div id="modal-web-requisicao" class="hidden fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4"><div class="glass-panel w-full max-w-lg rounded-2xl p-6 space-y-3"><h3 class="font-bold text-white">Nova Saída</h3><form onsubmit="submitWebRequisition(event)" class="space-y-2 text-xs"><input type="text" id="web-req-fleet" required placeholder="Equipamento/Frota" class="w-full glass-input p-2 rounded"><select id="web-req-sku" class="w-full glass-input p-2 rounded"></select><input type="number" id="web-req-qty" required value="1" class="w-full glass-input p-2 rounded"><button type="submit" class="w-full py-2 bg-amber-600 text-white rounded font-bold">Baixar</button></form></div></div>
@@ -333,6 +361,15 @@
           }
         } catch(e) { skus = FALLBACK_SKUS; }
       } else { skus = FALLBACK_SKUS; }
+
+      // Inclui também requisições do localStorage mobile se houver
+      let mobileReqs = JSON.parse(localStorage.getItem('nexus_mobile_reqs') || '[]');
+      mobileReqs.forEach(mr => {
+        if (!requisicoes.some(r => r.id === mr.codigo_req)) {
+          requisicoes.unshift({ id: mr.codigo_req, reqBy: mr.requisitante, cc: mr.destino, fleet: mr.equipamento, skuCode: mr.sku, qty: mr.quantidade, status: mr.status, date: '23/10/2026' });
+        }
+      });
+
       recebimentos = [{ id: 'r1', nfe: 'NF-104', forn: 'Gerdau', skuCode: 'ROL-6205', qty: 10, step: 2, date: '23/10/2026', user: 'Alan' }];
       counts = [{ date: '20/10/2026', user: 'Alan', skuCode: 'ROL-6205', sysQty: 14, countedQty: 12, diff: -2 }];
       auditLogs = [{ time: '23/10/2026', user: 'Alan', module: 'Auth', details: 'Login efetuado' }];
@@ -357,11 +394,77 @@
     function renderSKU() {
       const tb = document.getElementById('sku-table-body'); tb.innerHTML = '';
       skus.forEach(s => {
-        tb.innerHTML += `<tr class="border-b border-white/5"><td class="p-4 text-center"><input type="checkbox" onchange="toggleSku('${s.id}')"></td><td class="p-4 font-mono text-blue-400">${s.code}</td><td class="p-4 text-white">${s.name}</td><td class="p-4 text-center">${s.abc}</td><td class="p-4 text-center font-bold">${s.qty}</td><td class="p-4 font-mono">${s.loc}</td><td class="p-4 text-right"></td></tr>`;
+        const checked = selectedSkuIds.has(s.id) ? 'checked' : '';
+        tb.innerHTML += `<tr class="border-b border-white/5"><td class="p-4 text-center"><input type="checkbox" ${checked} onchange="toggleSku('${s.id}')"></td><td class="p-4 font-mono text-blue-400">${s.code}</td><td class="p-4 text-white">${s.name}</td><td class="p-4 text-center">${s.abc}</td><td class="p-4 text-center font-bold">${s.qty}</td><td class="p-4 font-mono">${s.loc}</td><td class="p-4 text-right"></td></tr>`;
       });
+      document.getElementById('selected-count').innerText = selectedSkuIds.size;
     }
     function toggleSku(id) { if(selectedSkuIds.has(id)) selectedSkuIds.delete(id); else selectedSkuIds.add(id); document.getElementById('selected-count').innerText = selectedSkuIds.size; }
-    
+    function toggleSelectAll(master) {
+      if (master.checked) skus.forEach(s => selectedSkuIds.add(s.id));
+      else selectedSkuIds.clear();
+      renderSKU();
+    }
+
+    function openBatchPrintModal() {
+      if (selectedSkuIds.size === 0) { alert('Selecione pelo menos um SKU na tabela!'); return; }
+      renderBatchLabels();
+      document.getElementById('print-labels-batch-modal').classList.remove('hidden');
+    }
+
+    function renderBatchLabels() {
+      const container = document.getElementById('batch-labels-container');
+      const sizeMode = document.getElementById('select-label-dimension').value;
+      container.innerHTML = '';
+      document.getElementById('batch-modal-count').innerText = selectedSkuIds.size;
+
+      const cssClass = sizeMode === '100x50' ? 'label-size-100x50' : 'label-size-60x40';
+      const bw = sizeMode === '100x50' ? 1.8 : 1.2;
+      const bh = sizeMode === '100x50' ? 40 : 25;
+
+      let idx = 0;
+      selectedSkuIds.forEach(id => {
+        const s = skus.find(x => x.id === id);
+        if (s) {
+          const svgId = `batch-svg-${idx}`;
+          container.innerHTML += `
+            <div class="${cssClass} shadow-md rounded">
+              <div class="flex justify-between items-center text-[9px] font-bold uppercase text-gray-700 border-b pb-1 border-gray-300">
+                <span>AGRÍCOLA FP</span><span>LOC: ${s.loc}</span>
+              </div>
+              <div class="font-extrabold text-[11px] leading-tight text-black my-1 text-center truncate">${s.code} - ${s.name}</div>
+              <div class="flex justify-center my-1"><svg id="${svgId}"></svg></div>
+              <div class="flex justify-between items-center text-[9px] border-t pt-1 border-gray-300 font-semibold text-gray-800">
+                <span>LOTE: ${s.lote}</span><span>VAL: ${s.validade}</span>
+              </div>
+            </div>
+          `;
+          idx++;
+        }
+      });
+
+      setTimeout(() => {
+        let i = 0;
+        selectedSkuIds.forEach(id => {
+          const s = skus.find(x => x.id === id);
+          if (s) {
+            try { JsBarcode(`#batch-svg-${i}`, s.code, { format: "CODE128", width: bw, height: bh, displayValue: true, fontSize: 10 }); } catch(e) {}
+          }
+          i++;
+        });
+      }, 50);
+    }
+
+    function closeBatchPrintModal() { document.getElementById('print-labels-batch-modal').classList.add('hidden'); }
+    function printLabelsOnly() {
+      const layout = document.getElementById('select-print-layout').value;
+      document.body.classList.add('printing-labels');
+      if (layout === 'grid') document.body.classList.add('layout-grid');
+      else document.body.classList.add('layout-thermal');
+      window.print();
+      setTimeout(() => document.body.classList.remove('printing-labels', 'layout-grid', 'layout-thermal'), 500);
+    }
+
     function renderKanban() {
       for(let i=1;i<=4;i++) document.getElementById(`kanban-col-${i}`).innerHTML = '';
       recebimentos.forEach(r => {
@@ -371,7 +474,7 @@
     function renderReq() {
       const tb = document.getElementById('requisitions-table-body'); tb.innerHTML = '';
       requisicoes.forEach(r => {
-        tb.innerHTML += `<tr class="border-b border-white/5"><td class="p-4 font-mono">${r.id}</td><td class="p-4">${r.reqBy}</td><td class="p-4 text-amber-400">${r.fleet}</td><td class="p-4">${r.skuCode}</td><td class="p-4 text-center">${r.qty}</td><td class="p-4 text-center">${r.status}</td><td class="p-4 text-right"><button onclick="openReceiptModal('${r.id}')" class="px-2 py-1 bg-blue-600 rounded text-white">Recibo</button></td></tr>`;
+        tb.innerHTML += `<tr class="border-b border-white/5"><td class="p-4 font-mono">${r.id}</td><td class="p-4">${r.reqBy}</td><td class="p-4 text-amber-400">${r.fleet}</td><td class="p-4">${r.skuCode}</td><td class="p-4 text-center">${r.qty}</td><td class="p-4 text-center">${r.status}</td><td class="p-4 text-right"><button onclick="openReceiptModal('${r.id}')" class="px-2.5 py-1 bg-blue-600 rounded text-white text-[10px]">Recibo A4</button></td></tr>`;
       });
     }
     function renderInv() {
@@ -404,22 +507,15 @@
       document.getElementById('modal-web-requisicao').classList.add('hidden');
       renderAllViews();
     }
-    function openBatchPrintModal() {
-      const c = document.getElementById('batch-labels-container'); c.innerHTML = '';
-      selectedSkuIds.forEach(id => {
-        const s = skus.find(x=>x.id===id);
-        if(s) c.innerHTML += `<div class="label-size-100x50"><span class="font-bold">AGRÍCOLA FP</span><span>${s.code} - ${s.name}</span><span>LOC: ${s.loc}</span></div>`;
-      });
-      document.getElementById('print-labels-batch-modal').classList.remove('hidden');
-    }
-    function closeBatchPrintModal() { document.getElementById('print-labels-batch-modal').classList.add('hidden'); }
-    function printLabelsOnly() { document.body.classList.add('printing-labels', 'layout-grid'); window.print(); setTimeout(()=>document.body.classList.remove('printing-labels', 'layout-grid'), 500); }
+
     function openReceiptModal(id) {
       const r = requisicoes.find(x=>x.id===id);
       document.getElementById('rcp-id').innerText = r.id;
+      document.getElementById('rcp-date').innerText = r.date;
       document.getElementById('rcp-solicitante-name').innerText = r.reqBy;
+      document.getElementById('rcp-sig-name').innerText = r.reqBy;
       document.getElementById('rcp-fleet').innerText = r.fleet;
-      document.getElementById('rcp-items-body').innerHTML = `<tr><td class="p-2 border">${r.skuCode}</td><td class="p-2 border">Material WMS</td><td class="p-2 border text-center">${r.qty} UN</td></tr>`;
+      document.getElementById('rcp-items-body').innerHTML = `<tr><td class="p-2 border font-mono">${r.skuCode}</td><td class="p-2 border">Material WMS</td><td class="p-2 border text-center font-bold">${r.qty} UN</td></tr>`;
       document.getElementById('print-receipt-modal').classList.remove('hidden');
     }
     function closeReceiptModal() { document.getElementById('print-receipt-modal').classList.add('hidden'); }
