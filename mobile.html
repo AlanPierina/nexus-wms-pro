@@ -41,7 +41,7 @@
         <p class="text-[9px] text-gray-400">Operador: Alan Kaique</p>
       </div>
     </div>
-    <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-bold rounded-full">v7.6 Mobile</span>
+    <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-bold rounded-full">v7.7 Mobile</span>
   </header>
 
   <!-- CORPO -->
@@ -52,23 +52,23 @@
       <div class="glass-card p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-slate-900/80 space-y-2">
         <span class="text-[10px] uppercase tracking-widest text-blue-400 font-bold">Almoxarifado Agrícola FP</span>
         <div class="text-sm font-bold text-white">Pronto para Operação de Turno</div>
-        <p class="text-[11px] text-gray-400">Escaneie materiais, colha assinaturas digitais e registre a saída diretamente no banco de dados.</p>
+        <p class="text-[11px] text-gray-400">Escaneie materiais, colha assinaturas e vincule as saídas a Ordens de Serviço ou frotas.</p>
       </div>
 
       <button onclick="navMobile('scanner')" class="w-full glass-card p-4 rounded-2xl flex items-center gap-4 hover:bg-slate-800 transition border border-blue-500/30 active:scale-95 shadow-md">
         <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0"><i data-lucide="scan-line" class="w-6 h-6"></i></div>
         <div class="text-left flex-1">
           <div class="text-sm font-bold text-white">Escanear & Saída com Assinatura</div>
-          <div class="text-[10px] text-gray-400">Câmera ligada + Assinatura de Retirada/Entrega</div>
+          <div class="text-[10px] text-gray-400">Câmera ligada + Baixa por O.S. ou Descrição</div>
         </div>
         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
       </button>
 
       <button onclick="navMobile('requisitar')" class="w-full glass-card p-4 rounded-2xl flex items-center gap-4 hover:bg-slate-800 transition border border-amber-500/30 active:scale-95 shadow-md">
-        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0"><i data-lucide="truck" class="w-6 h-6"></i></div>
+        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-6 h-6"></i></div>
         <div class="text-left flex-1">
-          <div class="text-sm font-bold text-white">Requisição Manual Frota</div>
-          <div class="text-[10px] text-gray-400">Vincular peças a tratores e maquinário</div>
+          <div class="text-sm font-bold text-white">Requisição Manual / O.S.</div>
+          <div class="text-[10px] text-gray-400">Lançamento com Ordem de Serviço ou Aplicação</div>
         </div>
         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
       </button>
@@ -110,8 +110,8 @@
           </div>
 
           <div>
-            <label class="text-[10px] text-gray-300 block mb-0.5 font-semibold">Equipamento / Frota *</label>
-            <input type="text" id="scan-req-fleet" placeholder="Ex: Trator John Deere 04" required class="w-full glass-input px-2.5 py-1.5 rounded-xl text-xs font-semibold text-amber-400">
+            <label class="text-[10px] text-gray-300 block mb-0.5 font-semibold">Ordem de Serviço (O.S.) / Descrição / Frota *</label>
+            <input type="text" id="scan-req-fleet" placeholder="Ex: OS-4592 ou Manutenção Preventiva Trator 04" required class="w-full glass-input px-2.5 py-1.5 rounded-xl text-xs font-semibold text-amber-400">
           </div>
 
           <div class="grid grid-cols-2 gap-2">
@@ -159,12 +159,12 @@
     <!-- REQUISIÇÃO MANUAL -->
     <div id="mob-page-requisitar" class="hidden space-y-3">
       <div class="flex items-center justify-between">
-        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Nova Requisição Manual</h3>
+        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Nova Requisição / O.S. Manual</h3>
         <button onclick="navMobile('home')" class="text-[10px] text-gray-400 underline">Voltar</button>
       </div>
       <form onsubmit="submitMobileRequisition(event)" class="space-y-3 text-xs glass-card p-4 rounded-2xl">
         <div><label class="text-gray-400 block mb-1">Retirante *</label><input type="text" id="mob-req-user" required placeholder="Nome de quem retira" class="w-full glass-input px-3 py-2 rounded-xl"></div>
-        <div><label class="text-gray-400 block mb-1">Frota *</label><input type="text" id="mob-req-fleet" required placeholder="Ex: Trator 04" class="w-full glass-input px-3 py-2 rounded-xl font-semibold text-amber-400"></div>
+        <div><label class="text-gray-400 block mb-1">Ordem de Serviço (O.S.) / Descrição / Frota *</label><input type="text" id="mob-req-fleet" required placeholder="Ex: OS-1082 ou Troca de Correia Trator 02" class="w-full glass-input px-3 py-2 rounded-xl font-semibold text-amber-400"></div>
         <div><label class="text-gray-400 block mb-1">Material *</label><select id="mob-req-sku" required class="w-full glass-input px-3 py-2 rounded-xl"></select></div>
         <div class="grid grid-cols-2 gap-2">
           <div><label class="text-gray-400 block mb-1">Qtd</label><input type="number" id="mob-req-qty" min="1" value="1" required class="w-full glass-input px-3 py-2 rounded-xl font-bold text-emerald-400"></div>
@@ -194,7 +194,7 @@
   <footer class="bg-slate-900 border-t border-white/10 px-4 py-2.5 flex items-center justify-around shrink-0 text-gray-400 text-[10px]">
     <button onclick="navMobile('home')" class="flex flex-col items-center gap-1 text-blue-400"><i data-lucide="home" class="w-5 h-5"></i><span>Início</span></button>
     <button onclick="navMobile('scanner')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="scan" class="w-5 h-5"></i><span>Scanner</span></button>
-    <button onclick="navMobile('requisitar')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="truck" class="w-5 h-5"></i><span>Frota</span></button>
+    <button onclick="navMobile('requisitar')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="file-text" class="w-5 h-5"></i><span>O.S. / Saída</span></button>
     <button onclick="navMobile('inventario')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="check-circle-2" class="w-5 h-5"></i><span>Inventário</span></button>
   </footer>
 
@@ -353,7 +353,7 @@
       const cc = document.getElementById('scan-req-cc').value;
 
       if (!retirante) { alert('Informe o nome de quem está retirando!'); return; }
-      if (!fleet) { alert('Informe a frota / equipamento!'); return; }
+      if (!fleet) { alert('Informe a Ordem de Serviço / Descrição / Frota!'); return; }
       if (qty > activeScannedItem.qty) { alert('Quantidade maior que o estoque disponível!'); return; }
 
       activeScannedItem.qty -= qty;
@@ -381,7 +381,7 @@
       savedReqs.unshift(newReq);
       localStorage.setItem('nexus_mobile_reqs', JSON.stringify(savedReqs));
 
-      alert(`Saída de ${qty}x ${activeScannedItem.code} registrada com sucesso no sistema!`);
+      alert(`Saída de ${qty}x ${activeScannedItem.code} registrada com sucesso!\nO.S./Aplicação: ${fleet}`);
       navMobile('home');
     }
 
@@ -396,7 +396,7 @@
 
     async function submitMobileRequisition(e) {
       e.preventDefault();
-      alert('Requisição manual gravada com sucesso!');
+      alert('Requisição manual/O.S. gravada com sucesso!');
       navMobile('home');
     }
 
