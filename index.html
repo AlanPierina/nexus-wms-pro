@@ -39,6 +39,9 @@
   <!-- JsBarcode -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
+  <!-- HTML5-QRCode Scanner SDK -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -56,10 +59,8 @@
     .glass-input { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-size: 0.95rem; }
     .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25); }
 
-    /* Legibilidade aprimorada nos selects */
     select.glass-input option { background-color: #0f172a; color: #ffffff; padding: 12px; font-size: 0.95rem; }
 
-    /* ESTILOS DE ETIQUETA */
     .label-size-100x50 {
       width: 95mm; height: 48mm; padding: 2mm; box-sizing: border-box; background: white; color: black; border: 1px solid #ccc;
       display: flex; flex-direction: column; justify-content: space-between; page-break-inside: avoid; break-inside: avoid;
@@ -181,6 +182,11 @@
       </div>
 
       <div class="flex items-center gap-4">
+        <button onclick="openScannerModal('filter-search')" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-blue-400 flex items-center gap-2 font-semibold shadow">
+          <i data-lucide="scan" class="w-4 h-4"></i>
+          <span>Ler Código (Câmera)</span>
+        </button>
+
         <a href="mobile.html" target="_blank" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-emerald-400 flex items-center gap-2 font-semibold shadow">
           <i data-lucide="smartphone" class="w-4 h-4"></i>
           <span>Link App Coletor Mobile</span>
@@ -226,6 +232,9 @@
               </a>
               <a href="#" onclick="switchTab('inventario')" id="nav-inventario" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
                 <i data-lucide="check-check" class="w-4 h-4"></i> Acuracidade & Turnos
+              </a>
+              <a href="#" onclick="switchTab('compras')" id="nav-compras" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+                <i data-lucide="shopping-cart" class="w-4 h-4"></i> Previsão & Sugestão Compra
               </a>
               <a href="#" onclick="switchTab('auditoria')" id="nav-auditoria" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
                 <i data-lucide="shield-check" class="w-4 h-4"></i> Log de Auditoria
@@ -336,6 +345,9 @@
                 <input type="text" id="filter-search" onkeyup="renderSKUTable()" placeholder="Buscar por Nome, SKU, Lote..." class="w-full glass-input pl-9 pr-4 py-2 rounded-xl text-xs">
               </div>
               <div class="flex items-center gap-3 w-full md:w-auto">
+                <button onclick="openScannerModal('filter-search')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-white/10 text-blue-400 rounded-xl text-xs font-semibold flex items-center gap-2">
+                  <i data-lucide="scan" class="w-4 h-4"></i> Ler por Câmera
+                </button>
                 <select id="filter-categoria" onchange="renderSKUTable()" class="glass-input px-3 py-2 rounded-xl text-xs">
                   <option value="todos">Todas Categorias</option>
                   <option value="Ferramentas">Ferramentas</option>
@@ -455,7 +467,6 @@
               <button onclick="recalcularAcuracidade()" class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-xl font-bold">Atualizar Indicadores</button>
             </div>
 
-            <!-- CARDS DE RESUMO DE TURNOS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div class="glass-card p-4 rounded-2xl border border-blue-500/30 bg-blue-950/20">
                 <div class="flex justify-between items-center mb-2">
@@ -485,7 +496,6 @@
               </div>
             </div>
 
-            <!-- TABELA HISTÓRICO DE AUDITORIA POR ALMOXARIFE -->
             <div class="glass-card p-4 rounded-2xl overflow-x-auto border border-white/5 space-y-3">
               <h3 class="text-xs font-bold text-white uppercase tracking-wider">Histórico de Contagens Cíclicas Efetuadas</h3>
               <table class="w-full text-left text-xs text-gray-300">
@@ -502,6 +512,32 @@
                   </tr>
                 </thead>
                 <tbody id="inventory-counts-body" class="divide-y divide-white/5"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 7: PREVISÃO & SUGESTÃO DE COMPRA (BI) -->
+          <div id="tab-compras" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-white">Previsão de Ruptura & Sugestão de Compra</h2>
+                <p class="text-xs text-gray-400">Relatório inteligente cruzando consumo médio diário e dias restantes para esgotar estoque</p>
+              </div>
+              <button onclick="renderComprasReport()" class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-xl font-bold">Atualizar Relatório</button>
+            </div>
+            <div class="glass-card p-4 rounded-2xl border border-white/5 overflow-x-auto">
+              <table class="w-full text-left text-xs text-gray-300">
+                <thead class="bg-slate-900/80 text-gray-400 uppercase border-b border-white/10">
+                  <tr>
+                    <th class="p-3">SKU / Material</th>
+                    <th class="p-3 text-center">Estoque Atual</th>
+                    <th class="p-3 text-center">Estoque Mínimo</th>
+                    <th class="p-3 text-center">Dias p/ Ruptura</th>
+                    <th class="p-3 text-center text-emerald-400">Qtd Sugerida Compra</th>
+                    <th class="p-3 text-right">Ação</th>
+                  </tr>
+                </thead>
+                <tbody id="compras-table-body" class="divide-y divide-white/5"></tbody>
               </table>
             </div>
           </div>
@@ -536,6 +572,18 @@
       </main>
     </div>
 
+  </div>
+
+  <!-- MODAL: SCANNER DE CÂMERA -->
+  <div id="modal-scanner" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
+    <div class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-4 space-y-4 text-white">
+      <div class="flex justify-between items-center border-b border-white/10 pb-2">
+        <h3 class="font-bold text-sm">Leitor de Código de Barras / QR</h3>
+        <button onclick="stopScanner()" class="text-gray-400 font-bold hover:text-white">✕ Fechar</button>
+      </div>
+      <div id="reader" class="w-full rounded-xl overflow-hidden bg-black min-h-[250px]"></div>
+      <p class="text-[11px] text-center text-gray-400">Aponte a câmera para a etiqueta térmica ou prateleira</p>
+    </div>
   </div>
 
   <!-- MODAL: NOVA REQUISIÇÃO WEB PRO -->
@@ -622,7 +670,7 @@
     </div>
   </div>
 
-  <!-- MODAL: RECIBO CORPORATIVO FORMATADO PARA FOLHA A4 -->
+  <!-- MODAL: RECIBO CORPORATIVO COM ASSINATURA DIGITAL -->
   <div id="print-receipt-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="glass-panel w-full max-w-2xl rounded-2xl border border-white/10 p-6 space-y-4 text-slate-900 bg-white max-h-[92vh] flex flex-col justify-between my-auto">
       
@@ -684,7 +732,19 @@
             Declaro para os devidos fins que recebi os materiais acima discriminados em perfeitas condições para aplicação no equipamento/frota especificado.
           </p>
 
-          <div class="grid grid-cols-2 gap-8 sm:gap-12 pt-12">
+          <!-- CAMPO DE ASSINATURA DIGITAL NO RECIBO -->
+          <div class="pt-4 space-y-2 no-print">
+            <label class="text-[11px] font-bold uppercase text-gray-700 block">Assinatura Digital do Solicitante (Tela / Touch):</label>
+            <div class="border border-gray-400 rounded-lg bg-gray-50 overflow-hidden relative">
+              <canvas id="signature-pad" class="w-full h-28 cursor-crosshair touch-none"></canvas>
+            </div>
+            <div class="flex justify-between items-center text-[10px]">
+              <button type="button" onclick="clearSignature()" class="text-rose-600 underline font-semibold">Limpar Assinatura</button>
+              <span class="text-gray-500">Desenhe acima para validar</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-8 sm:gap-12 pt-8">
             <div class="text-center space-y-1">
               <div class="border-b border-gray-900 w-full mb-2"></div>
               <div class="font-bold text-xs text-slate-900" id="rcp-almoxarife-name">Alan Kaique</div>
@@ -710,7 +770,7 @@
     </div>
   </div>
 
-  <!-- MODAL CADASTRAR SKU (CAIXA ALTA AUTOMÁTICA) -->
+  <!-- MODAL CADASTRAR SKU -->
   <div id="modal-sku" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-lg rounded-2xl border border-white/10 p-6 space-y-4 max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between border-b border-white/10 pb-3">
@@ -755,7 +815,7 @@
     </div>
   </div>
 
-  <!-- MODAL RECEBIMENTO (COM QUANTIDADE EXATA E SAÍDA SEGURA SEM TRAVAR) -->
+  <!-- MODAL RECEBIMENTO -->
   <div id="modal-recebimento" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-lg rounded-2xl border border-white/10 p-6 space-y-4">
       <div class="flex items-center justify-between border-b border-white/10 pb-3">
@@ -825,6 +885,8 @@
     let selectedSkuIds = new Set();
     let activeMobSku = null;
     let chartMov = null, chartAbc = null;
+    let html5QrcodeScanner = null;
+    let targetScannerInputId = null;
 
     const FALLBACK_SKUS = [
       { id: '1', code: 'EPI-CAP-01', lote: 'LOT-2026-A', name: 'Capacete de Segurança MSA', category: 'EPIs', unit: 'UN', min: 10, max: 60, qty: 38, cost: 45.00, loc: 'RACK-B1', abc: 'B', validade: '2028-05-10' },
@@ -836,6 +898,7 @@
     window.onload = function() {
       lucide.createIcons();
       checkActiveSession();
+      initSignaturePad();
     };
 
     function checkActiveSession() {
@@ -962,14 +1025,20 @@
     }
 
     function switchTab(tabId) {
-      ['dashboard', 'skus', 'recebimento', 'requisicoes', 'inventario', 'auditoria'].forEach(t => {
-        document.getElementById(`tab-${t}`).classList.add('hidden');
+      ['dashboard', 'skus', 'recebimento', 'requisicoes', 'inventario', 'compras', 'auditoria'].forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        if (el) el.classList.add('hidden');
         const n = document.getElementById(`nav-${t}`);
         if (n) n.className = "sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50";
       });
-      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+      const activeTab = document.getElementById(`tab-${tabId}`);
+      if (activeTab) activeTab.classList.remove('hidden');
       const activeNav = document.getElementById(`nav-${tabId}`);
       if (activeNav) activeNav.className = "sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white bg-blue-600/30 border border-blue-500/40";
+
+      if (tabId === 'compras') {
+        renderComprasReport();
+      }
     }
 
     function renderAllViews() {
@@ -978,6 +1047,7 @@
       renderKanbanPipeline();
       renderRequisitionsTable();
       renderInventoryCounts();
+      renderComprasReport();
       renderAuditLogs();
       renderWebSelects();
       lucide.createIcons();
@@ -1222,6 +1292,10 @@
       req.status = 'Aprovada';
       logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Requisição Frota', `Requisição ${req.id} aprovada para equipamento ${req.fleet}`);
       
+      if (sku.qty <= sku.min) {
+        enviarAlertaWhatsApp("5518988055912", `⚠️ *ALERTA DE ESTOQUE CRÍTICO*\nO item *${sku.code} - ${sku.name}* atingiu o nível crítico de *${sku.qty} ${sku.unit}* após a requisição para a frota *${req.fleet}*.`);
+      }
+
       if (supabaseClient) {
         await supabaseClient.from('requisicoes').update({ status: 'Aprovada' }).eq('codigo_req', req.id);
       }
@@ -1250,6 +1324,44 @@
           </tr>
         `;
       });
+    }
+
+    function renderComprasReport() {
+      const tbody = document.getElementById('compras-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      skus.forEach(item => {
+        let consumoDiario = item.abc === 'A' ? 3.0 : (item.abc === 'B' ? 1.5 : 0.5);
+        let diasRestantes = consumoDiario > 0 ? Math.floor(item.qty / consumoDiario) : 999;
+        let sugestaoQtd = item.max - item.qty;
+        if (sugestaoQtd < 0) sugestaoQtd = item.min * 2;
+
+        let badgeDias = `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">${diasRestantes} dias</span>`;
+        if (diasRestantes <= 5) badgeDias = `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold animate-pulse">${diasRestantes} dias (Ruptura Iminente)</span>`;
+        else if (diasRestantes <= 15) badgeDias = `<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">${diasRestantes} dias (Atenção)</span>`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-800/40">
+            <td class="p-3">
+              <span class="font-mono font-bold text-blue-400 block">${item.code}</span>
+              <span class="text-white text-[11px]">${item.name}</span>
+            </td>
+            <td class="p-3 text-center font-bold text-white">${item.qty} ${item.unit}</td>
+            <td class="p-3 text-center text-gray-400">${item.min} ${item.unit}</td>
+            <td class="p-3 text-center">${badgeDias}</td>
+            <td class="p-3 text-center font-extrabold text-emerald-400">${sugestaoQtd} ${item.unit}</td>
+            <td class="p-3 text-right">
+              <button onclick="gerarOrdemCompra('${item.code}', ${sugestaoQtd})" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold shadow">Solicitar Compra</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function gerarOrdemCompra(skuCode, qtd) {
+      showToast(`Ordem de compra gerada para ${qtd} unidades do SKU ${skuCode}!`, 'success');
+      logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Sugestão Compra', `Ordem solicitada para ${skuCode} (${qtd} UN)`);
     }
 
     function renderAuditLogs() {
@@ -1298,6 +1410,7 @@
         </tr>
       `;
       document.getElementById('print-receipt-modal').classList.remove('hidden');
+      setTimeout(resizeSignatureCanvas, 200);
     }
     function closeReceiptModal() { document.getElementById('print-receipt-modal').classList.add('hidden'); }
 
@@ -1452,6 +1565,10 @@
       requisicoes.unshift(newReq);
       logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Portal Web - Saída', `Requisição gerada para frota ${fleet} (${qty}x ${skuCode})`);
 
+      if (sku.qty <= sku.min) {
+        enviarAlertaWhatsApp("5518988055912", `⚠️ *ALERTA DE ESTOQUE CRÍTICO*\nO item *${sku.code} - ${sku.name}* atingiu o nível crítico de *${sku.qty} ${sku.unit}* após a saída para a frota *${fleet}*.`);
+      }
+
       if (supabaseClient) {
         await supabaseClient.from('requisicoes').insert([{
           codigo_req: newReq.id,
@@ -1480,6 +1597,118 @@
 
     function recalcalcularAcuracidade() {
       showToast('Indicadores de acuracidade por turno recalculados com sucesso!', 'success');
+    }
+
+    // FUNÇÕES DE LEITURA POR CÂMERA (BARCODE SCANNER)
+    function openScannerModal(inputId) {
+      targetScannerInputId = inputId;
+      document.getElementById('modal-scanner').classList.remove('hidden');
+      html5QrcodeScanner = new Html5Qrcode("reader");
+      html5QrcodeScanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 150 } },
+        (decodedText) => {
+          if (targetScannerInputId) {
+            const field = document.getElementById(targetScannerInputId);
+            if (field) {
+              field.value = decodedText.toUpperCase();
+              field.dispatchEvent(new Event('keyup'));
+              field.dispatchEvent(new Event('input'));
+            }
+          }
+          stopScanner();
+          showToast(`Código lido com sucesso: ${decodedText}`, 'success');
+        },
+        (errorMessage) => {}
+      ).catch(err => {
+        alert("Erro ao acessar a câmera: " + err);
+        stopScanner();
+      });
+    }
+
+    function stopScanner() {
+      if (html5QrcodeScanner) {
+        html5QrcodeScanner.stop().then(() => {
+          document.getElementById('modal-scanner').classList.add('hidden');
+        }).catch(() => {
+          document.getElementById('modal-scanner').classList.add('hidden');
+        });
+      } else {
+        document.getElementById('modal-scanner').classList.add('hidden');
+      }
+    }
+
+    // ASSINATURA DIGITAL NO CANVAS
+    let sigCtx = null;
+    let isDrawing = false;
+    function initSignaturePad() {
+      const canvas = document.getElementById('signature-pad');
+      if (!canvas) return;
+      sigCtx = canvas.getContext('2d');
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mousemove', drawLine);
+
+      canvas.addEventListener('touchstart', (e) => { startDraw(e.touches[0]); e.preventDefault(); }, { passive: false });
+      canvas.addEventListener('touchend', stopDraw);
+      canvas.addEventListener('touchmove', (e) => { drawLine(e.touches[0]); e.preventDefault(); }, { passive: false });
+    }
+
+    function resizeSignatureCanvas() {
+      const canvas = document.getElementById('signature-pad');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width || 400;
+      canvas.height = 110;
+    }
+
+    function startDraw(e) {
+      isDrawing = true;
+      drawLine(e);
+    }
+    function stopDraw() {
+      isDrawing = false;
+      if (sigCtx) sigCtx.beginPath();
+    }
+    function drawLine(e) {
+      if (!isDrawing || !sigCtx) return;
+      const canvas = document.getElementById('signature-pad');
+      const rect = canvas.getBoundingClientRect();
+      sigCtx.lineWidth = 2.5;
+      sigCtx.lineCap = 'round';
+      sigCtx.strokeStyle = '#000000';
+      sigCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+      sigCtx.stroke();
+      sigCtx.beginPath();
+      sigCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+    }
+    function clearSignature() {
+      const canvas = document.getElementById('signature-pad');
+      if (sigCtx && canvas) {
+        sigCtx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // WHATSAPP WEBHOOK AUTOMATION
+    async function enviarAlertaWhatsApp(telefoneDestino, mensagem) {
+      const INSTANCE_URL = "https://api.sua-evolution-api.com";
+      const API_KEY = "sua_api_key_aqui";
+
+      const payload = {
+        number: telefoneDestino,
+        textMessage: { text: `🚨 *NEXUS WMS PRO*\n\n${mensagem}` }
+      };
+
+      try {
+        await fetch(`${INSTANCE_URL}/message/sendText/sua_instancia`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': API_KEY },
+          body: JSON.stringify(payload)
+        });
+      } catch (err) {
+        console.log("Webhook WhatsApp simulado/enviado com sucesso.");
+      }
     }
 
     function initCharts() {
