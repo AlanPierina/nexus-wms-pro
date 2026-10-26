@@ -17,8 +17,8 @@
         extend: {
           colors: {
             brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
-            darkbg: '#0b0f19',
-            darkcard: 'rgba(17, 24, 39, 0.7)',
+            darkbg: '#07090e',
+            darkcard: 'rgba(15, 23, 42, 0.75)',
             darkborder: 'rgba(255, 255, 255, 0.08)',
           },
           fontFamily: { sans: ['Inter', 'sans-serif'] }
@@ -30,7 +30,7 @@
   <!-- Google Font & Lucide Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <!-- Chart.js -->
@@ -45,21 +45,47 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: radial-gradient(circle at top right, #1e1b4b 0%, #0b0f19 50%, #030712 100%);
+      background: radial-gradient(circle at 15% 15%, #1e1b4b 0%, #0b0f19 45%, #030712 100%);
       background-attachment: fixed;
       color: #f3f4f6;
     }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.5); }
+    ::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.3); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.6); }
     
-    .glass-panel { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); }
-    .glass-input { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-size: 0.95rem; }
-    .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25); }
+    .glass-panel { 
+      background: rgba(15, 23, 42, 0.85); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08); 
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card { 
+      background: rgba(30, 41, 59, 0.45); 
+      backdrop-filter: blur(14px); 
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.06); 
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      box-shadow: 0 12px 30px -10px rgba(59, 130, 246, 0.2);
+    }
+    .glass-input { 
+      background: rgba(11, 15, 25, 0.9); 
+      border: 1px solid rgba(255, 255, 255, 0.12); 
+      color: #fff; 
+      font-size: 0.9rem; 
+      transition: all 0.2s ease;
+    }
+    .glass-input:focus { 
+      border-color: #3b82f6; 
+      outline: none; 
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25); 
+    }
 
-    select.glass-input option { background-color: #0f172a; color: #ffffff; padding: 12px; font-size: 0.95rem; }
+    select.glass-input option { background-color: #0f172a; color: #ffffff; padding: 12px; font-size: 0.9rem; }
 
     .label-size-100x50 {
       width: 95mm; height: 48mm; padding: 2mm; box-sizing: border-box; background: white; color: black; border: 1px solid #ccc;
@@ -122,12 +148,12 @@
 
   <!-- ================= TELA DE LOGIN ================= -->
   <section id="view-login" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-    <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="w-full max-w-md glass-panel p-8 rounded-3xl border border-white/10 shadow-2xl space-y-6 z-10">
-      <div class="text-center space-y-2">
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/30">
+      <div class="text-center space-y-3">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-xl shadow-blue-500/25">
           <i data-lucide="boxes" class="w-8 h-8 text-white"></i>
         </div>
         <h1 class="text-2xl font-black tracking-wide text-white">NEXUS <span class="text-blue-400">WMS PRO</span></h1>
@@ -136,30 +162,32 @@
 
       <form onsubmit="handleLogin(event)" class="space-y-4 text-xs">
         <div>
-          <label class="text-gray-300 font-semibold block mb-1">E-mail Corporativo</label>
+          <label class="text-gray-300 font-medium block mb-1">E-mail Corporativo</label>
           <div class="relative">
-            <i data-lucide="mail" class="w-4 h-4 text-gray-400 absolute left-3 top-3"></i>
-            <input type="email" id="login-email" required value="alan.pierina@agricolafp.agr.br" placeholder="seu.email@empresa.com" class="w-full glass-input pl-9 pr-4 py-2.5 rounded-xl text-xs font-medium">
+            <i data-lucide="mail" class="w-4 h-4 text-gray-400 absolute left-3.5 top-3"></i>
+            <input type="email" id="login-email" required value="alan.pierina@agricolafp.agr.br" placeholder="seu.email@empresa.com" class="w-full glass-input pl-10 pr-4 py-2.5 rounded-xl text-xs font-medium">
           </div>
         </div>
 
         <div>
-          <label class="text-gray-300 font-semibold block mb-1">Palavra-passe</label>
+          <label class="text-gray-300 font-medium block mb-1">Palavra-passe</label>
           <div class="relative">
-            <i data-lucide="lock" class="w-4 h-4 text-gray-400 absolute left-3 top-3"></i>
-            <input type="password" id="login-password" required value="123456" placeholder="••••••••" class="w-full glass-input pl-9 pr-4 py-2.5 rounded-xl text-xs font-medium">
+            <i data-lucide="lock" class="w-4 h-4 text-gray-400 absolute left-3.5 top-3"></i>
+            <input type="password" id="login-password" required value="123456" placeholder="••••••••" class="w-full glass-input pl-10 pr-4 py-2.5 rounded-xl text-xs font-medium">
           </div>
         </div>
 
-        <button type="submit" id="btn-login-submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition">
+        <button type="submit" id="btn-login-submit" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 transition cursor-pointer">
           <i data-lucide="log-in" class="w-4 h-4"></i>
           <span>Entrar no Portal Web</span>
         </button>
       </form>
 
-      <div class="pt-4 border-t border-white/5 text-center text-[10px] text-gray-500 flex items-center justify-between">
+      <div class="pt-4 border-t border-white/5 text-center text-[10px] text-gray-400 flex items-center justify-between">
         <span>Agrícola FP S/A</span>
-        <a href="mobile.html" class="text-blue-400 underline font-semibold">Ir para o Link Mobile (Celular)</a>
+        <a href="mobile.html" class="text-emerald-400 hover:text-emerald-300 font-bold flex items-center gap-1 transition">
+          <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Ir para Coletor Mobile
+        </a>
       </div>
     </div>
   </section>
@@ -167,27 +195,32 @@
   <!-- ================= APLICAÇÃO PRINCIPAL WEB ================= -->
   <div id="app-container" class="hidden min-h-screen flex flex-col">
 
-    <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 lg:px-8 py-3 flex items-center justify-between">
+    <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-6 py-3.5 flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
           <i data-lucide="boxes" class="w-6 h-6 text-white"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="font-bold text-lg tracking-wide text-white">NEXUS <span class="text-blue-400 font-extrabold">WMS PRO</span></h1>
-            <span class="px-2 py-0.5 text-[10px] uppercase tracking-wider font-bold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Portal Web</span>
+            <h1 class="font-bold text-lg tracking-wide text-white">NEXUS <span class="text-blue-400 font-black">WMS PRO</span></h1>
+            <span class="px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">Portal Web</span>
           </div>
-          <p class="text-xs text-gray-400">Gestão de Almoxarifado Industrial & Impressão Térmica</p>
+          <p class="text-xs text-gray-400">Gestão de Almoxarifado Agrícola FP</p>
         </div>
       </div>
 
-      <div class="flex items-center gap-4">
-        <button onclick="openScannerModal('filter-search')" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-blue-400 flex items-center gap-2 font-semibold shadow">
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="openScannerModal('filter-search')" class="px-3.5 py-2 bg-slate-800/80 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-blue-400 flex items-center gap-2 font-semibold shadow transition cursor-pointer">
           <i data-lucide="scan" class="w-4 h-4"></i>
           <span>Ler Código (Câmera)</span>
         </button>
 
-        <a href="mobile.html" target="_blank" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-emerald-400 flex items-center gap-2 font-semibold shadow">
+        <button type="button" onclick="enviarAlertaItensCriticosWhatsApp()" class="px-3.5 py-2 bg-emerald-600/20 hover:bg-emerald-600/40 border border-emerald-500/30 text-emerald-400 text-xs rounded-xl font-bold flex items-center gap-2 transition cursor-pointer" title="Notificar itens críticos via Whats">
+          <i data-lucide="message-square" class="w-4 h-4"></i>
+          <span>Alerta Whats Críticos</span>
+        </button>
+
+        <a href="mobile.html" target="_blank" class="px-3.5 py-2 bg-slate-800/80 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-emerald-400 flex items-center gap-2 font-semibold shadow transition">
           <i data-lucide="smartphone" class="w-4 h-4"></i>
           <span>Link App Coletor Mobile</span>
         </a>
@@ -196,14 +229,14 @@
 
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-2.5">
-            <div id="user-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-xs font-bold text-white shadow">AP</div>
+            <div id="user-avatar" class="w-8.5 h-8.5 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center text-xs font-bold text-white shadow">AP</div>
             <div class="text-left leading-tight hidden lg:block">
               <p id="header-user-name" class="text-xs font-semibold text-gray-200">Alan Kaique</p>
-              <p id="header-user-role" class="text-[10px] text-emerald-400">Almoxarife Chefe</p>
+              <p id="header-user-role" class="text-[10px] text-emerald-400 font-medium">Almoxarife Chefe</p>
             </div>
           </div>
 
-          <button onclick="handleLogout()" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition" title="Sair da Conta">
+          <button type="button" onclick="handleLogout()" class="p-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition cursor-pointer" title="Sair da Conta">
             <i data-lucide="log-out" class="w-4 h-4"></i>
           </button>
         </div>
@@ -216,39 +249,44 @@
         
         <aside class="w-64 glass-panel border-r border-white/10 hidden md:flex flex-col justify-between p-4 shrink-0">
           <div class="space-y-6">
-            <div class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3">Módulos WMS</div>
-            <nav class="space-y-1" id="desktop-nav">
-              <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white bg-blue-600/30 border border-blue-500/40">
+            <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3">Módulos WMS</div>
+            <nav class="space-y-1.5" id="desktop-nav">
+              <a href="javascript:void(0)" onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white bg-blue-600/30 border border-blue-500/40">
                 <i data-lucide="line-chart" class="w-4 h-4 text-blue-400"></i> Dashboard Executivo
               </a>
-              <a href="#" onclick="switchTab('skus')" id="nav-skus" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <a href="javascript:void(0)" onclick="switchTab('skus')" id="nav-skus" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
                 <i data-lucide="package" class="w-4 h-4"></i> Catálogo SKUs & Lotes
               </a>
-              <a href="#" onclick="switchTab('recebimento')" id="nav-recebimento" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <a href="javascript:void(0)" onclick="switchTab('recebimento')" id="nav-recebimento" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
                 <i data-lucide="truck" class="w-4 h-4"></i> Entradas NFe & Qualidade
               </a>
-              <a href="#" onclick="switchTab('requisicoes')" id="nav-requisicoes" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <a href="javascript:void(0)" onclick="switchTab('requisicoes')" id="nav-requisicoes" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
                 <i data-lucide="clipboard-list" class="w-4 h-4"></i> Central de Requisições & Frota
               </a>
-              <a href="#" onclick="switchTab('inventario')" id="nav-inventario" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <a href="javascript:void(0)" onclick="switchTab('equipe')" id="nav-equipe" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+                <i data-lucide="users" class="w-4 h-4 text-amber-400"></i> Equipe & Escalas
+              </a>
+              <a href="javascript:void(0)" onclick="switchTab('inventario')" id="nav-inventario" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
                 <i data-lucide="check-check" class="w-4 h-4"></i> Acuracidade & Turnos
               </a>
-              <a href="#" onclick="switchTab('compras')" id="nav-compras" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
-                <i data-lucide="shopping-cart" class="w-4 h-4"></i> Previsão & Sugestão Compra
+              <a href="javascript:void(0)" onclick="switchTab('compras')" id="nav-compras" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+                <i data-lucide="shopping-cart" class="w-4 h-4 text-emerald-400"></i> Previsão & BI Compras
               </a>
-              <a href="#" onclick="switchTab('auditoria')" id="nav-auditoria" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
+              <a href="javascript:void(0)" onclick="switchTab('auditoria')" id="nav-auditoria" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50">
                 <i data-lucide="shield-check" class="w-4 h-4"></i> Log de Auditoria
               </a>
             </nav>
           </div>
 
-          <div class="glass-card p-3.5 rounded-xl space-y-2 border border-white/5">
+          <div class="glass-card p-4 rounded-2xl space-y-2 border border-white/5">
             <div class="flex items-center justify-between text-xs">
-              <span class="text-gray-400">Supabase Cloud</span>
-              <span id="db-status-badge" class="text-emerald-400 font-medium">Sincronizado</span>
+              <span class="text-gray-400 font-medium">Supabase Cloud</span>
+              <span id="db-status-badge" class="text-emerald-400 font-bold flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Sincronizado
+              </span>
             </div>
             <div class="text-xs font-bold text-gray-200">Agrícola FP - Unidade Central</div>
-            <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+            <div class="w-full bg-gray-800/80 h-1.5 rounded-full overflow-hidden">
               <div class="bg-gradient-to-r from-blue-500 to-emerald-400 h-full w-full"></div>
             </div>
           </div>
@@ -259,64 +297,68 @@
           <!-- TAB 1: DASHBOARD -->
           <div id="tab-dashboard" class="space-y-6">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="glass-card p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
                 <div class="flex items-center justify-between text-gray-400 mb-2">
                   <span class="text-xs font-medium">Total de SKUs</span>
                   <i data-lucide="layers" class="w-4 h-4 text-blue-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-white" id="kpi-total-skus">0</div>
-                <span class="text-[10px] text-emerald-400 mt-2">Ativos no Supabase</span>
+                <div class="text-3xl font-black text-white" id="kpi-total-skus">0</div>
+                <span class="text-[10px] text-emerald-400 font-semibold mt-2">Ativos no Supabase</span>
               </div>
-              <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="glass-card p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
                 <div class="flex items-center justify-between text-gray-400 mb-2">
                   <span class="text-xs font-medium">Valor em Estoque</span>
                   <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-white" id="kpi-total-valor">R$ 0,00</div>
+                <div class="text-3xl font-black text-white" id="kpi-total-valor">R$ 0,00</div>
                 <span class="text-[10px] text-gray-400 mt-2">Custo Médio Ponderado</span>
               </div>
-              <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="glass-card p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
                 <div class="flex items-center justify-between text-gray-400 mb-2">
                   <span class="text-xs font-medium">Itens Críticos</span>
                   <i data-lucide="alert-triangle" class="w-4 h-4 text-rose-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-rose-400" id="kpi-criticos">0</div>
-                <span class="text-[10px] text-rose-400/80 mt-2">Abaixo do Mínimo</span>
+                <div class="text-3xl font-black text-rose-400" id="kpi-criticos">0</div>
+                <span class="text-[10px] text-rose-400/80 font-semibold mt-2">Abaixo do Mínimo</span>
               </div>
-              <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="glass-card p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
                 <div class="flex items-center justify-between text-gray-400 mb-2">
                   <span class="text-xs font-medium">Requisições Pendentes</span>
                   <i data-lucide="clock" class="w-4 h-4 text-amber-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-amber-400" id="kpi-requisicoes-pendentes">0</div>
-                <span class="text-[10px] text-amber-400/80 mt-2">Aguardando Aprovação</span>
+                <div class="text-3xl font-black text-amber-400" id="kpi-requisicoes-pendentes">0</div>
+                <span class="text-[10px] text-amber-400/80 font-semibold mt-2">Aguardando Aprovação</span>
               </div>
-              <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+              <div class="glass-card p-5 rounded-2xl border border-white/5 flex flex-col justify-between">
                 <div class="flex items-center justify-between text-gray-400 mb-2">
                   <span class="text-xs font-medium">Acurácia WMS</span>
                   <i data-lucide="check-circle" class="w-4 h-4 text-indigo-400"></i>
                 </div>
-                <div class="text-2xl font-bold text-white">99.4%</div>
-                <span class="text-[10px] text-emerald-400 mt-2">Auditoria Cíclica</span>
+                <div class="text-3xl font-black text-white">99.4%</div>
+                <span class="text-[10px] text-emerald-400 font-semibold mt-2">Auditoria Cíclica</span>
               </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div class="glass-card p-5 rounded-2xl border border-white/5 lg:col-span-2 space-y-4">
-                <h3 class="text-sm font-bold text-white">Fluxo Semanal de Movimentações</h3>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <i data-lucide="activity" class="w-4 h-4 text-blue-400"></i> Fluxo Semanal de Movimentações
+                </h3>
                 <div class="h-64 relative w-full">
                   <canvas id="real-chart-movements"></canvas>
                 </div>
               </div>
               <div class="glass-card p-5 rounded-2xl border border-white/5 space-y-4 flex flex-col justify-between">
-                <h3 class="text-sm font-bold text-white">Curva ABC</h3>
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-400"></i> Curva ABC (Curva de Valor)
+                </h3>
                 <div class="h-48 relative flex items-center justify-center">
                   <canvas id="real-chart-abc"></canvas>
                 </div>
                 <div class="grid grid-cols-3 gap-2 text-center text-xs">
-                  <div class="p-2 bg-blue-500/10 rounded-lg border border-blue-500/20"><span class="font-bold text-blue-400 block">A</span><span class="text-[10px] text-gray-400">80% Valor</span></div>
-                  <div class="p-2 bg-amber-500/10 rounded-lg border border-amber-500/20"><span class="font-bold text-amber-400 block">B</span><span class="text-[10px] text-gray-400">15% Valor</span></div>
-                  <div class="p-2 bg-emerald-500/10 rounded-lg border border-emerald-500/20"><span class="font-bold text-emerald-400 block">C</span><span class="text-[10px] text-gray-400">5% Valor</span></div>
+                  <div class="p-2 bg-blue-500/10 rounded-xl border border-blue-500/20"><span class="font-bold text-blue-400 block">A</span><span class="text-[10px] text-gray-400">80% Valor</span></div>
+                  <div class="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20"><span class="font-bold text-amber-400 block">B</span><span class="text-[10px] text-gray-400">15% Valor</span></div>
+                  <div class="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20"><span class="font-bold text-emerald-400 block">C</span><span class="text-[10px] text-gray-400">5% Valor</span></div>
                 </div>
               </div>
             </div>
@@ -330,10 +372,10 @@
                 <p class="text-xs text-gray-400">Gerenciamento avançado com seleção múltipla para impressão em lote</p>
               </div>
               <div class="flex items-center gap-2">
-                <button onclick="openBatchPrintModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-white/10 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2 transition">
+                <button onclick="openBatchPrintModal()" class="px-4 py-2 bg-slate-800/80 hover:bg-slate-700 border border-white/10 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2 transition cursor-pointer">
                   <i data-lucide="printer" class="w-4 h-4 text-blue-400"></i> Imprimir Etiquetas Selecionadas (<span id="selected-count">0</span>)
                 </button>
-                <button onclick="openModalSKU()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2">
+                <button onclick="openModalSKU()" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2 cursor-pointer">
                   <i data-lucide="plus" class="w-4 h-4"></i> Cadastrar Novo SKU
                 </button>
               </div>
@@ -341,11 +383,11 @@
 
             <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
               <div class="relative w-full md:w-80">
-                <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-3"></i>
-                <input type="text" id="filter-search" onkeyup="renderSKUTable()" placeholder="Buscar por Nome, SKU, Lote..." class="w-full glass-input pl-9 pr-4 py-2 rounded-xl text-xs">
+                <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-3"></i>
+                <input type="text" id="filter-search" onkeyup="renderSKUTable()" placeholder="Buscar por Nome, SKU, Lote..." class="w-full glass-input pl-10 pr-4 py-2 rounded-xl text-xs font-medium">
               </div>
               <div class="flex items-center gap-3 w-full md:w-auto">
-                <button onclick="openScannerModal('filter-search')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-white/10 text-blue-400 rounded-xl text-xs font-semibold flex items-center gap-2">
+                <button type="button" onclick="openScannerModal('filter-search')" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 border border-white/10 text-blue-400 rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer">
                   <i data-lucide="scan" class="w-4 h-4"></i> Ler por Câmera
                 </button>
                 <select id="filter-categoria" onchange="renderSKUTable()" class="glass-input px-3 py-2 rounded-xl text-xs">
@@ -391,7 +433,7 @@
                 <h2 class="text-xl font-bold text-white">Recebimento & Qualidade</h2>
                 <p class="text-xs text-gray-400">Workflow visual com almoxarife responsável</p>
               </div>
-              <button onclick="openModalRecebimento()" class="px-4 py-2 bg-emerald-600 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2">
+              <button onclick="openModalRecebimento()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2 cursor-pointer">
                 <i data-lucide="file-plus" class="w-4 h-4"></i> Registrar Entrada NFe
               </button>
             </div>
@@ -399,25 +441,25 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[550px]">
                 <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3 text-xs font-bold text-gray-300">
-                  <span>1. Trânsito</span><span id="kanban-count-1" class="text-blue-400">0</span>
+                  <span>1. Trânsito</span><span id="kanban-count-1" class="text-blue-400 font-mono">0</span>
                 </div>
                 <div class="flex-1 overflow-y-auto space-y-3" id="kanban-col-1"></div>
               </div>
               <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[550px]">
                 <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3 text-xs font-bold text-gray-300">
-                  <span>2. Doca</span><span id="kanban-count-2" class="text-amber-400">0</span>
+                  <span>2. Doca</span><span id="kanban-count-2" class="text-amber-400 font-mono">0</span>
                 </div>
                 <div class="flex-1 overflow-y-auto space-y-3" id="kanban-col-2"></div>
               </div>
               <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[550px]">
                 <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3 text-xs font-bold text-gray-300">
-                  <span>3. CQ / Inspeção</span><span id="kanban-count-3" class="text-indigo-400">0</span>
+                  <span>3. CQ / Inspeção</span><span id="kanban-count-3" class="text-indigo-400 font-mono">0</span>
                 </div>
                 <div class="flex-1 overflow-y-auto space-y-3" id="kanban-col-3"></div>
               </div>
               <div class="glass-card p-4 rounded-2xl border border-white/5 flex flex-col h-[550px]">
                 <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-3 text-xs font-bold text-gray-300">
-                  <span>4. Disponível</span><span id="kanban-count-4" class="text-emerald-400">0</span>
+                  <span>4. Disponível</span><span id="kanban-count-4" class="text-emerald-400 font-mono">0</span>
                 </div>
                 <div class="flex-1 overflow-y-auto space-y-3" id="kanban-col-4"></div>
               </div>
@@ -431,7 +473,7 @@
                 <h2 class="text-xl font-bold text-white">Central de Requisições & Aplicação em Frota</h2>
                 <p class="text-xs text-gray-400">Controle de saída vinculado a equipamentos, tratores e frotas agrícolas</p>
               </div>
-              <button onclick="openModalWebRequisicao()" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2">
+              <button onclick="openModalWebRequisicao()" class="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white font-medium text-xs rounded-xl shadow-lg flex items-center gap-2 cursor-pointer">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i> Nova Requisição / Saída Web
               </button>
             </div>
@@ -457,42 +499,76 @@
             </div>
           </div>
 
-          <!-- TAB 5: RELATÓRIO DE ACURACIDADE & CONTAGENS POR TURNO -->
+          <!-- TAB NOVA: EQUIPE & ESCALAS DE TURNO -->
+          <div id="tab-equipe" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-white">Quadro de Horários & Colaboradores do Almoxarifado</h2>
+                <p class="text-xs text-gray-400">Escalas ativas e gestão da equipe sincronizada diretamente com o Supabase</p>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
+              <div class="p-4 border-b border-white/10 flex justify-between items-center bg-slate-900/50">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <i data-lucide="users" class="w-4 h-4 text-amber-400"></i> Integrantes Registrados na Base
+                </h3>
+                <span class="text-[11px] text-gray-400" id="team-count-badge">4 Colaboradores</span>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-gray-300">
+                  <thead class="bg-slate-900/80 text-gray-400 uppercase border-b border-white/10">
+                    <tr>
+                      <th class="p-4">Colaborador</th>
+                      <th class="p-4">Cargo</th>
+                      <th class="p-4">Escala / Turno</th>
+                      <th class="p-4">Horário de Trabalho</th>
+                      <th class="p-4">Observações de Jornada</th>
+                      <th class="p-4 text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="team-table-body" class="divide-y divide-white/5"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 5: ACURACIDADE & TURNOS -->
           <div id="tab-inventario" class="hidden space-y-6">
             <div class="flex items-center justify-between">
               <div>
                 <h2 class="text-xl font-bold text-white">Relatório de Acuracidade & Auditoria por Turnos</h2>
                 <p class="text-xs text-gray-400">Verificação das contagens físicas realizadas pelos almoxarifes divididas por turno de trabalho</p>
               </div>
-              <button onclick="recalcularAcuracidade()" class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-xl font-bold">Atualizar Indicadores</button>
+              <button onclick="recalcularAcuracidade()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-xl font-bold shadow cursor-pointer">Atualizar Indicadores</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div class="glass-card p-4 rounded-2xl border border-blue-500/30 bg-blue-950/20">
+              <div class="glass-card p-5 rounded-2xl border border-blue-500/30 bg-blue-950/20">
                 <div class="flex justify-between items-center mb-2">
-                  <span class="text-xs font-bold text-blue-400 uppercase">Turno 1 (06h - 14h)</span>
+                  <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">Turno A (06h - 14h) - João/Nathan</span>
                   <i data-lucide="sun" class="w-4 h-4 text-blue-400"></i>
                 </div>
-                <div class="text-xl font-extrabold text-white" id="t1-acuracidade">100% Acurácia</div>
-                <p class="text-[11px] text-gray-400 mt-1" id="t1-detalhes">0 itens divergentes de 12 auditados</p>
+                <div class="text-2xl font-black text-white" id="t1-acuracidade">100% Acurácia</div>
+                <p class="text-[11px] text-gray-400 mt-1" id="t1-detalhes">0 itens divergentes em auditados</p>
               </div>
 
-              <div class="glass-card p-4 rounded-2xl border border-amber-500/30 bg-amber-950/20">
+              <div class="glass-card p-5 rounded-2xl border border-amber-500/30 bg-amber-950/20">
                 <div class="flex justify-between items-center mb-2">
-                  <span class="text-xs font-bold text-amber-400 uppercase">Turno 2 (14h - 22h)</span>
+                  <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Turno B (14h - 22h) - Rubens</span>
                   <i data-lucide="sunset" class="w-4 h-4 text-amber-400"></i>
                 </div>
-                <div class="text-xl font-extrabold text-white" id="t2-acuracidade">95.2% Acurácia</div>
-                <p class="text-[11px] text-gray-400 mt-1" id="t2-detalhes">1 item divergente de 15 auditados</p>
+                <div class="text-2xl font-black text-white" id="t2-acuracidade">98.2% Acurácia</div>
+                <p class="text-[11px] text-gray-400 mt-1" id="t2-detalhes">0 itens divergentes em auditados</p>
               </div>
 
-              <div class="glass-card p-4 rounded-2xl border border-indigo-500/30 bg-indigo-950/20">
+              <div class="glass-card p-5 rounded-2xl border border-indigo-500/30 bg-indigo-950/20">
                 <div class="flex justify-between items-center mb-2">
-                  <span class="text-xs font-bold text-indigo-400 uppercase">Turno 3 (22h - 06h)</span>
-                  <i data-lucide="moon" class="w-4 h-4 text-indigo-400"></i>
+                  <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">Administrativo (07h - 17h) - Rafael</span>
+                  <i data-lucide="clock" class="w-4 h-4 text-indigo-400"></i>
                 </div>
-                <div class="text-xl font-extrabold text-white" id="t3-acuracidade">98.0% Acurácia</div>
-                <p class="text-[11px] text-gray-400 mt-1" id="t3-detalhes">0 itens divergentes de 8 auditados</p>
+                <div class="text-2xl font-black text-white" id="t3-acuracidade">99.0% Acurácia</div>
+                <p class="text-[11px] text-gray-400 mt-1" id="t3-detalhes">Conferência diária de controle</p>
               </div>
             </div>
 
@@ -516,15 +592,16 @@
             </div>
           </div>
 
-          <!-- TAB 7: PREVISÃO & SUGESTÃO DE COMPRA (BI) -->
+          <!-- TAB 7: PREVISÃO & BI COMPRAS -->
           <div id="tab-compras" class="hidden space-y-6">
             <div class="flex items-center justify-between">
               <div>
-                <h2 class="text-xl font-bold text-white">Previsão de Ruptura & Sugestão de Compra</h2>
-                <p class="text-xs text-gray-400">Relatório inteligente cruzando consumo médio diário e dias restantes para esgotar estoque</p>
+                <h2 class="text-xl font-bold text-white">Previsão de Ruptura & Inteligência de Compras (BI)</h2>
+                <p class="text-xs text-gray-400">Análise de giro diário, cobertura de estoque em dias e solicitação de ordens de compra</p>
               </div>
-              <button onclick="renderComprasReport()" class="px-3 py-1.5 bg-blue-600 text-white text-xs rounded-xl font-bold">Atualizar Relatório</button>
+              <button onclick="renderComprasReport()" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-xl font-bold shadow cursor-pointer">Recalcular Giro de Estoque</button>
             </div>
+
             <div class="glass-card p-4 rounded-2xl border border-white/5 overflow-x-auto">
               <table class="w-full text-left text-xs text-gray-300">
                 <thead class="bg-slate-900/80 text-gray-400 uppercase border-b border-white/10">
@@ -532,8 +609,9 @@
                     <th class="p-3">SKU / Material</th>
                     <th class="p-3 text-center">Estoque Atual</th>
                     <th class="p-3 text-center">Estoque Mínimo</th>
-                    <th class="p-3 text-center">Dias p/ Ruptura</th>
-                    <th class="p-3 text-center text-emerald-400">Qtd Sugerida Compra</th>
+                    <th class="p-3 text-center">Giro Diário Estimado</th>
+                    <th class="p-3 text-center">Dias para Ruptura</th>
+                    <th class="p-3 text-center text-emerald-400">Sugestão Reposição</th>
                     <th class="p-3 text-right">Ação</th>
                   </tr>
                 </thead>
@@ -576,13 +654,20 @@
 
   <!-- MODAL: SCANNER DE CÂMERA -->
   <div id="modal-scanner" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-4 space-y-4 text-white">
+    <div class="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl p-4 space-y-4 text-white shadow-2xl relative">
       <div class="flex justify-between items-center border-b border-white/10 pb-2">
-        <h3 class="font-bold text-sm">Leitor de Código de Barras / QR</h3>
-        <button onclick="stopScanner()" class="text-gray-400 font-bold hover:text-white">✕ Fechar</button>
+        <h3 class="font-bold text-sm text-blue-400 flex items-center gap-2">
+          <i data-lucide="scan" class="w-4 h-4"></i> Leitor de Código de Barras / QR
+        </h3>
+        <button type="button" onclick="forceCloseScanner()" class="px-3 py-1 bg-rose-600/30 hover:bg-rose-600 text-rose-300 hover:text-white rounded-lg text-xs font-bold border border-rose-500/40 cursor-pointer">
+          ✕ Sair / Fechar
+        </button>
       </div>
-      <div id="reader" class="w-full rounded-xl overflow-hidden bg-black min-h-[250px]"></div>
-      <p class="text-[11px] text-center text-gray-400">Aponte a câmera para a etiqueta térmica ou prateleira</p>
+      <div id="reader" class="w-full rounded-xl overflow-hidden bg-black min-h-[260px] flex items-center justify-center border border-white/10"></div>
+      <div class="flex items-center justify-between text-[11px] text-gray-400 pt-1">
+        <span>Aponte para o código na prateleira</span>
+        <button type="button" onclick="forceCloseScanner()" class="text-blue-400 underline font-semibold">Cancelar Leitura</button>
+      </div>
     </div>
   </div>
 
@@ -597,8 +682,8 @@
       </div>
       <form onsubmit="submitWebRequisition(event)" class="space-y-3 text-xs">
         <div>
-          <label class="text-gray-300 block mb-1">Requisitante (Retirante) *</label>
-          <input type="text" id="web-req-user" required value="Alan Kaique" class="w-full glass-input px-3 py-2 rounded-xl">
+          <label class="text-gray-300 block mb-1">Almoxarife Responsável *</label>
+          <select id="web-req-user" required class="w-full glass-input px-3 py-2.5 rounded-xl text-amber-400 font-semibold"></select>
         </div>
         <div>
           <label class="text-gray-300 block mb-1">Equipamento / Trator / Frota *</label>
@@ -670,7 +755,7 @@
     </div>
   </div>
 
-  <!-- MODAL: RECIBO CORPORATIVO COM ASSINATURA DIGITAL -->
+  <!-- MODAL: RECIBO CORPORATIVO FORMATADO PARA FOLHA A4 -->
   <div id="print-receipt-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="glass-panel w-full max-w-2xl rounded-2xl border border-white/10 p-6 space-y-4 text-slate-900 bg-white max-h-[92vh] flex flex-col justify-between my-auto">
       
@@ -732,19 +817,7 @@
             Declaro para os devidos fins que recebi os materiais acima discriminados em perfeitas condições para aplicação no equipamento/frota especificado.
           </p>
 
-          <!-- CAMPO DE ASSINATURA DIGITAL NO RECIBO -->
-          <div class="pt-4 space-y-2 no-print">
-            <label class="text-[11px] font-bold uppercase text-gray-700 block">Assinatura Digital do Solicitante (Tela / Touch):</label>
-            <div class="border border-gray-400 rounded-lg bg-gray-50 overflow-hidden relative">
-              <canvas id="signature-pad" class="w-full h-28 cursor-crosshair touch-none"></canvas>
-            </div>
-            <div class="flex justify-between items-center text-[10px]">
-              <button type="button" onclick="clearSignature()" class="text-rose-600 underline font-semibold">Limpar Assinatura</button>
-              <span class="text-gray-500">Desenhe acima para validar</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-8 sm:gap-12 pt-8">
+          <div class="grid grid-cols-2 gap-8 sm:gap-12 pt-12">
             <div class="text-center space-y-1">
               <div class="border-b border-gray-900 w-full mb-2"></div>
               <div class="font-bold text-xs text-slate-900" id="rcp-almoxarife-name">Alan Kaique</div>
@@ -827,7 +900,10 @@
           <div><label class="text-gray-300 block mb-1">NFe *</label><input type="text" id="form-rec-nfe" required placeholder="NF-9921" class="w-full glass-input px-3 py-2 rounded-xl font-semibold"></div>
           <div><label class="text-gray-300 block mb-1">Fornecedor *</label><input type="text" id="form-rec-forn" required placeholder="Gerdau S/A" class="w-full glass-input px-3 py-2 rounded-xl"></div>
         </div>
-        <div><label class="text-gray-300 block mb-1">Almoxarife Responsável *</label><input type="text" id="form-rec-user" required value="Alan Kaique" class="w-full glass-input px-3 py-2 rounded-xl font-medium text-emerald-400"></div>
+        <div>
+          <label class="text-gray-300 block mb-1 font-semibold">Almoxarife Responsável *</label>
+          <select id="form-rec-user" required class="w-full glass-input px-3 py-2.5 rounded-xl text-emerald-400 font-semibold"></select>
+        </div>
         <div>
           <label class="text-gray-300 block mb-1 font-semibold">Selecione o Material (SKU) *</label>
           <select id="form-rec-sku" required class="w-full glass-input px-3 py-3 rounded-xl font-medium text-sm"></select>
@@ -853,7 +929,10 @@
       <h3 class="text-sm font-bold text-white">Ajustar Saldo de SKU</h3>
       <p class="text-xs text-gray-400" id="adjust-sku-name">---</p>
       <div class="space-y-3 text-xs">
-        <div><label class="text-gray-300 block mb-1">Almoxarife *</label><input type="text" id="input-adjust-user" required value="Alan Kaique" class="w-full glass-input px-3 py-2 rounded-xl"></div>
+        <div>
+          <label class="text-gray-300 block mb-1 font-semibold">Almoxarife *</label>
+          <select id="input-adjust-user" required class="w-full glass-input px-3 py-2 rounded-xl font-semibold text-amber-400"></select>
+        </div>
         <div><label class="text-gray-300 block mb-1">Novo Saldo Real *</label><input type="number" id="input-adjust-newqty" class="w-full glass-input px-3 py-2 rounded-xl text-sm font-bold text-emerald-400"></div>
         <div><label class="text-gray-300 block mb-1">Justificativa *</label><input type="text" id="input-adjust-reason" required placeholder="Ajuste de inventário" class="w-full glass-input px-3 py-2 rounded-xl"></div>
       </div>
@@ -871,6 +950,71 @@
     const SUPABASE_URL = 'https://qnxqrimsgehthjgksuqa.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_secret_8r2ctf2pAY-aQRBPQL1_Sw_AqEZmH5U';
 
+    // MÓDULO DE NOTIFICAÇÕES WHATSAPP
+    const WHATSAPP_CONFIG = {
+      numeroDestino: "5518988055912", // 📱 Seu número cadastrado
+      apiUrl: "https://api.z-api.io/instances/SUA_INSTANCIA/token/SEU_TOKEN/send-text"
+    };
+
+    async function enviarNotificacaoMovimentacaoWhatsApp(dados) {
+      const textoMensagem = 
+        `🚨 *NEXUS WMS - MOVIMENTAÇÃO DE ESTOQUE*\n\n` +
+        `👤 *Responsável:* ${dados.usuario}\n` +
+        `📦 *SKU:* ${dados.skuCode} - ${dados.nomeMaterial}\n` +
+        `🔄 *Tipo de Ação:* ${dados.tipoAcao}\n` +
+        `📊 *Variação:* ${dados.qtdDiferenca > 0 ? '+' : ''}${dados.qtdDiferenca} UN\n` +
+        `📈 *Novo Saldo Total:* ${dados.saldoAtual} UN\n` +
+        `📍 *Local:* ${dados.localizacao || 'Almoxarifado Central'}\n` +
+        `⏰ *Data/Hora:* ${new Date().toLocaleString('pt-BR')}`;
+
+      await dispararMensagemWhatsApp(textoMensagem);
+    }
+
+    async function enviarAlertaItensCriticosWhatsApp() {
+      const itensCriticos = skus.filter(s => s.qty <= s.min);
+
+      if (itensCriticos.length === 0) {
+        showToast("Nenhum item em estado crítico no momento!", "info");
+        return;
+      }
+
+      let listaTexto = "";
+      itensCriticos.forEach((item, index) => {
+        const falta = item.min - item.qty;
+        listaTexto += `\n${index + 1}. *${item.code}* - ${item.name}\n` +
+                      `   • Saldo Atual: *${item.qty} ${item.unit}* (Mínimo: ${item.min})\n` +
+                      `   • Reposição Mínima: *+${falta} ${item.unit}*\n` +
+                      `   • Local: \`${item.loc}\`\n`;
+      });
+
+      const textoMensagem = 
+        `⚠️ *NEXUS WMS - ALERTA DE REPOSIÇÃO CRÍTICA*\n` +
+        `📋 *Total de itens em risco:* ${itensCriticos.length}\n` +
+        `________________________________________\n` +
+        listaTexto +
+        `________________________________________\n` +
+        `💡 *Ação Sugerida:* Gerar Ordem de Compra Imediata no BI.`;
+
+      await dispararMensagemWhatsApp(textoMensagem);
+      showToast(`Alerta de ${itensCriticos.length} itens críticos disparado via WhatsApp!`, "success");
+    }
+
+    async function dispararMensagemWhatsApp(mensagemTexto) {
+      try {
+        await fetch(WHATSAPP_CONFIG.apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: WHATSAPP_CONFIG.numeroDestino,
+            message: mensagemTexto
+          })
+        });
+        console.log("Notificação WhatsApp disparada com sucesso!");
+      } catch (error) {
+        console.error("Erro ao enviar notificação WhatsApp:", error);
+      }
+    }
+
     let supabaseClient = null;
     if (window.supabase && SUPABASE_URL.startsWith('https://')) {
         supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -882,11 +1026,20 @@
     let requisicoes = [];
     let counts = [];
     let auditLogs = [];
+    let colaboradores = [];
+    let turnos = [];
     let selectedSkuIds = new Set();
     let activeMobSku = null;
     let chartMov = null, chartAbc = null;
     let html5QrcodeScanner = null;
     let targetScannerInputId = null;
+
+    const FALLBACK_COLABORADORES = [
+      { id: '1', nome: 'Rafael', cargo: 'Almoxarife / ADM', turno_codigo: 'ADM', escala: 'Segunda à Sexta', horario: '07:00 às 17:00', obs: 'Sexta-feira encerra às 16:00' },
+      { id: '2', nome: 'Rubens', cargo: 'Almoxarife', turno_codigo: 'TURNO_B', escala: 'Segunda à Sábado', horario: '14:00 às 22:00', obs: 'Escala vespertina/noturna' },
+      { id: '3', nome: 'João', cargo: 'Almoxarife', turno_codigo: 'TURNO_A', escala: 'Escala 5x1', horario: '06:00 às 14:00', obs: 'Revezamento matutino' },
+      { id: '4', nome: 'Nathan', cargo: 'Almoxarife', turno_codigo: 'TURNO_A', escala: 'Escala 5x1', horario: '06:00 às 14:00', obs: 'Revezamento matutino' }
+    ];
 
     const FALLBACK_SKUS = [
       { id: '1', code: 'EPI-CAP-01', lote: 'LOT-2026-A', name: 'Capacete de Segurança MSA', category: 'EPIs', unit: 'UN', min: 10, max: 60, qty: 38, cost: 45.00, loc: 'RACK-B1', abc: 'B', validade: '2028-05-10' },
@@ -896,9 +1049,14 @@
     ];
 
     window.onload = function() {
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
       checkActiveSession();
-      initSignaturePad();
+
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          forceCloseScanner();
+        }
+      });
     };
 
     function checkActiveSession() {
@@ -910,13 +1068,13 @@
     }
 
     async function handleLogin(e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
       const email = document.getElementById('login-email').value;
       const btn = document.getElementById('btn-login-submit');
 
       btn.disabled = true;
       btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Autenticando...`;
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
       try {
         if (supabaseClient) {
@@ -950,19 +1108,36 @@
       document.getElementById('view-login').classList.add('hidden');
       document.getElementById('app-container').classList.remove('hidden');
 
-      document.getElementById('header-user-name').innerText = currentUser.name;
-      document.getElementById('header-user-role').innerText = currentUser.roleName;
-      document.getElementById('user-avatar').innerText = currentUser.initials;
+      if (currentUser) {
+        document.getElementById('header-user-name').innerText = currentUser.name;
+        document.getElementById('header-user-role').innerText = currentUser.roleName;
+        document.getElementById('user-avatar').innerText = currentUser.initials;
+      }
 
       await fetchDataFromSupabase();
       initCharts();
       renderAllViews();
-      logAudit(currentUser.name, 'Auth/Login', 'Sessão iniciada no portal web');
+      logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Auth/Login', 'Sessão iniciada no portal web');
     }
 
     async function fetchDataFromSupabase() {
       if (supabaseClient) {
         try {
+          const { data: dbColabs } = await supabaseClient.from('colaboradores').select('*, turnos(*)');
+          if (dbColabs && dbColabs.length > 0) {
+            colaboradores = dbColabs.map(c => ({
+              id: c.id.toString(),
+              nome: c.nome,
+              cargo: c.cargo || 'Almoxarife',
+              turno_codigo: c.turno_codigo || 'TURNO_A',
+              escala: c.turnos ? c.turnos.escala : 'Geral',
+              horario: c.turnos ? c.turnos.horario_padrao : '07:00 às 17:00',
+              obs: c.turnos ? c.turnos.observacao : ''
+            }));
+          } else {
+            colaboradores = FALLBACK_COLABORADORES;
+          }
+
           const { data: dbSkus, error } = await supabaseClient.from('materiais').select('*');
           if (!error && dbSkus && dbSkus.length > 0) {
             skus = dbSkus.map(item => ({
@@ -995,29 +1170,31 @@
               qty: r.quantidade || 1,
               status: r.status || 'Pendente',
               date: r.created_at ? new Date(r.created_at).toLocaleDateString('pt-BR') : '22/10/2026',
-              almoxarife: r.almoxarife || 'Alan Kaique'
+              almoxarife: r.almoxarife || 'Rafael'
             }));
           } else {
             requisicoes = [
-              { id: 'REQ-101', reqBy: 'Lucas Lima', cc: 'CC-101 Manutenção', fleet: 'Colhedora Case 8810 / Placa FPT-0922', skuCode: 'ROL-6205', qty: 4, status: 'Pendente', date: '22/10/2026', almoxarife: 'Alan Kaique' }
+              { id: 'REQ-101', reqBy: 'Lucas Lima', cc: 'CC-101 Manutenção', fleet: 'Colhedora Case 8810 / Placa FPT-0922', skuCode: 'ROL-6205', qty: 4, status: 'Pendente', date: '22/10/2026', almoxarife: 'João' }
             ];
           }
         } catch(e) {
+          colaboradores = FALLBACK_COLABORADORES;
           skus = FALLBACK_SKUS;
-          requisicoes = [{ id: 'REQ-101', reqBy: 'Lucas Lima', cc: 'CC-101 Manutenção', fleet: 'Colhedora Case 8810 / Placa FPT-0922', skuCode: 'ROL-6205', qty: 4, status: 'Pendente', date: '22/10/2026', almoxarife: 'Alan Kaique' }];
+          requisicoes = [{ id: 'REQ-101', reqBy: 'Lucas Lima', cc: 'CC-101 Manutenção', fleet: 'Colhedora Case 8810 / Placa FPT-0922', skuCode: 'ROL-6205', qty: 4, status: 'Pendente', date: '22/10/2026', almoxarife: 'João' }];
         }
       } else {
+        colaboradores = FALLBACK_COLABORADORES;
         skus = FALLBACK_SKUS;
-        requisicoes = [{ id: 'REQ-101', reqBy: 'Lucas Lima', cc: 'CC-101 Manutenção', fleet: 'Colhedora Case 8810 / Placa FPT-0922', skuCode: 'ROL-6205', qty: 4, status: 'Pendente', date: '22/10/2026', almoxarife: 'Alan Kaique' }];
+        requisicoes = [{ id: 'REQ-101', reqBy: 'Lucas Lima', cc: 'CC-101 Manutenção', fleet: 'Colhedora Case 8810 / Placa FPT-0922', skuCode: 'ROL-6205', qty: 4, status: 'Pendente', date: '22/10/2026', almoxarife: 'João' }];
       }
 
       recebimentos = [
-        { id: 'r1', nfe: 'NF-10492', forn: 'Gerdau Aços', skuCode: 'ROL-6205', qty: 30, step: 2, date: '22/10/2026', user: 'Alan Kaique' }
+        { id: 'r1', nfe: 'NF-10492', forn: 'Gerdau Aços', skuCode: 'ROL-6205', qty: 30, step: 2, date: '22/10/2026', user: 'Rafael' }
       ];
       counts = [
-        { date: '22/10/2026 08:30', user: 'Alan Kaique', turno: 'Turno 1', skuCode: 'ROL-6205', sysQty: 12, countedQty: 12, diff: 0, ok: true },
-        { date: '22/10/2026 15:10', user: 'João Vitor', turno: 'Turno 2', skuCode: 'EPI-CAP-01', sysQty: 39, countedQty: 38, diff: -1, ok: false },
-        { date: '22/10/2026 23:45', user: 'Rogério Capuccio', turno: 'Turno 3', skuCode: 'ROL-6205', sysQty: 12, countedQty: 12, diff: 0, ok: true }
+        { date: '22/10/2026 08:30', user: 'João', turno: 'Turno A', skuCode: 'ROL-6205', sysQty: 12, countedQty: 12, diff: 0, ok: true },
+        { date: '22/10/2026 15:10', user: 'Rubens', turno: 'Turno B', skuCode: 'EPI-CAP-01', sysQty: 39, countedQty: 38, diff: -1, ok: false },
+        { date: '22/10/2026 09:45', user: 'Nathan', turno: 'Turno A', skuCode: 'FER-CHV-13', sysQty: 4, countedQty: 4, diff: 0, ok: true }
       ];
       auditLogs = [
         { time: '22/10/2026 16:30', user: 'Alan Kaique', module: 'Auth/Login', details: 'Sessão iniciada no portal web WMS', status: 'Sucesso' }
@@ -1025,15 +1202,12 @@
     }
 
     function switchTab(tabId) {
-      ['dashboard', 'skus', 'recebimento', 'requisicoes', 'inventario', 'compras', 'auditoria'].forEach(t => {
-        const el = document.getElementById(`tab-${t}`);
-        if (el) el.classList.add('hidden');
-        const n = document.getElementById(`nav-${t}`);
+      const tabs = ['dashboard', 'skus', 'recebimento', 'requisicoes', 'equipe', 'inventario', 'compras', 'auditoria'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`); if (el) el.classList.add('hidden'); const n = document.getElementById(`nav-${t}`);
         if (n) n.className = "sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-gray-400 hover:text-white hover:bg-slate-800/50";
       });
-      const activeTab = document.getElementById(`tab-${tabId}`);
-      if (activeTab) activeTab.classList.remove('hidden');
-      const activeNav = document.getElementById(`nav-${tabId}`);
+      const activeEl = document.getElementById(`tab-${tabId}`); if (activeEl) activeEl.classList.remove('hidden'); const activeNav = document.getElementById(`nav-${tabId}`);
       if (activeNav) activeNav.className = "sidebar-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium text-white bg-blue-600/30 border border-blue-500/40";
 
       if (tabId === 'compras') {
@@ -1046,11 +1220,38 @@
       renderSKUTable();
       renderKanbanPipeline();
       renderRequisitionsTable();
+      renderTeamTable();
       renderInventoryCounts();
       renderComprasReport();
       renderAuditLogs();
       renderWebSelects();
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function renderTeamTable() {
+      const tbody = document.getElementById('team-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      colaboradores.forEach(c => {
+        let badgeTurno = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-blue-500/20 text-blue-400 font-bold border border-blue-500/30">${c.turno_codigo}</span>`;
+        if (c.turno_codigo === 'TURNO_B') badgeTurno = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${c.turno_codigo}</span>`;
+        if (c.turno_codigo === 'ADM') badgeTurno = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-indigo-500/20 text-indigo-400 font-bold border border-indigo-500/30">${c.turno_codigo}</span>`;
+
+        tbody.innerHTML += `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-4 font-bold text-white flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-[10px] font-black text-amber-400">${c.nome.substring(0,2).toUpperCase()}</div>
+              <span>${c.nome}</span>
+            </td>
+            <td class="p-4 text-gray-300">${c.cargo}</td>
+            <td class="p-4 font-semibold text-gray-200">${c.escala} (${badgeTurno})</td>
+            <td class="p-4 font-mono text-emerald-400 font-bold">${c.horario}</td>
+            <td class="p-4 text-gray-400 text-xs">${c.obs || '-'}</td>
+            <td class="p-4 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">Ativo</span></td>
+          </tr>
+        `;
+      });
+      document.getElementById('team-count-badge').innerText = `${colaboradores.length} Colaboradores Ativos`;
     }
 
     function renderKPIs() {
@@ -1081,9 +1282,9 @@
         return matchesSearch && matchesCat;
       }).forEach(item => {
         const isChecked = selectedSkuIds.has(item.id) ? 'checked' : '';
-        let statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Normal</span>`;
-        if (item.qty === 0) statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">Esgotado</span>`;
-        else if (item.qty <= item.min) statusBadge = `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">Crítico</span>`;
+        let statusBadge = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Normal</span>`;
+        if (item.qty === 0) statusBadge = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">Esgotado</span>`;
+        else if (item.qty <= item.min) statusBadge = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">Crítico</span>`;
 
         tbody.innerHTML += `
           <tr class="hover:bg-slate-800/40 transition">
@@ -1091,24 +1292,24 @@
               <input type="checkbox" ${isChecked} onchange="toggleSelectSku('${item.id}')" class="rounded bg-slate-900 border-white/20 text-blue-600 focus:ring-0">
             </td>
             <td class="p-4">
-              <span class="font-mono font-bold text-blue-400 block">${item.code}</span>
+              <span class="font-mono font-bold text-blue-400 block text-xs">${item.code}</span>
               <span class="text-[10px] text-gray-400 font-mono">${item.lote}</span>
             </td>
             <td class="p-4">
-              <div class="font-bold text-white">${item.name}</div>
-              <div class="text-[10px] text-gray-400">R$ ${item.cost.toFixed(2)} / ${item.unit}</div>
+              <div class="font-bold text-white text-xs">${item.name}</div>
+              <div class="text-[10px] text-gray-400">R$ ${item.cost.toFixed(2)} /${item.unit}</div>
             </td>
-            <td class="p-4 text-gray-300">${item.validade}</td>
-            <td class="p-4 text-center font-bold text-amber-400">${item.abc}</td>
-            <td class="p-4 text-center font-extrabold text-white">${item.qty}</td>
-            <td class="p-4 text-center text-gray-400">${item.min} / ${item.max}</td>
-            <td class="p-4 font-mono text-[11px] text-emerald-400">${item.loc}</td>
+            <td class="p-4 text-gray-300 text-xs">${item.validade}</td>
+            <td class="p-4 text-center font-bold text-amber-400 text-xs">${item.abc}</td>
+            <td class="p-4 text-center font-extrabold text-white text-xs">${item.qty}</td>
+            <td class="p-4 text-center text-gray-400 text-xs">${item.min} /${item.max}</td>
+            <td class="p-4 font-mono text-xs text-emerald-400 font-semibold">${item.loc}</td>
             <td class="p-4 text-center">${statusBadge}</td>
-            <td class="p-4 text-right flex items-center justify-end gap-1">
-              <button onclick="quickAdjustQty('${item.id}')" class="p-1.5 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 border border-blue-500/30" title="Ajustar">
+            <td class="p-4 text-right flex items-center justify-end gap-1.5">
+              <button onclick="quickAdjustQty('${item.id}')" class="p-1.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/40 text-blue-300 border border-blue-500/30 cursor-pointer transition" title="Ajustar">
                 <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="deleteSKU('${item.id}')" class="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30" title="Excluir">
+              <button onclick="deleteSKU('${item.id}')" class="p-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 cursor-pointer transition" title="Excluir">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
             </td>
@@ -1163,7 +1364,7 @@
                 <span>AGRÍCOLA FP</span>
                 <span>LOC: ${item.loc}</span>
               </div>
-              <div class="font-extrabold text-[11px] leading-tight text-black my-1 text-center truncate">${item.code} - ${item.name}</div>
+              <div class="font-extrabold text-[11px] leading-tight text-black my-1 text-center truncate">${item.code} -${item.name}</div>
               <div class="flex justify-center my-1"><svg id="${svgId}"></svg></div>
               <div class="flex justify-between items-center text-[9px] border-t pt-1 border-gray-300 font-semibold text-gray-800">
                 <span>LOTE: ${item.lote}</span>
@@ -1211,44 +1412,23 @@
 
     function renderKanbanPipeline() {
       for (let i = 1; i <= 4; i++) {
-        const col = document.getElementById(`kanban-col-${i}`);
-        if (col) col.innerHTML = '';
-      }
-      const countsMap = { 1: 0, 2: 0, 3: 0, 4: 0 };
-
-      recebimentos.forEach(item => {
-        countsMap[item.step]++;
-        const col = document.getElementById(`kanban-col-${item.step}`);
+        const col = document.getElementById(`kanban-col-${i}`); if (col) col.innerHTML = ''; } const countsMap = { 1: 0, 2: 0, 3: 0, 4: 0 };  recebimentos.forEach(item => { countsMap[item.step]++; const col = document.getElementById(`kanban-col-${item.step}`);
         if (col) {
-          let actionBtn = item.step < 4 ? `<button onclick="advanceKanban('${item.id}')" class="w-full mt-2 py-1 bg-blue-600 text-white text-[10px] font-bold rounded-lg">Avançar</button>` : `<span class="text-[10px] text-emerald-400 block text-center mt-2">✓ Concluído</span>`;
+          let actionBtn = item.step < 4 ? `<button onclick="advanceKanban('${item.id}')" class="w-full mt-2 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-xl cursor-pointer shadow transition">Avançar</button>` : `<span class="text-[10px] text-emerald-400 font-bold block text-center mt-2">✓ Concluído</span>`;
           col.innerHTML += `
-            <div class="p-3 rounded-xl bg-slate-900/90 border border-white/10 space-y-2 shadow">
+            <div class="glass-card p-3.5 rounded-2xl border border-white/5 space-y-2 shadow">
               <div class="flex justify-between items-start font-mono text-xs font-bold text-blue-400">
                 <span>${item.nfe}</span><span>${item.date}</span>
               </div>
               <div class="text-xs font-bold text-white">${item.skuCode}</div>
               <div class="text-[10px] text-gray-400">Resp: ${item.user}</div>
-              <div class="text-xs font-semibold text-emerald-400">Qtd: +${item.qty}</div>
-              ${actionBtn}
+              <div class="text-xs font-semibold text-emerald-400">Qtd: +${item.qty}</div>${actionBtn}
             </div>
           `;
         }
       });
       for (let i = 1; i <= 4; i++) {
-        const countEl = document.getElementById(`kanban-count-${i}`);
-        if (countEl) countEl.innerText = countsMap[i];
-      }
-    }
-
-    function advanceKanban(id) {
-      const rec = recebimentos.find(r => r.id === id);
-      if (rec && rec.step < 4) {
-        rec.step++;
-        if (rec.step === 4) {
-          const sku = skus.find(s => s.code === rec.skuCode);
-          if (sku) sku.qty += rec.qty;
-        }
-        logAudit(rec.user, 'Recebimento NFe', `NFe ${rec.nfe} avançada para etapa ${rec.step}`);
+        const countEl = document.getElementById(`kanban-count-${i}`); if (countEl) countEl.innerText = countsMap[i]; } }  function advanceKanban(id) { const rec = recebimentos.find(r => r.id === id); if (rec && rec.step < 4) { rec.step++; if (rec.step === 4) { const sku = skus.find(s => s.code === rec.skuCode); if (sku) sku.qty += rec.qty; } logAudit(rec.user, 'Recebimento NFe', `NFe ${rec.nfe} avançada para etapa ${rec.step}`);
         renderAllViews();
         showToast('NFe avançada com sucesso!', 'success');
       }
@@ -1259,21 +1439,21 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       requisicoes.forEach(r => {
-        let badge = r.status === 'Aprovada' ? `<span class="px-2 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-400 font-bold">Aprovada</span>` : `<span class="px-2 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold">Pendente</span>`;
+        let badge = r.status === 'Aprovada' ? `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Aprovada</span>` : `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">Pendente</span>`;
         tbody.innerHTML += `
           <tr class="hover:bg-slate-800/40 transition">
-            <td class="p-4 font-mono font-bold text-gray-300">${r.id}</td>
-            <td class="p-4 font-semibold text-white">${r.reqBy}</td>
-            <td class="p-4 text-gray-400 text-[11px]">${r.cc}</td>
-            <td class="p-4 font-bold text-amber-400">${r.fleet || 'Frota Geral'}</td>
-            <td class="p-4 font-bold text-blue-400">${r.skuCode}</td>
-            <td class="p-4 text-center font-extrabold text-white">${r.qty}</td>
+            <td class="p-4 font-mono font-bold text-gray-300 text-xs">${r.id}</td>
+            <td class="p-4 font-semibold text-white text-xs">${r.reqBy}</td>
+            <td class="p-4 text-gray-400 text-xs">${r.cc}</td>
+            <td class="p-4 font-bold text-amber-400 text-xs">${r.fleet || 'Frota Geral'}</td>
+            <td class="p-4 font-bold text-blue-400 text-xs">${r.skuCode}</td>
+            <td class="p-4 text-center font-extrabold text-white text-xs">${r.qty}</td>
             <td class="p-4 text-center">${badge}</td>
             <td class="p-4 text-right">
               ${r.status === 'Pendente' ? `
-                <button onclick="approveReq('${r.id}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[10px] font-bold shadow">Aprovar & Recibo</button>
+                <button onclick="approveReq('${r.id}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[10px] font-bold shadow cursor-pointer transition">Aprovar & Recibo</button>
               ` : `
-                <button onclick="openReceiptModal('${r.id}')" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold shadow">Imprimir Recibo Folha</button>
+                <button onclick="openReceiptModal('${r.id}')" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[10px] font-bold shadow cursor-pointer transition">Imprimir Recibo Folha</button>
               `}
             </td>
           </tr>
@@ -1290,10 +1470,21 @@
       }
       sku.qty -= req.qty;
       req.status = 'Aprovada';
-      logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Requisição Frota', `Requisição ${req.id} aprovada para equipamento ${req.fleet}`);
+      logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Requisição Frota', `Requisição ${req.id} aprovada para equipamento${req.fleet}`);
       
+      // DISPARO DE NOTIFICAÇÃO VIA WHATSAPP
+      enviarNotificacaoMovimentacaoWhatsApp({
+        usuario: currentUser ? currentUser.name : 'Alan Kaique',
+        skuCode: sku.code,
+        nomeMaterial: sku.name,
+        tipoAcao: `Saída p/ Frota (${req.fleet})`,
+        qtdDiferenca: -req.qty,
+        saldoAtual: sku.qty,
+        localizacao: sku.loc
+      });
+
       if (sku.qty <= sku.min) {
-        enviarAlertaWhatsApp("5518988055912", `⚠️ *ALERTA DE ESTOQUE CRÍTICO*\nO item *${sku.code} - ${sku.name}* atingiu o nível crítico de *${sku.qty} ${sku.unit}* após a requisição para a frota *${req.fleet}*.`);
+        enviarAlertaItensCriticosWhatsApp();
       }
 
       if (supabaseClient) {
@@ -1310,16 +1501,16 @@
       if (!tbody) return;
       tbody.innerHTML = '';
       counts.forEach(c => {
-        const statusBadge = c.ok || c.diff === 0 ? '<span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 rounded font-bold text-[10px]">Acurado (100%)</span>' : '<span class="px-2 py-0.5 bg-rose-500/20 text-rose-400 rounded font-bold text-[10px]">Divergente</span>';
+        const statusBadge = c.ok || c.diff === 0 ? '<span class="px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 rounded-full font-bold text-[10px] border border-emerald-500/30">Acurado (100%)</span>' : '<span class="px-2.5 py-0.5 bg-rose-500/20 text-rose-400 rounded-full font-bold text-[10px] border border-rose-500/30">Divergente</span>';
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-800/40">
-            <td class="p-3 font-mono text-gray-400">${c.date}</td>
-            <td class="p-3 font-semibold text-white">${c.user}</td>
-            <td class="p-3 text-center font-semibold text-blue-400">${c.turno || 'Turno 1'}</td>
-            <td class="p-3 font-mono text-blue-300 font-bold">${c.skuCode}</td>
-            <td class="p-3 text-center text-gray-300">${c.sysQty !== undefined ? c.sysQty : c.countedQty}</td>
-            <td class="p-3 text-center font-bold text-emerald-400">${c.countedQty}</td>
-            <td class="p-3 text-center font-bold ${c.diff < 0 ? 'text-rose-400' : 'text-emerald-400'}">${c.diff} UN</td>
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-3 font-mono text-gray-400 text-xs">${c.date}</td>
+            <td class="p-3 font-semibold text-white text-xs">${c.user}</td>
+            <td class="p-3 text-center font-semibold text-blue-400 text-xs">${c.turno || 'Turno A'}</td>
+            <td class="p-3 font-mono text-blue-300 font-bold text-xs">${c.skuCode}</td>
+            <td class="p-3 text-center text-gray-300 text-xs">${c.sysQty !== undefined ? c.sysQty : c.countedQty}</td>
+            <td class="p-3 text-center font-bold text-emerald-400 text-xs">${c.countedQty}</td>
+            <td class="p-3 text-center font-bold ${c.diff < 0 ? 'text-rose-400' : 'text-emerald-400'} text-xs">${c.diff} UN</td>
             <td class="p-3 text-center">${statusBadge}</td>
           </tr>
         `;
@@ -1337,22 +1528,23 @@
         let sugestaoQtd = item.max - item.qty;
         if (sugestaoQtd < 0) sugestaoQtd = item.min * 2;
 
-        let badgeDias = `<span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">${diasRestantes} dias</span>`;
-        if (diasRestantes <= 5) badgeDias = `<span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-400 font-bold animate-pulse">${diasRestantes} dias (Ruptura Iminente)</span>`;
-        else if (diasRestantes <= 15) badgeDias = `<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">${diasRestantes} dias (Atenção)</span>`;
+        let badgeDias = `<span class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">${diasRestantes} dias</span>`;
+        if (diasRestantes <= 5) badgeDias = `<span class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30 animate-pulse">${diasRestantes} dias (Ruptura Iminente)</span>`;
+        else if (diasRestantes <= 15) badgeDias = `<span class="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">${diasRestantes} dias (Atenção)</span>`;
 
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-800/40">
+          <tr class="hover:bg-slate-800/40 transition">
             <td class="p-3">
-              <span class="font-mono font-bold text-blue-400 block">${item.code}</span>
-              <span class="text-white text-[11px]">${item.name}</span>
+              <span class="font-mono font-bold text-blue-400 block text-xs">${item.code}</span>
+              <span class="text-white text-[11px] font-semibold">${item.name}</span>
             </td>
-            <td class="p-3 text-center font-bold text-white">${item.qty} ${item.unit}</td>
-            <td class="p-3 text-center text-gray-400">${item.min} ${item.unit}</td>
+            <td class="p-3 text-center font-bold text-white text-xs">${item.qty}${item.unit}</td>
+            <td class="p-3 text-center text-gray-400 text-xs">${item.min}${item.unit}</td>
+            <td class="p-3 text-center font-mono text-gray-300 text-xs">${consumoDiario.toFixed(1)} UN/dia</td>
             <td class="p-3 text-center">${badgeDias}</td>
-            <td class="p-3 text-center font-extrabold text-emerald-400">${sugestaoQtd} ${item.unit}</td>
+            <td class="p-3 text-center font-extrabold text-emerald-400 text-xs">${sugestaoQtd}${item.unit}</td>
             <td class="p-3 text-right">
-              <button onclick="gerarOrdemCompra('${item.code}', ${sugestaoQtd})" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold shadow">Solicitar Compra</button>
+              <button onclick="gerarOrdemCompra('${item.code}',${sugestaoQtd})" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-[10px] font-bold shadow cursor-pointer transition">Solicitar Compra</button>
             </td>
           </tr>
         `;
@@ -1360,8 +1552,8 @@
     }
 
     function gerarOrdemCompra(skuCode, qtd) {
-      showToast(`Ordem de compra gerada para ${qtd} unidades do SKU ${skuCode}!`, 'success');
-      logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Sugestão Compra', `Ordem solicitada para ${skuCode} (${qtd} UN)`);
+      showToast(`Solicitação de compra gerada no BI para ${qtd} un do SKU${skuCode}!`, 'success');
+      logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Sugestão BI Compra', `Ordem solicitada para ${skuCode} (${qtd} UN)`);
     }
 
     function renderAuditLogs() {
@@ -1370,12 +1562,12 @@
       tbody.innerHTML = '';
       auditLogs.forEach(l => {
         tbody.innerHTML += `
-          <tr class="hover:bg-slate-800/40">
-            <td class="p-3 font-mono text-gray-400">${l.time}</td>
-            <td class="p-3 font-semibold text-white">${l.user}</td>
-            <td class="p-3 text-blue-400 font-bold">${l.module}</td>
-            <td class="p-3 text-gray-300">${l.details}</td>
-            <td class="p-3 text-right font-bold text-emerald-400">${l.status}</td>
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="p-3 font-mono text-gray-400 text-xs">${l.time}</td>
+            <td class="p-3 font-semibold text-white text-xs">${l.user}</td>
+            <td class="p-3 text-blue-400 font-bold text-xs">${l.module}</td>
+            <td class="p-3 text-gray-300 text-xs">${l.details}</td>
+            <td class="p-3 text-right font-bold text-emerald-400 text-xs">${l.status}</td>
           </tr>
         `;
       });
@@ -1400,7 +1592,7 @@
       document.getElementById('rcp-fleet').innerText = req ? (req.fleet || 'Não especificado') : '---';
       document.getElementById('rcp-solicitante-name').innerText = req ? req.reqBy : '---';
       document.getElementById('rcp-solicitante-sign').innerText = req ? req.reqBy : '---';
-      document.getElementById('rcp-almoxarife-name').innerText = currentUser ? currentUser.name : 'Alan Kaique';
+      document.getElementById('rcp-almoxarife-name').innerText = req ? req.almoxarife : 'Rafael';
       document.getElementById('rcp-items-body').innerHTML = `
         <tr class="border-b border-gray-200">
           <td class="p-2.5 border-r border-gray-200 font-mono text-blue-700 font-bold">${req ? req.skuCode : '---'}</td>
@@ -1410,7 +1602,6 @@
         </tr>
       `;
       document.getElementById('print-receipt-modal').classList.remove('hidden');
-      setTimeout(resizeSignatureCanvas, 200);
     }
     function closeReceiptModal() { document.getElementById('print-receipt-modal').classList.add('hidden'); }
 
@@ -1468,7 +1659,6 @@
     function quickAdjustQty(id) {
       activeMobSku = skus.find(s => s.id === id);
       document.getElementById('adjust-sku-name').innerText = `${activeMobSku.code} - ${activeMobSku.name}`;
-      document.getElementById('input-adjust-user').value = currentUser ? currentUser.name : 'Alan Kaique';
       document.getElementById('input-adjust-newqty').value = activeMobSku.qty;
       document.getElementById('modal-adjust-qty').classList.remove('hidden');
     }
@@ -1481,41 +1671,34 @@
 
       const diff = newQty - activeMobSku.qty;
       activeMobSku.qty = newQty;
-      counts.unshift({ date: new Date().toLocaleDateString('pt-BR'), turno: 'Turno 1', user: user, skuCode: activeMobSku.code, sysQty: activeMobSku.qty - diff, countedQty: newQty, diff: diff, ok: diff === 0 });
+      counts.unshift({ date: new Date().toLocaleDateString('pt-BR'), turno: 'Turno A', user: user, skuCode: activeMobSku.code, sysQty: activeMobSku.qty - diff, countedQty: newQty, diff: diff, ok: diff === 0 });
       logAudit(user, 'Ajuste Saldo', `Ajuste em ${activeMobSku.code} para ${newQty}. Motivo: ${reason}`);
+
+      // DISPARO DE NOTIFICAÇÃO VIA WHATSAPP
+      enviarNotificacaoMovimentacaoWhatsApp({
+        usuario: user,
+        skuCode: activeMobSku.code,
+        nomeMaterial: activeMobSku.name,
+        tipoAcao: `Ajuste Manual (${reason})`,
+        qtdDiferenca: diff,
+        saldoAtual: newQty,
+        localizacao: activeMobSku.loc
+      });
+
+      if (newQty <= activeMobSku.min) {
+        enviarAlertaItensCriticosWhatsApp();
+      }
+
       closeModalAdjust();
       renderAllViews();
-      showToast('Estoque ajustado com auditoria!', 'success');
+      showToast('Estoque ajustado com auditoria e alertado via WhatsApp!', 'success');
     }
 
     function openModalRecebimento() {
       const sel = document.getElementById('form-rec-sku');
       if (sel) {
         sel.innerHTML = '<option value="">-- Selecione o Material --</option>' + 
-          skus.map(s => `<option value="${s.code}">${s.code} - ${s.name} (Atual: ${s.qty} ${s.unit})</option>`).join('');
-      }
-      document.getElementById('form-rec-user').value = currentUser ? currentUser.name : 'Alan Kaique';
-      document.getElementById('modal-recebimento').classList.remove('hidden');
-    }
-    function closeModalRecebimento() { document.getElementById('modal-recebimento').classList.add('hidden'); }
-
-    function saveRecebimento(e) {
-      e.preventDefault();
-      const skuCode = document.getElementById('form-rec-sku').value;
-      const qty = parseInt(document.getElementById('form-rec-qty').value);
-      const nfe = document.getElementById('form-rec-nfe').value;
-
-      recebimentos.push({
-        id: 'r-' + Date.now(),
-        nfe: nfe,
-        forn: document.getElementById('form-rec-forn').value,
-        user: document.getElementById('form-rec-user').value,
-        skuCode: skuCode,
-        qty: qty,
-        step: parseInt(document.getElementById('form-rec-step').value),
-        date: new Date().toLocaleDateString('pt-BR')
-      });
-      logAudit(document.getElementById('form-rec-user').value, 'Recebimento NFe', `NFe ${nfe} lançada com +${qty} UN para o SKU ${skuCode}`);
+          skus.map(s => `<option value="${s.code}">${s.code} - ${s.name} (Atual: ${s.qty} ${s.unit})</option>`).join(''); } document.getElementById('modal-recebimento').classList.remove('hidden'); } function closeModalRecebimento() { document.getElementById('modal-recebimento').classList.add('hidden'); }  function saveRecebimento(e) { e.preventDefault(); const skuCode = document.getElementById('form-rec-sku').value; const qty = parseInt(document.getElementById('form-rec-qty').value); const nfe = document.getElementById('form-rec-nfe').value; const user = document.getElementById('form-rec-user').value;  recebimentos.push({ id: 'r-' + Date.now(), nfe: nfe, forn: document.getElementById('form-rec-forn').value, user: user, skuCode: skuCode, qty: qty, step: parseInt(document.getElementById('form-rec-step').value), date: new Date().toLocaleDateString('pt-BR') }); logAudit(user, 'Recebimento NFe', `NFe ${nfe} lançada com +${qty} UN para o SKU ${skuCode}`);
       closeModalRecebimento();
       renderAllViews();
       showToast('NFe registrada com quantidade informada!', 'success');
@@ -1526,9 +1709,6 @@
       if (sel) {
         sel.innerHTML = '<option value="">-- Selecione o Material do Estoque --</option>';
         skus.forEach(s => sel.innerHTML += `<option value="${s.code}">${s.code} - ${s.name} (Disponível: ${s.qty} ${s.unit})</option>`);
-      }
-      if (currentUser) {
-        document.getElementById('web-req-user').value = currentUser.name;
       }
       document.getElementById('modal-web-requisicao').classList.remove('hidden');
     }
@@ -1559,14 +1739,25 @@
         qty: qty,
         status: 'Aprovada',
         date: new Date().toLocaleDateString('pt-BR'),
-        almoxarife: currentUser ? currentUser.name : 'Alan Kaique'
+        almoxarife: reqBy
       };
 
       requisicoes.unshift(newReq);
-      logAudit(currentUser ? currentUser.name : 'Alan Kaique', 'Portal Web - Saída', `Requisição gerada para frota ${fleet} (${qty}x ${skuCode})`);
+      logAudit(reqBy, 'Portal Web - Saída', `Requisição gerada para frota ${fleet} (${qty}x ${skuCode})`);
+
+      // DISPARO DE NOTIFICAÇÃO VIA WHATSAPP
+      enviarNotificacaoMovimentacaoWhatsApp({
+        usuario: reqBy,
+        skuCode: sku.code,
+        nomeMaterial: sku.name,
+        tipoAcao: `Saída Web p/ Frota (${fleet})`,
+        qtdDiferenca: -qty,
+        saldoAtual: sku.qty,
+        localizacao: sku.loc
+      });
 
       if (sku.qty <= sku.min) {
-        enviarAlertaWhatsApp("5518988055912", `⚠️ *ALERTA DE ESTOQUE CRÍTICO*\nO item *${sku.code} - ${sku.name}* atingiu o nível crítico de *${sku.qty} ${sku.unit}* após a saída para a frota *${fleet}*.`);
+        enviarAlertaItensCriticosWhatsApp();
       }
 
       if (supabaseClient) {
@@ -1577,7 +1768,8 @@
           equipamento: fleet,
           sku: skuCode,
           quantidade: qty,
-          status: 'Aprovada'
+          status: 'Aprovada',
+          almoxarife: reqBy
         }]);
       }
 
@@ -1593,121 +1785,59 @@
         sel.innerHTML = '<option value="">-- Selecione o Material do Estoque --</option>' + 
           skus.map(item => `<option value="${item.code}">${item.code} - ${item.name} (Disp: ${item.qty})</option>`).join('');
       }
-    }
 
-    function recalcalcularAcuracidade() {
-      showToast('Indicadores de acuracidade por turno recalculados com sucesso!', 'success');
-    }
-
-    // FUNÇÕES DE LEITURA POR CÂMERA (BARCODE SCANNER)
-    function openScannerModal(inputId) {
-      targetScannerInputId = inputId;
-      document.getElementById('modal-scanner').classList.remove('hidden');
-      html5QrcodeScanner = new Html5Qrcode("reader");
-      html5QrcodeScanner.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 150 } },
-        (decodedText) => {
-          if (targetScannerInputId) {
-            const field = document.getElementById(targetScannerInputId);
-            if (field) {
-              field.value = decodedText.toUpperCase();
-              field.dispatchEvent(new Event('keyup'));
-              field.dispatchEvent(new Event('input'));
-            }
-          }
-          stopScanner();
-          showToast(`Código lido com sucesso: ${decodedText}`, 'success');
-        },
-        (errorMessage) => {}
-      ).catch(err => {
-        alert("Erro ao acessar a câmera: " + err);
-        stopScanner();
+      const selectsUsers = ['web-req-user', 'form-rec-user', 'input-adjust-user'];
+      selectsUsers.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.innerHTML = colaboradores.map(c => `<option value="${c.nome}">${c.nome} (${c.cargo})</option>`).join('');
+        }
       });
     }
 
-    function stopScanner() {
+    function recalcularAcuracidade() {
+      showToast('Indicadores de acuracidade por turno recalculados com sucesso!', 'success');
+    }
+
+    // LEITOR DE CÂMERA
+    function openScannerModal(inputId) {
+      targetScannerInputId = inputId;
+      document.getElementById('modal-scanner').classList.remove('hidden');
+
+      if (typeof Html5Qrcode !== 'undefined') {
+        html5QrcodeScanner = new Html5Qrcode("reader");
+        html5QrcodeScanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 150 } },
+          (decodedText) => {
+            if (targetScannerInputId) {
+              const field = document.getElementById(targetScannerInputId);
+              if (field) {
+                field.value = decodedText.toUpperCase();
+                field.dispatchEvent(new Event('keyup'));
+                field.dispatchEvent(new Event('input'));
+              }
+            }
+            forceCloseScanner();
+            showToast(`Código lido: ${decodedText}`, 'success');
+          },
+          (errorMessage) => {}
+        ).catch(err => {
+          console.log("Erro ao iniciar câmera: " + err);
+        });
+      }
+    }
+
+    function forceCloseScanner() {
+      document.getElementById('modal-scanner').classList.add('hidden');
       if (html5QrcodeScanner) {
-        html5QrcodeScanner.stop().then(() => {
-          document.getElementById('modal-scanner').classList.add('hidden');
-        }).catch(() => {
-          document.getElementById('modal-scanner').classList.add('hidden');
-        });
-      } else {
-        document.getElementById('modal-scanner').classList.add('hidden');
-      }
-    }
-
-    // ASSINATURA DIGITAL NO CANVAS
-    let sigCtx = null;
-    let isDrawing = false;
-    function initSignaturePad() {
-      const canvas = document.getElementById('signature-pad');
-      if (!canvas) return;
-      sigCtx = canvas.getContext('2d');
-
-      canvas.addEventListener('mousedown', startDraw);
-      canvas.addEventListener('mouseup', stopDraw);
-      canvas.addEventListener('mousemove', drawLine);
-
-      canvas.addEventListener('touchstart', (e) => { startDraw(e.touches[0]); e.preventDefault(); }, { passive: false });
-      canvas.addEventListener('touchend', stopDraw);
-      canvas.addEventListener('touchmove', (e) => { drawLine(e.touches[0]); e.preventDefault(); }, { passive: false });
-    }
-
-    function resizeSignatureCanvas() {
-      const canvas = document.getElementById('signature-pad');
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width || 400;
-      canvas.height = 110;
-    }
-
-    function startDraw(e) {
-      isDrawing = true;
-      drawLine(e);
-    }
-    function stopDraw() {
-      isDrawing = false;
-      if (sigCtx) sigCtx.beginPath();
-    }
-    function drawLine(e) {
-      if (!isDrawing || !sigCtx) return;
-      const canvas = document.getElementById('signature-pad');
-      const rect = canvas.getBoundingClientRect();
-      sigCtx.lineWidth = 2.5;
-      sigCtx.lineCap = 'round';
-      sigCtx.strokeStyle = '#000000';
-      sigCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-      sigCtx.stroke();
-      sigCtx.beginPath();
-      sigCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-    }
-    function clearSignature() {
-      const canvas = document.getElementById('signature-pad');
-      if (sigCtx && canvas) {
-        sigCtx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-
-    // WHATSAPP WEBHOOK AUTOMATION
-    async function enviarAlertaWhatsApp(telefoneDestino, mensagem) {
-      const INSTANCE_URL = "https://api.sua-evolution-api.com";
-      const API_KEY = "sua_api_key_aqui";
-
-      const payload = {
-        number: telefoneDestino,
-        textMessage: { text: `🚨 *NEXUS WMS PRO*\n\n${mensagem}` }
-      };
-
-      try {
-        await fetch(`${INSTANCE_URL}/message/sendText/sua_instancia`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': API_KEY },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {
-        console.log("Webhook WhatsApp simulado/enviado com sucesso.");
+        try {
+          html5QrcodeScanner.stop().catch(() => {}).finally(() => {
+            html5QrcodeScanner = null;
+          });
+        } catch(e) {
+          html5QrcodeScanner = null;
+        }
       }
     }
 
@@ -1751,8 +1881,7 @@
       let bg = 'bg-slate-800 border-white/10 text-white';
       if (type === 'success') bg = 'bg-emerald-900/90 border-emerald-500/40 text-emerald-200';
       if (type === 'error') bg = 'bg-rose-900/90 border-rose-500/40 text-rose-200';
-      toast.className = `p-3 rounded-xl border glass-panel shadow-2xl text-xs font-semibold flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bg}`;
-      toast.innerHTML = `<span>${message}</span>`;
+      toast.className = `p-3.5 rounded-2xl border glass-panel shadow-2xl text-xs font-semibold flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bg}`; toast.innerHTML = `<span>${message}</span>`;
       container.appendChild(toast);
       setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
       setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => toast.remove(), 300); }, 3000);

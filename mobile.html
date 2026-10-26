@@ -3,406 +3,730 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>NEXUS Coletor - App Mobile</title>
+  <title>NEXUS WMS Pro - App Coletor Mobile</title>
   
+  <!-- Supabase JS Client SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+            darkbg: '#07090e',
+            darkcard: 'rgba(17, 24, 39, 0.8)',
+            darkborder: 'rgba(255, 255, 255, 0.08)',
+          },
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Font & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <!-- HTML5-QRCode Scanner SDK -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    body, html { 
-      background: #0b0f19; color: #f3f4f6; font-family: 'Inter', sans-serif; 
-      height: 100vh; height: 100dvh; margin: 0; padding: 0; overflow: hidden; position: fixed; width: 100%;
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at top right, #1e1b4b 0%, #0b0f19 50%, #030712 100%);
+      background-attachment: fixed;
+      color: #f3f4f6;
+      touch-action: manipulation;
     }
-    .glass-panel { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.06); }
-    .glass-input { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.15); color: #fff; }
-    .glass-input:focus { border-color: #3b82f6; outline: none; }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 9999px; }
     
-    @keyframes scanLine { 0% { top: 10%; opacity: 0.2; } 50% { top: 85%; opacity: 0.9; } 100% { top: 10%; opacity: 0.2; } }
-    .scanner-laser { position: absolute; left: 5%; width: 90%; height: 2px; background: #f43f5e; box-shadow: 0 0 12px 3px #f43f5e; animation: scanLine 2.2s infinite ease-in-out; pointer-events: none; z-index: 10; }
+    .glass-panel { 
+      background: rgba(15, 23, 42, 0.9); 
+      backdrop-filter: blur(20px); 
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08); 
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .glass-card { 
+      background: rgba(30, 41, 59, 0.6); 
+      backdrop-filter: blur(14px); 
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.06); 
+    }
+    .glass-input { 
+      background: rgba(11, 15, 25, 0.95); 
+      border: 1px solid rgba(255, 255, 255, 0.15); 
+      color: #fff; 
+      font-size: 0.9rem; 
+    }
+    .glass-input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25); }
 
-    #interactive-reader { width: 100% !important; height: 100% !important; overflow: hidden; position: relative; }
-    #interactive-reader video { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 0.75rem; }
+    select.glass-input option { background-color: #0f172a; color: #ffffff; padding: 12px; }
 
-    .sig-canvas { touch-action: none; background: #1e293b; border: 1px dashed rgba(255,255,255,0.2); border-radius: 0.75rem; width: 100%; height: 80px; }
+    /* Laser de Leitura */
+    .laser-line {
+      height: 2px;
+      background: #ef4444;
+      box-shadow: 0 0 12px 2px #ef4444;
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 50%;
+      animation: scan 2s infinite ease-in-out;
+    }
+    @keyframes scan {
+      0% { top: 20%; }
+      50% { top: 80%; }
+      100% { top: 20%; }
+    }
   </style>
 </head>
-<body class="flex flex-col justify-between p-3">
 
-  <!-- TOPO MOBILE -->
-  <header class="bg-slate-900 px-4 py-3 rounded-2xl border border-white/10 flex items-center justify-between shrink-0 shadow-lg">
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white pb-20">
+
+  <!-- ================= HEADER MOBILE ================= -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 py-3.5 flex items-center justify-between">
     <div class="flex items-center gap-2.5">
-      <div class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
+        <i data-lucide="smartphone" class="w-5 h-5 text-white"></i>
+      </div>
       <div>
-        <h1 class="text-xs font-bold text-white tracking-wider">NEXUS COLETOR</h1>
-        <p class="text-[9px] text-gray-400">Operador: Alan Kaique</p>
+        <div class="flex items-center gap-1.5">
+          <h1 class="font-bold text-sm tracking-wide text-white">NEXUS <span class="text-blue-400 font-extrabold">COLETOR</span></h1>
+          <span class="px-1.5 py-0.5 text-[9px] bg-blue-500/20 text-blue-400 rounded-full border border-blue-500/30 font-bold">v7.8</span>
+        </div>
+        <p class="text-[10px] text-emerald-400 font-semibold" id="mob-user-display">Operação Coletor</p>
       </div>
     </div>
-    <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 border border-blue-500/30 text-[9px] font-bold rounded-full">v7.7 Mobile</span>
+
+    <div class="flex items-center gap-2">
+      <a href="index.html" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded-xl border border-white/10 text-blue-400 font-bold flex items-center gap-1 shadow cursor-pointer" title="Ir para o Portal Web">
+        <i data-lucide="monitor" class="w-3.5 h-3.5"></i>
+        <span>Web</span>
+      </a>
+
+      <button type="button" onclick="openMobScanner('mob-search')" class="p-2.5 bg-blue-600 active:bg-blue-700 text-white rounded-xl shadow-lg flex items-center justify-center cursor-pointer">
+        <i data-lucide="scan" class="w-5 h-5"></i>
+      </button>
+      <button type="button" onclick="handleMobLogout()" class="p-2.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-xl border border-rose-500/20 cursor-pointer" title="Sair">
+        <i data-lucide="log-out" class="w-5 h-5"></i>
+      </button>
+    </div>
   </header>
 
-  <!-- CORPO -->
-  <main class="flex-1 overflow-y-auto py-2 space-y-3 relative flex flex-col">
-
-    <!-- MENU INICIAL -->
-    <div id="mob-page-home" class="space-y-3 my-auto">
-      <div class="glass-card p-4 rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-900/40 to-slate-900/80 space-y-2">
-        <span class="text-[10px] uppercase tracking-widest text-blue-400 font-bold">Almoxarifado Agrícola FP</span>
-        <div class="text-sm font-bold text-white">Pronto para Operação de Turno</div>
-        <p class="text-[11px] text-gray-400">Escaneie materiais, colha assinaturas e vincule as saídas a Ordens de Serviço ou frotas.</p>
+  <!-- ================= TELA DA CÂMERA (MODAL INTEGRADO FULLSCREEN) ================= -->
+  <div id="modal-mob-scanner" class="hidden fixed inset-0 z-50 bg-slate-950 flex flex-col justify-between p-4 overflow-hidden">
+    <div class="flex items-center justify-between border-b border-white/10 pb-3 z-10 bg-slate-950/80 px-2 rounded-xl">
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <h3 class="font-bold text-xs uppercase tracking-wider text-white">Leitor de Câmera Ativo</h3>
       </div>
-
-      <button onclick="navMobile('scanner')" class="w-full glass-card p-4 rounded-2xl flex items-center gap-4 hover:bg-slate-800 transition border border-blue-500/30 active:scale-95 shadow-md">
-        <div class="w-12 h-12 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0"><i data-lucide="scan-line" class="w-6 h-6"></i></div>
-        <div class="text-left flex-1">
-          <div class="text-sm font-bold text-white">Escanear & Saída com Assinatura</div>
-          <div class="text-[10px] text-gray-400">Câmera ligada + Baixa por O.S. ou Descrição</div>
-        </div>
-        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-      </button>
-
-      <button onclick="navMobile('requisitar')" class="w-full glass-card p-4 rounded-2xl flex items-center gap-4 hover:bg-slate-800 transition border border-amber-500/30 active:scale-95 shadow-md">
-        <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0"><i data-lucide="file-text" class="w-6 h-6"></i></div>
-        <div class="text-left flex-1">
-          <div class="text-sm font-bold text-white">Requisição Manual / O.S.</div>
-          <div class="text-[10px] text-gray-400">Lançamento com Ordem de Serviço ou Aplicação</div>
-        </div>
-        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-      </button>
-
-      <button onclick="navMobile('inventario')" class="w-full glass-card p-4 rounded-2xl flex items-center gap-4 hover:bg-slate-800 transition border border-emerald-500/30 active:scale-95 shadow-md">
-        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0"><i data-lucide="clipboard-check" class="w-6 h-6"></i></div>
-        <div class="text-left flex-1">
-          <div class="text-sm font-bold text-white">Contagem Cíclica (Inventário)</div>
-          <div class="text-[10px] text-gray-400">Auditoria física de prateleira</div>
-        </div>
-        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+      <button type="button" onclick="forceCloseMobScanner()" class="px-4 py-2 bg-rose-600 active:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-lg flex items-center gap-1 cursor-pointer">
+        <i data-lucide="x" class="w-4 h-4"></i> Voltar / Sair
       </button>
     </div>
 
-    <!-- SCANNER + ASSINATURA -->
-    <div id="mob-page-scanner" class="hidden flex-1 flex flex-col space-y-3 h-full">
-      <div class="flex items-center justify-between shrink-0">
-        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Leitor de Câmera Ativo</h3>
-        <button onclick="navMobile('home')" class="text-[10px] text-gray-400 underline">Voltar</button>
+    <div class="relative w-full max-w-sm mx-auto my-auto rounded-3xl overflow-hidden border-2 border-blue-500/40 bg-black min-h-[280px] flex items-center justify-center shadow-2xl">
+      <div id="mob-reader" class="w-full h-full"></div>
+      <div class="laser-line pointer-events-none"></div>
+    </div>
+
+    <div class="space-y-3 z-10 max-w-sm mx-auto w-full text-center pb-2">
+      <p class="text-xs text-gray-300">Aponte a câmera para o código de barras ou QR Code...</p>
+      <div class="grid grid-cols-2 gap-2">
+        <button type="button" onclick="restartScanner()" class="py-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-blue-400 font-bold rounded-xl text-xs border border-white/10 flex items-center justify-center gap-2">
+          <i data-lucide="refresh-cw" class="w-4 h-4"></i> Reiniciar Câmera
+        </button>
+        <button type="button" onclick="forceCloseMobScanner()" class="py-3 bg-rose-600/20 active:bg-rose-600 text-rose-300 font-bold rounded-xl text-xs border border-rose-500/30 flex items-center justify-center gap-2">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Cancelar Leitura
+        </button>
       </div>
-      
-      <div id="camera-box" class="relative w-full h-36 bg-black rounded-2xl overflow-hidden border-2 border-blue-500/60 flex items-center justify-center shrink-0 shadow-inner">
-        <div class="scanner-laser"></div>
-        <div id="interactive-reader" class="w-full h-full"></div>
-      </div>
+    </div>
+  </div>
 
-      <div id="scanned-result-card" class="hidden flex-1 glass-card p-3 rounded-2xl border border-emerald-500/40 bg-slate-900/95 flex flex-col justify-between space-y-2 overflow-y-auto">
-        <div class="space-y-0.5">
-          <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[9px] font-bold rounded">Material Identificado</span>
-          <h4 class="font-bold text-white text-xs" id="scan-res-name">---</h4>
-          <p class="text-gray-400 text-[10px] font-mono" id="scan-res-code">SKU: --- | Lote: ---</p>
-          <p class="text-emerald-400 font-bold text-xs" id="scan-res-stock">Disponível: 0 UN</p>
-        </div>
+  <!-- ================= CONTEÚDO PRINCIPAL MOBILE ================= -->
+  <main class="flex-1 p-4 space-y-4 max-w-md mx-auto w-full">
 
-        <div class="space-y-2 pt-1 border-t border-white/10 text-xs">
-          <div>
-            <label class="text-[10px] text-gray-300 block mb-0.5 font-semibold">Nome de Quem está Retirando *</label>
-            <input type="text" id="scan-req-retirante" placeholder="Ex: João Vitor" required class="w-full glass-input px-2.5 py-1.5 rounded-xl text-xs font-semibold text-white">
-          </div>
-
-          <div>
-            <label class="text-[10px] text-gray-300 block mb-0.5 font-semibold">Ordem de Serviço (O.S.) / Descrição / Frota *</label>
-            <input type="text" id="scan-req-fleet" placeholder="Ex: OS-4592 ou Manutenção Preventiva Trator 04" required class="w-full glass-input px-2.5 py-1.5 rounded-xl text-xs font-semibold text-amber-400">
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="text-[10px] text-gray-300 block mb-0.5 font-semibold">Qtd *</label>
-              <input type="number" id="scan-req-qty" min="1" value="1" class="w-full glass-input px-2.5 py-1.5 rounded-xl text-xs font-bold text-emerald-400">
-            </div>
-            <div>
-              <label class="text-[10px] text-gray-300 block mb-0.5 font-semibold">Centro Custo</label>
-              <input type="text" id="scan-req-cc" value="CC-101 Manutenção" class="w-full glass-input px-2.5 py-1.5 rounded-xl text-xs">
-            </div>
-          </div>
-
-          <div class="space-y-1.5 pt-1 border-t border-white/10">
-            <div>
-              <div class="flex justify-between items-center mb-0.5">
-                <label class="text-[9px] text-gray-300 font-bold">Assinatura: QUEM RETIRA</label>
-                <button type="button" onclick="clearCanvas('canvas-retirante')" class="text-[9px] text-rose-400 underline">Limpar</button>
-              </div>
-              <canvas id="canvas-retirante" class="sig-canvas"></canvas>
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-0.5">
-                <label class="text-[9px] text-gray-300 font-bold">Assinatura: ALMOXARIFE (Entregou)</label>
-                <button type="button" onclick="clearCanvas('canvas-entregador')" class="text-[9px] text-rose-400 underline">Limpar</button>
-              </div>
-              <canvas id="canvas-entregador" class="sig-canvas"></canvas>
-            </div>
-          </div>
-
-          <button onclick="confirmScanRequisition()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 active:scale-95 transition">
-            <i data-lucide="check-circle" class="w-4 h-4"></i> Confirmar Saída & Salvar no Banco
+    <!-- ABA 1: CONSULTA DE ESTOQUE & BIPAGEM -->
+    <div id="mob-tab-skus" class="space-y-4">
+      <div class="glass-card p-3 rounded-2xl border border-white/5 space-y-2">
+        <div class="relative">
+          <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-3.5"></i>
+          <input type="text" id="mob-search" onkeyup="renderMobSkus()" placeholder="Bipar código ou pesquisar SKU/Nome..." class="w-full glass-input pl-9 pr-10 py-3 rounded-xl text-xs font-semibold">
+          <button type="button" onclick="openMobScanner('mob-search')" class="absolute right-2 top-2 p-1.5 text-blue-400 hover:text-white cursor-pointer">
+            <i data-lucide="camera" class="w-5 h-5"></i>
           </button>
         </div>
       </div>
 
-      <div id="scan-waiting-box" class="flex-1 glass-card rounded-2xl flex flex-col items-center justify-center p-6 text-center space-y-2">
-        <i data-lucide="scan" class="w-8 h-8 text-blue-400 animate-bounce"></i>
-        <p class="text-xs text-gray-300 font-semibold">Aponte a câmera para o código de barras ou QR Code...</p>
-        <button onclick="restartScanner()" class="px-3 py-1.5 bg-blue-600/20 text-blue-400 text-xs rounded-xl border border-blue-500/30">Reiniciar Câmera</button>
+      <div id="mob-sku-list" class="space-y-3"></div>
+    </div>
+
+    <!-- ABA 2: NOVA SAÍDA / REQUISIÇÃO FROTA -->
+    <div id="mob-tab-requisicao" class="hidden space-y-4">
+      <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-3">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i> Registrar Saída para Frota
+        </h2>
+
+        <form onsubmit="submitMobRequisition(event)" class="space-y-3 text-xs">
+          <div>
+            <label class="text-gray-300 block mb-1">Almoxarife Responsável *</label>
+            <select id="mob-req-user" required class="w-full glass-input px-3 py-2.5 rounded-xl font-semibold text-amber-400"></select>
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1">Equipamento / Trator / Frota *</label>
+            <input type="text" id="mob-req-fleet" required placeholder="Ex: Trator JD 04 / Placa ABC-1234" class="w-full glass-input px-3 py-2.5 rounded-xl font-semibold text-amber-400">
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1">Material / SKU *</label>
+            <div class="relative">
+              <select id="mob-req-sku" required class="w-full glass-input px-3 py-3 rounded-xl font-medium text-xs pr-10"></select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-gray-300 block mb-1">Quantidade *</label>
+              <input type="number" id="mob-req-qty" min="1" value="1" required class="w-full glass-input px-3 py-2.5 rounded-xl font-bold text-emerald-400">
+            </div>
+            <div>
+              <label class="text-gray-300 block mb-1">Centro Custo *</label>
+              <input type="text" id="mob-req-cc" value="CC-101 Manutenção" required class="w-full glass-input px-3 py-2.5 rounded-xl">
+            </div>
+          </div>
+          <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-amber-600 to-orange-600 active:from-amber-700 active:to-orange-700 text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 text-xs cursor-pointer">
+            <i data-lucide="check-circle" class="w-4 h-4"></i> Confirmar Saída no Coletor
+          </button>
+        </form>
       </div>
     </div>
 
-    <!-- REQUISIÇÃO MANUAL -->
-    <div id="mob-page-requisitar" class="hidden space-y-3">
-      <div class="flex items-center justify-between">
-        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Nova Requisição / O.S. Manual</h3>
-        <button onclick="navMobile('home')" class="text-[10px] text-gray-400 underline">Voltar</button>
+    <!-- ABA 3: PREVISÃO & BI DE COMPRAS (MOBILE) -->
+    <div id="mob-tab-compras" class="hidden space-y-4">
+      <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-1">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="shopping-cart" class="w-4 h-4 text-emerald-400"></i> Previsão de Ruptura (BI)
+        </h2>
+        <p class="text-[11px] text-gray-400">Itens com risco de desabastecimento em breve</p>
       </div>
-      <form onsubmit="submitMobileRequisition(event)" class="space-y-3 text-xs glass-card p-4 rounded-2xl">
-        <div><label class="text-gray-400 block mb-1">Retirante *</label><input type="text" id="mob-req-user" required placeholder="Nome de quem retira" class="w-full glass-input px-3 py-2 rounded-xl"></div>
-        <div><label class="text-gray-400 block mb-1">Ordem de Serviço (O.S.) / Descrição / Frota *</label><input type="text" id="mob-req-fleet" required placeholder="Ex: OS-1082 ou Troca de Correia Trator 02" class="w-full glass-input px-3 py-2 rounded-xl font-semibold text-amber-400"></div>
-        <div><label class="text-gray-400 block mb-1">Material *</label><select id="mob-req-sku" required class="w-full glass-input px-3 py-2 rounded-xl"></select></div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-gray-400 block mb-1">Qtd</label><input type="number" id="mob-req-qty" min="1" value="1" required class="w-full glass-input px-3 py-2 rounded-xl font-bold text-emerald-400"></div>
-          <div><label class="text-gray-400 block mb-1">Centro de Custo</label><input type="text" id="mob-req-cc" value="CC-101 Manutenção" class="glass-input px-3 py-2 rounded-xl w-full"></div>
-        </div>
-        <button type="submit" class="w-full py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow-lg">Enviar Requisição</button>
-      </form>
+
+      <div id="mob-compras-list" class="space-y-3"></div>
     </div>
 
-    <!-- CONTAGEM CÍCLICA -->
-    <div id="mob-page-inventario" class="hidden space-y-3">
-      <div class="flex items-center justify-between">
-        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Contagem Cíclica</h3>
-        <button onclick="navMobile('home')" class="text-[10px] text-gray-400 underline">Voltar</button>
+    <!-- ABA 4: HISTÓRICO DE REQUISIÇÕES E RECIBOS -->
+    <div id="mob-tab-historico" class="hidden space-y-4">
+      <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-1">
+        <h2 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="history" class="w-4 h-4 text-blue-400"></i> Últimas Saídas Registradas
+        </h2>
       </div>
-      <div class="glass-card p-4 rounded-2xl border border-white/10 space-y-3 text-xs">
-        <div><label class="text-gray-400 block mb-1">Auditor *</label><input type="text" id="mob-inv-user" required value="Alan Kaique" class="w-full glass-input px-3 py-2 rounded-xl"></div>
-        <div><label class="text-gray-400 block mb-1">SKU</label><select id="mob-inv-sku" class="w-full glass-input px-3 py-2 rounded-xl"></select></div>
-        <div><label class="text-gray-400 block mb-1">Qtd Contada *</label><input type="number" id="mob-counted-qty" placeholder="0" class="w-full glass-input px-3 py-2 rounded-xl font-bold text-emerald-400"></div>
-        <button onclick="saveInventoryCount()" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Salvar Contagem</button>
-      </div>
+
+      <div id="mob-req-list" class="space-y-3"></div>
     </div>
 
   </main>
 
-  <!-- MENU INFERIOR -->
-  <footer class="bg-slate-900 border-t border-white/10 px-4 py-2.5 flex items-center justify-around shrink-0 text-gray-400 text-[10px]">
-    <button onclick="navMobile('home')" class="flex flex-col items-center gap-1 text-blue-400"><i data-lucide="home" class="w-5 h-5"></i><span>Início</span></button>
-    <button onclick="navMobile('scanner')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="scan" class="w-5 h-5"></i><span>Scanner</span></button>
-    <button onclick="navMobile('requisitar')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="file-text" class="w-5 h-5"></i><span>O.S. / Saída</span></button>
-    <button onclick="navMobile('inventario')" class="flex flex-col items-center gap-1 hover:text-white"><i data-lucide="check-circle-2" class="w-5 h-5"></i><span>Inventário</span></button>
-  </footer>
+  <!-- ================= BARRA DE NAVEGAÇÃO INFERIOR ================= -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-white/10 px-2 py-2 flex items-center justify-around text-[10px]">
+    <button type="button" onclick="switchMobTab('skus')" id="mob-nav-skus" class="flex flex-col items-center gap-1 text-blue-400 font-bold p-1 cursor-pointer">
+      <i data-lucide="package" class="w-5 h-5"></i>
+      <span>Estoque</span>
+    </button>
+    <button type="button" onclick="switchMobTab('requisicao')" id="mob-nav-requisicao" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white p-1 cursor-pointer">
+      <i data-lucide="plus-circle" class="w-5 h-5"></i>
+      <span>Nova Saída</span>
+    </button>
+    <button type="button" onclick="switchMobTab('compras')" id="mob-nav-compras" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white p-1 cursor-pointer">
+      <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+      <span>Ruptura BI</span>
+    </button>
+    <button type="button" onclick="switchMobTab('historico')" id="mob-nav-historico" class="flex flex-col items-center gap-1 text-gray-400 hover:text-white p-1 cursor-pointer">
+      <i data-lucide="history" class="w-5 h-5"></i>
+      <span>Histórico</span>
+    </button>
+  </nav>
 
+  <!-- MODAL: AJUSTE RÁPIDO DE QUANTIDADE -->
+  <div id="modal-mob-adjust" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-xs rounded-2xl border border-white/10 p-5 space-y-4">
+      <h3 class="text-xs font-bold text-white uppercase tracking-wider">Ajuste de Saldo Físico</h3>
+      <p id="mob-adjust-title" class="text-xs text-blue-400 font-semibold">---</p>
+      
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="text-gray-300 block mb-1">Novo Saldo Contado *</label>
+          <input type="number" id="mob-adjust-newqty" class="w-full glass-input px-3 py-2 rounded-xl text-sm font-bold text-emerald-400">
+        </div>
+        <div>
+          <label class="text-gray-300 block mb-1">Motivo *</label>
+          <input type="text" id="mob-adjust-reason" value="Contagem física coletor" class="w-full glass-input px-3 py-2 rounded-xl">
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="closeMobAdjustModal()" class="flex-1 py-2 bg-slate-800 text-gray-300 text-xs rounded-xl font-bold cursor-pointer">Cancelar</button>
+        <button type="button" onclick="confirmMobAdjust()" class="flex-1 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl shadow cursor-pointer">Salvar Saldo</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container" class="fixed bottom-16 left-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- LÓGICA COLETOR MOBILE -->
   <script>
     const SUPABASE_URL = 'https://qnxqrimsgehthjgksuqa.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_secret_8r2ctf2pAY-aQRBPQL1_Sw_AqEZmH5U';
-    let supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-    let html5QrCodeScanner = null;
-    let activeScannedItem = null;
-    let skus = [
-      { id: '1', code: 'ROL-6205', lote: 'LOT-2026-B', name: 'Rolamento SKF 6205-2RS', qty: 12, unit: 'UN', loc: 'RACK-A2' },
-      { id: '2', code: 'EPI-CAP-01', lote: 'LOT-2026-A', name: 'Capacete de Segurança MSA', qty: 38, unit: 'UN', loc: 'RACK-B1' }
-    ];
-
-    window.onload = async function() {
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-      await fetchSkusFromCloud();
-      renderMobileSelects();
+    // MÓDULO DE NOTIFICAÇÕES WHATSAPP
+    const WHATSAPP_CONFIG = {
+      numeroDestino: "5518988055912", // 📱 Seu número cadastrado
+      apiUrl: "https://api.z-api.io/instances/SUA_INSTANCIA/token/SEU_TOKEN/send-text"
     };
 
-    async function fetchSkusFromCloud() {
+    async function enviarNotificacaoMovimentacaoWhatsApp(dados) {
+      const textoMensagem = 
+        `🚨 *NEXUS WMS - MOVIMENTAÇÃO DE ESTOQUE (COLETOR)*\n\n` +
+        `👤 *Responsável:* ${dados.usuario}\n` +
+        `📦 *SKU:* ${dados.skuCode} - ${dados.nomeMaterial}\n` +
+        `🔄 *Tipo de Ação:* ${dados.tipoAcao}\n` +
+        `📊 *Variação:* ${dados.qtdDiferenca > 0 ? '+' : ''}${dados.qtdDiferenca} UN\n` +
+        `📈 *Novo Saldo Total:* ${dados.saldoAtual} UN\n` +
+        `📍 *Local:* ${dados.localizacao || 'Almoxarifado'}\n` +
+        `⏰ *Data/Hora:* ${new Date().toLocaleString('pt-BR')}`;
+
+      await dispararMensagemWhatsApp(textoMensagem);
+    }
+
+    async function enviarAlertaItensCriticosWhatsApp() {
+      const itensCriticos = mobSkus.filter(s => s.qty <= s.min);
+
+      if (itensCriticos.length === 0) {
+        showToast("Nenhum item em estado crítico!", "info");
+        return;
+      }
+
+      let listaTexto = "";
+      itensCriticos.forEach((item, index) => {
+        const falta = item.min - item.qty;
+        listaTexto += `\n${index + 1}. *${item.code}* - ${item.name}\n` +
+                      `   • Saldo Atual: *${item.qty} ${item.unit}* (Mínimo: ${item.min})\n` +
+                      `   • Reposição Mínima: *+${falta} ${item.unit}*\n` +
+                      `   • Local: \`${item.loc}\`\n`;
+      });
+
+      const textoMensagem = 
+        `⚠️ *NEXUS WMS - ALERTA DE REPOSIÇÃO CRÍTICA*\n` +
+        `📋 *Total de itens em risco:* ${itensCriticos.length}\n` +
+        `________________________________________\n` +
+        listaTexto +
+        `________________________________________\n` +
+        `💡 *Ação Sugerida:* Gerar Ordem de Compra Imediata no BI.`;
+
+      await dispararMensagemWhatsApp(textoMensagem);
+      showToast(`Alerta de ${itensCriticos.length} itens críticos enviado via WhatsApp!`, "success");
+    }
+
+    async function dispararMensagemWhatsApp(mensagemTexto) {
+      try {
+        await fetch(WHATSAPP_CONFIG.apiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            phone: WHATSAPP_CONFIG.numeroDestino,
+            message: mensagemTexto
+          })
+        });
+        console.log("Notificação WhatsApp enviada com sucesso!");
+      } catch (error) {
+        console.error("Erro ao enviar notificação WhatsApp:", error);
+      }
+    }
+
+    let supabaseClient = null;
+    if (window.supabase && SUPABASE_URL.startsWith('https://')) {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    let mobSkus = [];
+    let mobRequisicoes = [];
+    let mobColaboradores = [];
+    let activeMobSkuItem = null;
+    let mobQrcodeScanner = null;
+    let mobTargetInputId = null;
+
+    const FALLBACK_COLABORADORES = [
+      { id: '1', nome: 'Rafael', cargo: 'Almoxarife / ADM' },
+      { id: '2', nome: 'Rubens', cargo: 'Almoxarife' },
+      { id: '3', nome: 'João', cargo: 'Almoxarife' },
+      { id: '4', nome: 'Nathan', cargo: 'Almoxarife' }
+    ];
+
+    const FALLBACK_SKUS = [
+      { id: '1', code: 'EPI-CAP-01', lote: 'LOT-2026-A', name: 'Capacete de Segurança MSA', category: 'EPIs', unit: 'UN', min: 10, max: 60, qty: 38, cost: 45.00, loc: 'RACK-B1', abc: 'B' },
+      { id: '2', code: 'ROL-6205', lote: 'LOT-2026-B', name: 'Rolamento SKF 6205-2RS', category: 'Peças', unit: 'UN', min: 15, max: 80, qty: 12, cost: 32.50, loc: 'RACK-A2', abc: 'A' },
+      { id: '3', code: 'FER-CHV-13', lote: 'LOT-2025-C', name: 'Chave Combinada 13mm', category: 'Ferramentas', unit: 'UN', min: 5, max: 20, qty: 4, cost: 18.90, loc: 'RACK-B2', abc: 'C' },
+      { id: '4', code: 'INS-DIS-07', lote: 'LOT-2026-X', name: 'Disco de Corte Inox Norton', category: 'Insumos', unit: 'CX', min: 20, max: 100, qty: 85, cost: 110.00, loc: 'RACK-A1', abc: 'A' },
+    ];
+
+    window.onload = function() {
+      if (window.lucide) lucide.createIcons();
+      fetchMobData();
+
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          forceCloseMobScanner();
+        }
+      });
+    };
+
+    async function fetchMobData() {
       if (supabaseClient) {
         try {
-          const { data } = await supabaseClient.from('materiais').select('*');
-          if (data && data.length > 0) {
-            skus = data.map(i => ({
-              id: i.id ? i.id.toString() : Math.random().toString(),
-              code: i.sku || i.codigo || 'SKU',
-              lote: i.lote || 'LOT-01',
-              name: i.nome || i.descricao || 'Material',
-              qty: i.quantidade !== undefined ? i.quantidade : 10,
-              unit: i.unid || 'UN',
-              loc: i.localizacao || 'RACK-A1'
-            }));
+          const { data: dbColabs } = await supabaseClient.from('colaboradores').select('*');
+          if (dbColabs && dbColabs.length > 0) {
+            mobColaboradores = dbColabs;
+          } else {
+            mobColaboradores = FALLBACK_COLABORADORES;
           }
-        } catch(e) {}
+
+          const { data, error } = await supabaseClient.from('materiais').select('*');
+          if (!error && data && data.length > 0) {
+            mobSkus = data.map(i => ({
+              id: i.id ? i.id.toString() : Math.random().toString(),
+              code: (i.sku || i.codigo || 'SKU').toUpperCase(),
+              lote: (i.lote || 'LOT-01').toUpperCase(),
+              name: i.nome || i.descricao || 'Material',
+              category: i.categoria || 'Peças',
+              unit: i.unid || i.unidade || 'UN',
+              min: i.minimo || 5,
+              max: i.maximo || 50,
+              qty: i.quantidade !== undefined ? i.quantidade : 10,
+              cost: i.custo || 25.00,
+              loc: (i.localizacao || 'RACK-A1').toUpperCase(),
+              abc: i.abc || 'C'
+            }));
+          } else {
+            mobSkus = FALLBACK_SKUS;
+          }
+        } catch(e) {
+          mobColaboradores = FALLBACK_COLABORADORES;
+          mobSkus = FALLBACK_SKUS;
+        }
+      } else {
+        mobColaboradores = FALLBACK_COLABORADORES;
+        mobSkus = FALLBACK_SKUS;
       }
+
+      mobRequisicoes = [
+        { id: 'REQ-101', reqBy: 'João', cc: 'CC-101', fleet: 'Colhedora Case 8810', skuCode: 'ROL-6205', qty: 4, status: 'Aprovada' }
+      ];
+
+      renderMobSkus();
+      renderMobSelects();
+      renderMobCompras();
+      renderMobReqs();
     }
 
-    function navMobile(page) {
-      stopCameraScanner();
-      ['home', 'scanner', 'requisitar', 'inventario'].forEach(p => {
-        const el = document.getElementById(`mob-page-${p}`);
-        if (el) el.classList.add('hidden');
+    function switchMobTab(tabId) {
+      ['skus', 'requisicao', 'compras', 'historico'].forEach(t => {
+        const page = document.getElementById(`mob-tab-${t}`);
+        if (page) page.classList.add('hidden');
+        const nav = document.getElementById(`mob-nav-${t}`);
+        if (nav) nav.className = "flex flex-col items-center gap-1 text-gray-400 hover:text-white p-1 cursor-pointer";
       });
-      const target = document.getElementById(`mob-page-${page}`);
-      if (target) target.classList.remove('hidden');
 
-      if (page === 'scanner') {
-        document.getElementById('scanned-result-card').classList.add('hidden');
-        document.getElementById('scan-waiting-box').classList.remove('hidden');
-        setTimeout(() => { startCameraScanner(); }, 150);
+      const activePage = document.getElementById(`mob-tab-${tabId}`);
+      if (activePage) activePage.classList.remove('hidden');
+      const activeNav = document.getElementById(`mob-nav-${tabId}`);
+      if (activeNav) activeNav.className = "flex flex-col items-center gap-1 text-blue-400 font-bold p-1 cursor-pointer";
+
+      if (tabId === 'compras') renderMobCompras();
+    }
+
+    function renderMobSkus() {
+      const listEl = document.getElementById('mob-sku-list');
+      const search = document.getElementById('mob-search').value.toLowerCase();
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      mobSkus.filter(s => s.name.toLowerCase().includes(search) || s.code.toLowerCase().includes(search) || s.lote.toLowerCase().includes(search))
+        .forEach(item => {
+          let badge = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">OK (${item.qty})</span>`;
+          if (item.qty <= item.min) badge = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-amber-500/20 text-amber-400 font-bold border border-amber-500/30">Crítico (${item.qty})</span>`;
+          if (item.qty === 0) badge = `<span class="px-2.5 py-0.5 text-[10px] rounded-full bg-rose-500/20 text-rose-400 font-bold border border-rose-500/30">Zerado</span>`;
+
+          listEl.innerHTML += `
+            <div class="glass-card p-3.5 rounded-2xl border border-white/5 space-y-2 shadow">
+              <div class="flex justify-between items-start">
+                <div>
+                  <span class="font-mono font-extrabold text-blue-400 text-xs block">${item.code}</span>
+                  <h3 class="font-bold text-white text-xs">${item.name}</h3>
+                </div>
+                ${badge}
+              </div>
+
+              <div class="flex items-center justify-between text-[11px] text-gray-400 border-t border-white/5 pt-2">
+                <span>RACK: <strong class="text-emerald-400 font-mono">${item.loc}</strong></span>
+                <span>LOTE: <strong class="text-gray-200 font-mono">${item.lote}</strong></span>
+                <button type="button" onclick="openMobAdjustModal('${item.id}')" class="px-2.5 py-1 bg-blue-600/30 active:bg-blue-600 text-blue-300 active:text-white rounded-xl font-semibold text-[10px] cursor-pointer">
+                  Ajustar
+                </button>
+              </div>
+            </div>
+          `;
+        });
+    }
+
+    function renderMobCompras() {
+      const listEl = document.getElementById('mob-compras-list');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      mobSkus.forEach(item => {
+        let consumoDiario = item.abc === 'A' ? 3.0 : (item.abc === 'B' ? 1.5 : 0.5);
+        let dias = Math.floor(item.qty / consumoDiario);
+
+        let badgeClass = dias <= 5 ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold';
+
+        listEl.innerHTML += `
+          <div class="glass-card p-3.5 rounded-2xl border border-white/5 space-y-2 shadow">
+            <div class="flex justify-between items-center">
+              <span class="font-mono font-bold text-blue-400 text-xs">${item.code}</span>
+              <span class="text-[11px] ${badgeClass}">${dias} Dias p/ Ruptura</span>
+            </div>
+            <p class="text-xs text-white font-semibold">${item.name}</p>
+            <div class="flex justify-between items-center text-[10px] text-gray-400 border-t border-white/5 pt-2">
+              <span>Atual: <strong class="text-white">${item.qty} ${item.unit}</strong></span>
+              <span>Min: <strong class="text-gray-300">${item.min} ${item.unit}</strong></span>
+              <button type="button" onclick="showToast('Solicitação enviada ao BI!', 'success')" class="px-2.5 py-1 bg-emerald-600 text-white rounded-xl font-bold cursor-pointer">Solicitar</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderMobReqs() {
+      const listEl = document.getElementById('mob-req-list');
+      if (!listEl) return;
+      listEl.innerHTML = '';
+
+      mobRequisicoes.forEach(r => {
+        listEl.innerHTML += `
+          <div class="glass-card p-3.5 rounded-2xl border border-white/5 space-y-1 text-xs shadow">
+            <div class="flex justify-between font-mono font-bold text-gray-300">
+              <span>${r.id}</span>
+              <span class="text-emerald-400">✓ ${r.status}</span>
+            </div>
+            <p class="font-bold text-white">${r.reqBy} (${r.cc})</p>
+            <p class="text-[11px] text-amber-400 font-semibold">${r.fleet}</p>
+            <p class="text-[11px] text-blue-300">Item: ${r.qty}x ${r.skuCode}</p>
+          </div>
+        `;
+      });
+    }
+
+    function renderMobSelects() {
+      const selSku = document.getElementById('mob-req-sku');
+      if (selSku) {
+        selSku.innerHTML = '<option value="">-- Selecione o Material --</option>';
+        mobSkus.forEach(s => {
+          selSku.innerHTML += `<option value="${s.code}">${s.code} - ${s.name} (Disp: ${s.qty})</option>`;
+        });
+      }
+
+      const selUser = document.getElementById('mob-req-user');
+      if (selUser) {
+        selUser.innerHTML = mobColaboradores.map(c => `<option value="${c.nome}">${c.nome} (${c.cargo})</option>`).join('');
       }
     }
 
-    function startCameraScanner() {
-      if (typeof Html5Qrcode === "undefined") return;
-      if (html5QrCodeScanner) stopCameraScanner();
+    async function submitMobRequisition(e) {
+      e.preventDefault();
+      const reqBy = document.getElementById('mob-req-user').value;
+      const fleet = document.getElementById('mob-req-fleet').value;
+      const skuCode = document.getElementById('mob-req-sku').value;
+      const qty = parseInt(document.getElementById('mob-req-qty').value);
+      const cc = document.getElementById('mob-req-cc').value;
 
-      const readerDiv = document.getElementById("interactive-reader");
-      if (!readerDiv) return;
+      const sku = mobSkus.find(s => s.code === skuCode);
+      if (!sku || sku.qty < qty) {
+        showToast('Estoque insuficiente!', 'error');
+        return;
+      }
 
-      html5QrCodeScanner = new Html5Qrcode("interactive-reader");
-      const config = { fps: 20, qrbox: { width: 200, height: 110 } };
+      sku.qty -= qty;
+      const newReq = {
+        id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
+        reqBy, cc, fleet, skuCode, qty, status: 'Aprovada'
+      };
 
-      html5QrCodeScanner.start(
-        { facingMode: "environment" },
-        config,
-        (decodedText) => { handleScannedCode(decodedText); },
-        () => {}
-      ).catch(err => { console.warn("Câmera indisponível:", err); });
+      mobRequisicoes.unshift(newReq);
+
+      // DISPARO DE NOTIFICAÇÃO VIA WHATSAPP
+      enviarNotificacaoMovimentacaoWhatsApp({
+        usuario: reqBy,
+        skuCode: sku.code,
+        nomeMaterial: sku.name,
+        tipoAcao: `Saída Coletor p/ Frota (${fleet})`,
+        qtdDiferenca: -qty,
+        saldoAtual: sku.qty,
+        localizacao: sku.loc
+      });
+
+      if (sku.qty <= sku.min) {
+        enviarAlertaItensCriticosWhatsApp();
+      }
+
+      if (supabaseClient) {
+        await supabaseClient.from('requisicoes').insert([{
+          codigo_req: newReq.id,
+          requisitante: reqBy,
+          destino: cc,
+          equipamento: fleet,
+          sku: skuCode,
+          quantidade: qty,
+          status: 'Aprovada',
+          almoxarife: reqBy
+        }]);
+      }
+
+      renderMobSkus();
+      renderMobReqs();
+      switchMobTab('historico');
+      showToast('Saída efetuada com sucesso!', 'success');
     }
 
-    function stopCameraScanner() {
-      if (html5QrCodeScanner) {
-        html5QrCodeScanner.stop().then(() => {
-          html5QrCodeScanner.clear();
-          html5QrCodeScanner = null;
-        }).catch(() => { html5QrCodeScanner = null; });
+    function openMobAdjustModal(id) {
+      activeMobSkuItem = mobSkus.find(s => s.id === id);
+      if (activeMobSkuItem) {
+        document.getElementById('mob-adjust-title').innerText = `${activeMobSkuItem.code} - ${activeMobSkuItem.name}`;
+        document.getElementById('mob-adjust-newqty').value = activeMobSkuItem.qty;
+        document.getElementById('modal-mob-adjust').classList.remove('hidden');
+      }
+    }
+
+    function closeMobAdjustModal() {
+      document.getElementById('modal-mob-adjust').classList.add('hidden');
+    }
+
+    function confirmMobAdjust() {
+      if (!activeMobSkuItem) return;
+      const newQty = parseInt(document.getElementById('mob-adjust-newqty').value);
+      const reason = document.getElementById('mob-adjust-reason').value;
+
+      const diff = newQty - activeMobSkuItem.qty;
+      activeMobSkuItem.qty = newQty;
+
+      // DISPARO DE NOTIFICAÇÃO VIA WHATSAPP
+      enviarNotificacaoMovimentacaoWhatsApp({
+        usuario: "Coletor Mobile",
+        skuCode: activeMobSkuItem.code,
+        nomeMaterial: activeMobSkuItem.name,
+        tipoAcao: `Ajuste de Coletor (${reason})`,
+        qtdDiferenca: diff,
+        saldoAtual: newQty,
+        localizacao: activeMobSkuItem.loc
+      });
+
+      if (newQty <= activeMobSkuItem.min) {
+        enviarAlertaItensCriticosWhatsApp();
+      }
+
+      renderMobSkus();
+      closeMobAdjustModal();
+      showToast('Estoque atualizado e notificado no Whats!', 'success');
+    }
+
+    // LEITOR DE CÂMERA MOBILE
+    function openMobScanner(inputId) {
+      mobTargetInputId = inputId;
+      const modal = document.getElementById('modal-mob-scanner');
+      modal.classList.remove('hidden');
+
+      if (typeof Html5Qrcode !== 'undefined') {
+        try {
+          mobQrcodeScanner = new Html5Qrcode("mob-reader");
+          mobQrcodeScanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: { width: 220, height: 160 } },
+            (decodedText) => {
+              if (mobTargetInputId) {
+                const field = document.getElementById(mobTargetInputId);
+                if (field) {
+                  field.value = decodedText.toUpperCase();
+                  field.dispatchEvent(new Event('keyup'));
+                }
+              }
+              forceCloseMobScanner();
+              showToast(`Bipado: ${decodedText}`, 'success');
+            },
+            () => {}
+          ).catch((err) => {
+            console.log("Erro câmera: " + err);
+          });
+        } catch(e) {
+          console.log("Erro scanner: " + e);
+        }
       }
     }
 
     function restartScanner() {
-      document.getElementById('scanned-result-card').classList.add('hidden');
-      document.getElementById('scan-waiting-box').classList.remove('hidden');
-      startCameraScanner();
+      forceCloseMobScanner();
+      setTimeout(() => { openMobScanner(mobTargetInputId || 'mob-search'); }, 300);
     }
 
-    function handleScannedCode(code) {
-      const cleanCode = code.trim().toUpperCase();
-      const item = skus.find(s => s.code.toUpperCase() === cleanCode || s.lote.toUpperCase() === cleanCode);
-      
-      if (item) {
-        activeScannedItem = item;
-        document.getElementById('scan-res-name').innerText = item.name;
-        document.getElementById('scan-res-code').innerText = `SKU: ${item.code} | Lote: ${item.lote} | Local: ${item.loc}`;
-        document.getElementById('scan-res-stock').innerText = `Estoque Disponível: ${item.qty} ${item.unit}`;
-        
-        document.getElementById('scan-waiting-box').classList.add('hidden');
-        document.getElementById('scanned-result-card').classList.remove('hidden');
-        
-        stopCameraScanner();
+    function forceCloseMobScanner() {
+      const modal = document.getElementById('modal-mob-scanner');
+      if (modal) modal.classList.add('hidden');
 
-        setTimeout(() => {
-          initCanvas('canvas-retirante');
-          initCanvas('canvas-entregador');
-        }, 100);
-      } else {
-        alert(`Código Lido: ${code} (Material não cadastrado no catálogo WMS)`);
-      }
-    }
+      try {
+        const videoElements = document.querySelectorAll('#mob-reader video');
+        videoElements.forEach(v => {
+          if (v.srcObject) {
+            const tracks = v.srcObject.getTracks();
+            tracks.forEach(track => track.stop());
+          }
+        });
+      } catch(e) {}
 
-    function initCanvas(id) {
-      const canvas = document.getElementById(id);
-      if (!canvas) return;
-
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-
-      const ctx = canvas.getContext('2d');
-      ctx.strokeStyle = "#38bdf8";
-      ctx.lineWidth = 2.5;
-      ctx.lineCap = "round";
-
-      let drawing = false;
-
-      function getPos(e) {
-        const rect = canvas.getBoundingClientRect();
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        return { x: clientX - rect.left, y: clientY - rect.top };
-      }
-
-      function startDraw(e) { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
-      function moveDraw(e) { if (!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
-      function endDraw() { drawing = false; }
-
-      canvas.onmousedown = startDraw; canvas.onmousemove = moveDraw; canvas.onmouseup = endDraw;
-      canvas.ontouchstart = startDraw; canvas.ontouchmove = moveDraw; canvas.ontouchend = endDraw;
-    }
-
-    function clearCanvas(id) {
-      const canvas = document.getElementById(id);
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-
-    async function confirmScanRequisition() {
-      if (!activeScannedItem) return;
-      const retirante = document.getElementById('scan-req-retirante').value;
-      const fleet = document.getElementById('scan-req-fleet').value;
-      const qty = parseInt(document.getElementById('scan-req-qty').value);
-      const cc = document.getElementById('scan-req-cc').value;
-
-      if (!retirante) { alert('Informe o nome de quem está retirando!'); return; }
-      if (!fleet) { alert('Informe a Ordem de Serviço / Descrição / Frota!'); return; }
-      if (qty > activeScannedItem.qty) { alert('Quantidade maior que o estoque disponível!'); return; }
-
-      activeScannedItem.qty -= qty;
-
-      const reqCode = 'REQ-' + Math.floor(1000 + Math.random() * 9000);
-      const newReq = {
-        codigo_req: reqCode,
-        requisitante: retirante,
-        destino: cc,
-        equipamento: fleet,
-        sku: activeScannedItem.code,
-        quantidade: qty,
-        status: 'Aprovada',
-        almoxarife: 'Alan Kaique'
-      };
-
-      if (supabaseClient) {
+      if (mobQrcodeScanner) {
         try {
-          await supabaseClient.from('requisicoes').insert([newReq]);
-          await supabaseClient.from('materiais').update({ quantidade: activeScannedItem.qty }).eq('sku', activeScannedItem.code);
-        } catch(e) {}
+          mobQrcodeScanner.stop().catch(() => {}).finally(() => {
+            mobQrcodeScanner = null;
+            document.getElementById('mob-reader').innerHTML = '';
+          });
+        } catch(e) {
+          mobQrcodeScanner = null;
+          document.getElementById('mob-reader').innerHTML = '';
+        }
       }
-
-      let savedReqs = JSON.parse(localStorage.getItem('nexus_mobile_reqs') || '[]');
-      savedReqs.unshift(newReq);
-      localStorage.setItem('nexus_mobile_reqs', JSON.stringify(savedReqs));
-
-      alert(`Saída de ${qty}x ${activeScannedItem.code} registrada com sucesso!\nO.S./Aplicação: ${fleet}`);
-      navMobile('home');
     }
 
-    function renderMobileSelects() {
-      const opts = '<option value="">-- Selecione o Material --</option>' + 
-        skus.map(i => `<option value="${i.code}">${i.code} - ${i.name} (Disp: ${i.qty})</option>`).join('');
-      const reqSku = document.getElementById('mob-req-sku');
-      const invSku = document.getElementById('mob-inv-sku');
-      if (reqSku) reqSku.innerHTML = opts;
-      if (invSku) invSku.innerHTML = opts;
+    function handleMobLogout() {
+      localStorage.removeItem('nexus_user');
+      window.location.href = "index.html";
     }
 
-    async function submitMobileRequisition(e) {
-      e.preventDefault();
-      alert('Requisição manual/O.S. gravada com sucesso!');
-      navMobile('home');
-    }
-
-    async function saveInventoryCount() {
-      alert('Contagem cíclica gravada com sucesso!');
-      navMobile('home');
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      let bg = 'bg-slate-800 border-white/10 text-white';
+      if (type === 'success') bg = 'bg-emerald-900/90 border-emerald-500/40 text-emerald-200';
+      if (type === 'error') bg = 'bg-rose-900/90 border-rose-500/40 text-rose-200';
+      toast.className = `p-3.5 rounded-2xl border glass-panel shadow-2xl text-xs font-semibold flex items-center justify-between transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bg}`;
+      toast.innerHTML = `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+      setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-2'); setTimeout(() => toast.remove(), 300); }, 2500);
     }
   </script>
 </body>
