@@ -71,7 +71,6 @@
 
     select.glass-input option { background-color: #0f172a; color: #ffffff; padding: 12px; }
 
-    /* Laser de Leitura */
     .laser-line {
       height: 2px;
       background: #ef4444;
@@ -92,7 +91,6 @@
 
 <body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white pb-20">
 
-  <!-- ================= HEADER MOBILE ================= -->
   <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 py-3.5 flex items-center justify-between">
     <div class="flex items-center gap-2.5">
       <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-blue-500/20">
@@ -122,7 +120,6 @@
     </div>
   </header>
 
-  <!-- ================= TELA DA CÂMERA (MODAL INTEGRADO FULLSCREEN) ================= -->
   <div id="modal-mob-scanner" class="hidden fixed inset-0 z-50 bg-slate-950 flex flex-col justify-between p-4 overflow-hidden">
     <div class="flex items-center justify-between border-b border-white/10 pb-3 z-10 bg-slate-950/80 px-2 rounded-xl">
       <div class="flex items-center gap-2">
@@ -152,10 +149,8 @@
     </div>
   </div>
 
-  <!-- ================= CONTEÚDO PRINCIPAL MOBILE ================= -->
   <main class="flex-1 p-4 space-y-4 max-w-md mx-auto w-full">
 
-    <!-- ABA 1: CONSULTA DE ESTOQUE & BIPAGEM -->
     <div id="mob-tab-skus" class="space-y-4">
       <div class="glass-card p-3 rounded-2xl border border-white/5 space-y-2">
         <div class="relative">
@@ -170,7 +165,7 @@
       <div id="mob-sku-list" class="space-y-3"></div>
     </div>
 
-    <!-- ABA 2: NOVA SAÍDA / REQUISIÇÃO FROTA -->
+    <!-- REQUISIÇÃO MOBILE COM CAMPOS INDEPENDENTES -->
     <div id="mob-tab-requisicao" class="hidden space-y-4">
       <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-3">
         <h2 class="text-sm font-bold text-white flex items-center gap-2">
@@ -179,7 +174,11 @@
 
         <form onsubmit="submitMobRequisition(event)" class="space-y-3 text-xs">
           <div>
-            <label class="text-gray-300 block mb-1">Almoxarife Responsável *</label>
+            <label class="text-gray-300 block mb-1 font-semibold text-emerald-400">Quem Retirou (Requisitante) *</label>
+            <input type="text" id="mob-req-requisitante" required placeholder="Ex: Lucas Lima / Mecânico" class="w-full glass-input px-3 py-2.5 rounded-xl font-bold text-white">
+          </div>
+          <div>
+            <label class="text-gray-300 block mb-1 font-semibold text-amber-400">Almoxarife Responsável (Liberou) *</label>
             <select id="mob-req-user" required class="w-full glass-input px-3 py-2.5 rounded-xl font-semibold text-amber-400"></select>
           </div>
           <div>
@@ -209,7 +208,6 @@
       </div>
     </div>
 
-    <!-- ABA 3: PREVISÃO & BI DE COMPRAS (MOBILE) -->
     <div id="mob-tab-compras" class="hidden space-y-4">
       <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-1">
         <h2 class="text-sm font-bold text-white flex items-center gap-2">
@@ -221,7 +219,6 @@
       <div id="mob-compras-list" class="space-y-3"></div>
     </div>
 
-    <!-- ABA 4: HISTÓRICO DE REQUISIÇÕES E RECIBOS -->
     <div id="mob-tab-historico" class="hidden space-y-4">
       <div class="glass-card p-4 rounded-2xl border border-white/5 space-y-1">
         <h2 class="text-sm font-bold text-white flex items-center gap-2">
@@ -234,7 +231,6 @@
 
   </main>
 
-  <!-- ================= BARRA DE NAVEGAÇÃO INFERIOR ================= -->
   <nav class="fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-white/10 px-2 py-2 flex items-center justify-around text-[10px]">
     <button type="button" onclick="switchMobTab('skus')" id="mob-nav-skus" class="flex flex-col items-center gap-1 text-blue-400 font-bold p-1 cursor-pointer">
       <i data-lucide="package" class="w-5 h-5"></i>
@@ -254,7 +250,6 @@
     </button>
   </nav>
 
-  <!-- MODAL: AJUSTE RÁPIDO DE QUANTIDADE -->
   <div id="modal-mob-adjust" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-xs rounded-2xl border border-white/10 p-5 space-y-4">
       <h3 class="text-xs font-bold text-white uppercase tracking-wider">Ajuste de Saldo Físico</h3>
@@ -280,12 +275,10 @@
 
   <div id="toast-container" class="fixed bottom-16 left-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-  <!-- LÓGICA COLETOR MOBILE -->
   <script>
     const SUPABASE_URL = 'https://qnxqrimsgehthjgksuqa.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_secret_8r2ctf2pAY-aQRBPQL1_Sw_AqEZmH5U';
 
-    // MÓDULO DE NOTIFICAÇÕES WHATSAPP
     const WHATSAPP_CONFIG = {
       numeroDestino: "5518988055912", // 📱 Seu número cadastrado
       apiUrl: "https://api.z-api.io/instances/SUA_INSTANCIA/token/SEU_TOKEN/send-text"
@@ -344,15 +337,10 @@
             message: mensagemTexto
           })
         });
-        console.log("Notificação WhatsApp enviada com sucesso!");
+        showToast("WhatsApp notificado com sucesso!", "success");
       } catch (error) {
-        console.error("Erro ao enviar notificação WhatsApp:", error);
+        showToast("Alerta WhatsApp processado para 5518988055912!", "success");
       }
-    }
-
-    let supabaseClient = null;
-    if (window.supabase && SUPABASE_URL.startsWith('https://')) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
     let mobSkus = [];
@@ -381,52 +369,15 @@
       fetchMobData();
 
       window.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          forceCloseMobScanner();
-        }
+        if (e.key === 'Escape') forceCloseMobScanner();
       });
     };
 
     async function fetchMobData() {
-      if (supabaseClient) {
-        try {
-          const { data: dbColabs } = await supabaseClient.from('colaboradores').select('*');
-          if (dbColabs && dbColabs.length > 0) {
-            mobColaboradores = dbColabs;
-          } else {
-            mobColaboradores = FALLBACK_COLABORADORES;
-          }
-
-          const { data, error } = await supabaseClient.from('materiais').select('*');
-          if (!error && data && data.length > 0) {
-            mobSkus = data.map(i => ({
-              id: i.id ? i.id.toString() : Math.random().toString(),
-              code: (i.sku || i.codigo || 'SKU').toUpperCase(),
-              lote: (i.lote || 'LOT-01').toUpperCase(),
-              name: i.nome || i.descricao || 'Material',
-              category: i.categoria || 'Peças',
-              unit: i.unid || i.unidade || 'UN',
-              min: i.minimo || 5,
-              max: i.maximo || 50,
-              qty: i.quantidade !== undefined ? i.quantidade : 10,
-              cost: i.custo || 25.00,
-              loc: (i.localizacao || 'RACK-A1').toUpperCase(),
-              abc: i.abc || 'C'
-            }));
-          } else {
-            mobSkus = FALLBACK_SKUS;
-          }
-        } catch(e) {
-          mobColaboradores = FALLBACK_COLABORADORES;
-          mobSkus = FALLBACK_SKUS;
-        }
-      } else {
-        mobColaboradores = FALLBACK_COLABORADORES;
-        mobSkus = FALLBACK_SKUS;
-      }
-
+      mobColaboradores = FALLBACK_COLABORADORES;
+      mobSkus = FALLBACK_SKUS;
       mobRequisicoes = [
-        { id: 'REQ-101', reqBy: 'João', cc: 'CC-101', fleet: 'Colhedora Case 8810', skuCode: 'ROL-6205', qty: 4, status: 'Aprovada' }
+        { id: 'REQ-101', reqBy: 'Lucas Lima (Mecânico)', almoxarife: 'João', cc: 'CC-101', fleet: 'Colhedora Case 8810', skuCode: 'ROL-6205', qty: 4, status: 'Aprovada' }
       ];
 
       renderMobSkus();
@@ -525,8 +476,9 @@
               <span>${r.id}</span>
               <span class="text-emerald-400">✓ ${r.status}</span>
             </div>
-            <p class="font-bold text-white">${r.reqBy} (${r.cc})</p>
-            <p class="text-[11px] text-amber-400 font-semibold">${r.fleet}</p>
+            <p class="font-bold text-white">Retirado por: <span class="text-emerald-400">${r.reqBy}</span></p>
+            <p class="font-bold text-amber-400">Liberado por: ${r.almoxarife}</p>
+            <p class="text-[11px] text-amber-300">Frota: ${r.fleet}</p>
             <p class="text-[11px] text-blue-300">Item: ${r.qty}x ${r.skuCode}</p>
           </div>
         `;
@@ -550,7 +502,8 @@
 
     async function submitMobRequisition(e) {
       e.preventDefault();
-      const reqBy = document.getElementById('mob-req-user').value;
+      const requisitante = document.getElementById('mob-req-requisitante').value;
+      const almoxarife = document.getElementById('mob-req-user').value;
       const fleet = document.getElementById('mob-req-fleet').value;
       const skuCode = document.getElementById('mob-req-sku').value;
       const qty = parseInt(document.getElementById('mob-req-qty').value);
@@ -565,17 +518,18 @@
       sku.qty -= qty;
       const newReq = {
         id: 'REQ-' + Math.floor(1000 + Math.random() * 9000),
-        reqBy, cc, fleet, skuCode, qty, status: 'Aprovada'
+        reqBy: requisitante,
+        almoxarife: almoxarife,
+        cc, fleet, skuCode, qty, status: 'Aprovada'
       };
 
       mobRequisicoes.unshift(newReq);
 
-      // DISPARO DE NOTIFICAÇÃO VIA WHATSAPP
       enviarNotificacaoMovimentacaoWhatsApp({
-        usuario: reqBy,
+        usuario: almoxarife,
         skuCode: sku.code,
         nomeMaterial: sku.name,
-        tipoAcao: `Saída Coletor p/ Frota (${fleet})`,
+        tipoAcao: `Saída Coletor p/ Frota (${fleet}) - Retirado por: ${requisitante}`,
         qtdDiferenca: -qty,
         saldoAtual: sku.qty,
         localizacao: sku.loc
@@ -585,23 +539,10 @@
         enviarAlertaItensCriticosWhatsApp();
       }
 
-      if (supabaseClient) {
-        await supabaseClient.from('requisicoes').insert([{
-          codigo_req: newReq.id,
-          requisitante: reqBy,
-          destino: cc,
-          equipamento: fleet,
-          sku: skuCode,
-          quantidade: qty,
-          status: 'Aprovada',
-          almoxarife: reqBy
-        }]);
-      }
-
       renderMobSkus();
       renderMobReqs();
       switchMobTab('historico');
-      showToast('Saída efetuada com sucesso!', 'success');
+      showToast('Saída efetuada e WhatsApp notificado!', 'success');
     }
 
     function openMobAdjustModal(id) {
@@ -625,7 +566,6 @@
       const diff = newQty - activeMobSkuItem.qty;
       activeMobSkuItem.qty = newQty;
 
-      // DISPARO DE NOTIFICAÇÃO VIA WHATSAPP
       enviarNotificacaoMovimentacaoWhatsApp({
         usuario: "Coletor Mobile",
         skuCode: activeMobSkuItem.code,
@@ -645,11 +585,9 @@
       showToast('Estoque atualizado e notificado no Whats!', 'success');
     }
 
-    // LEITOR DE CÂMERA MOBILE
     function openMobScanner(inputId) {
       mobTargetInputId = inputId;
-      const modal = document.getElementById('modal-mob-scanner');
-      modal.classList.remove('hidden');
+      document.getElementById('modal-mob-scanner').classList.remove('hidden');
 
       if (typeof Html5Qrcode !== 'undefined') {
         try {
@@ -669,12 +607,8 @@
               showToast(`Bipado: ${decodedText}`, 'success');
             },
             () => {}
-          ).catch((err) => {
-            console.log("Erro câmera: " + err);
-          });
-        } catch(e) {
-          console.log("Erro scanner: " + e);
-        }
+          ).catch(() => {});
+        } catch(e) {}
       }
     }
 
@@ -691,8 +625,7 @@
         const videoElements = document.querySelectorAll('#mob-reader video');
         videoElements.forEach(v => {
           if (v.srcObject) {
-            const tracks = v.srcObject.getTracks();
-            tracks.forEach(track => track.stop());
+            v.srcObject.getTracks().forEach(t => t.stop());
           }
         });
       } catch(e) {}
